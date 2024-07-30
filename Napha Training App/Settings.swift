@@ -20,7 +20,8 @@ struct Settings: View {
             Label("Goal Setting", systemImage: "target")
         }
         .sheet(isPresented: $GoalSheet){
-            Goal_Page(info: $info, selectedDays: $selectedDaysSettings, selectedTimes: $selectedTimedSettings)
+            Goal_Page(info: $info)
+            
         }
     }
 }
