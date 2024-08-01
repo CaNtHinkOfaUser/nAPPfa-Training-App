@@ -5,6 +5,8 @@
 //
 
 import SwiftUI
+import UserNotifications
+
 
 struct Home: View {
     
@@ -14,11 +16,13 @@ struct Home: View {
     @Binding var homeSelectedTimed: [Date]
     @State var DayIndex = Calendar.current.component(.weekday, from: Date())
     @Binding var homeSelectedDays: [Int]
-    @State var timeUntilNextWorkout: Int = 0
+    @State var timeUntilNextWorkout: DateComponents = Calendar.current.dateComponents([.hour], from: Date())
     @State var daySelected: Bool = false
     @State var selectedDayComponent = Date()
     @State var datesButToday: [Date] = []
     @State var resultFromFunction: Int = 0
+    @State var nextWorkoutComponents = Calendar.current.dateComponents([.hour, .minute], from: Date())
+    @State var notificationAuthorized: Bool = false
     var todayComponents: DateComponents {
         Calendar.current.dateComponents([.year, .month, .day], from: Date())
     }
@@ -38,6 +42,7 @@ struct Home: View {
             return calendar.date(from: newComponents) ?? date
         }
     }
+
     @State var dayNum: Int = (Calendar.current.component(.weekday, from: Date())+5) % 7 + 1
     let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -67,7 +72,21 @@ struct Home: View {
                 Text("Sorted Days: \(sortedDays.map { String($0) }.joined(separator: ", "))")
                                 .font(.system(size: 16))
                                 .foregroundColor(.gray)
-                
+                Button("send notif"){
+                    let content = UNMutableNotificationContent()
+                    content.title = "Feed the cat"
+                    content.subtitle = "It looks hungry"
+                    content.sound = UNNotificationSound.default
+
+                    // show this notification five seconds from now
+                    let trigger = UNCalendarNotificationTrigger(dateMatching: nextWorkoutComponents, repeats: true)
+
+                    // choose a random identifier
+                    let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+
+                    // add our notification request
+                    UNUserNotificationCenter.current().add(request)
+                }
                 Text("NAPFA EXAMINATION IN")
                     .font(.system(size: 20))
                     .bold()
@@ -92,7 +111,8 @@ struct Home: View {
                             Image("Calendar")
                                 .scaledToFit()
                                 .scaleEffect(0.55)
-                            Text("2")
+                            Text(timeUntilNextWorkout.hour! >= 24 ?
+                                 String(Int(ceil(Double(timeUntilNextWorkout.hour!/24)))+1) : String(timeUntilNextWorkout.hour!) )
                                 .font(.system(size: 60))
                                 .bold()
                         }
@@ -136,6 +156,35 @@ struct Home: View {
             }
         }
         .onAppear{
+            if !notificationAuthorized {
+                               UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { success, error in
+                                   if success {
+                                       notificationAuthorized = true
+                                   } else if let error {
+                                       print(error.localizedDescription)
+                                   }
+                               }
+                           }
+            let notificationIdentifier = "workoutNotification"
+            
+            
+                            UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [notificationIdentifier])
+            
+                            // Create a new notification request with the fixed identifier
+                            let content = UNMutableNotificationContent()
+                            content.title = "Time for your workout!"
+                            content.subtitle = "Exercise Now"
+                            content.sound = UNNotificationSound.default
+            
+                          
+                            let trigger = UNCalendarNotificationTrigger(dateMatching: nextWorkoutComponents, repeats: true)
+            
+                            let request = UNNotificationRequest(identifier: notificationIdentifier, content: content, trigger: trigger)
+            
+                            
+                            UNUserNotificationCenter.current().add(request)
+           
+            
             /*daySelected = false
              for i in homeSelectedDays{
              if daySelected == false {
@@ -176,7 +225,7 @@ struct Home: View {
                 print(sortedTimes)
                 print(resultFromFunction)
                 nextWorkout = sortedTimes[resultFromFunction]
-                var nextWorkoutComponents = Calendar.current.dateComponents([.hour, .minute], from: nextWorkout)
+                 nextWorkoutComponents = Calendar.current.dateComponents([.hour, .minute], from: nextWorkout)
                 
                 let todayComponents = Calendar.current.dateComponents([.year, .month, .day], from: Date())
                 let comparingComponents = Calendar.current.dateComponents([.hour, .minute, .year, .month, .day], from: Date())
@@ -209,9 +258,12 @@ struct Home: View {
                 }
                 
             }
+            timeUntilNextWorkout = Calendar.current.dateComponents([.hour], from: Date(), to: nextWorkout)
+           
+            }
         }
     }
-}
+
 
 
 #Preview {
