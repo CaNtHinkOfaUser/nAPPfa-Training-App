@@ -9,30 +9,14 @@ struct Goal_Page: View {
     @State private var endCalc: String = ""
     @State private var autoCalc: Int = 0
     @Binding var info: data
-    @State var Sex = true
+    @Binding var Sex: Bool
     @State private var prev = ["", "", "", "", "", ""]
     @State private var targ = ["", "", "", "", "", ""]
     @State private var Nil = [false, false,  false, false, false, false]
     @State private var Goals: [[String]] = []
-    @State private var age = 12
     @State private var grades = ["A", "B", "C", "D", "E", "F", "NA"]
-    @State private var Days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
-    @State private var selectedDays: [Int] = []
-    @State private var toThrow: String = ""
-    @State private var times : [Date] =  Array(repeating: Date(), count: 7)
-    @State private var selectedTimes : [Date] = []
-    @State private var numberArray = [1,2,3,4,5,6,7]
-    @State private var selectedTime = Date()
-    @State private var selectedTimeInt: Int = 0
-    @State private var selectedTimeOptional: Int? = 0
     
-    let dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium // Choose a date style (e.g., .short, .medium, .long)
-        formatter.timeStyle = .short // Choose a time style (e.g., .none, .short, .medium, .long)
-        return formatter
-        
-    }()
+    
     
     func calculateSitUpsGrade(age: Int, sex: Bool, sitUps: Int) -> String {
         // Define the grading criteria for male and female
@@ -45,7 +29,7 @@ struct Goal_Page: View {
             17: ["A": 43...100, "B": 40...42, "C": 37...39, "D": 34...36, "E": 31...33, "F": 0...33],
             18: ["A": 43...100, "B": 40...42, "C": 37...39, "D": 34...36, "E": 31...33, "F": 0...33],
             19: ["A": 43...100, "B": 40...42, "C": 37...39, "D": 34...36, "E": 31...33, "F": 0...33],
-]
+        ]
         
         let femaleGrades: [Int: [String: ClosedRange<Int>]] = [
             12: ["A": 30...100, "B": 25...29, "C": 21...24, "D": 17...20, "E" : 13...16, "F": 0...12],
@@ -64,7 +48,7 @@ struct Goal_Page: View {
         if let ageGrades = Grades[age] {
             for (gradeString, range) in ageGrades.sorted(by: { $0.value.lowerBound < $1.value.lowerBound }) {
                 if range.contains(sitUps) {
-                   grade = gradeString
+                    grade = gradeString
                 }
             }
         }
@@ -74,267 +58,163 @@ struct Goal_Page: View {
     
     var body: some View {
         NavigationStack{
-            ScrollView{
-                VStack{
-                    Text("GOALS")
-                        .font(.system(size: 60))
-                        .bold()
-                        .offset(y: 1)
-                    Image("TargetBoard")
-                        .resizable()
-                        .scaleEffect(0.4)
-                        .offset(y: -150)
-                    
-                    
-                    Text("ABOUT ME")
-                        .font(.system(size: 20))
-                        .foregroundStyle(.gray)
-                        .offset(y: -260)
-                        .position(x: 100)
-                    VStack{
-                        ZStack{
-                            RoundedRectangle(cornerRadius: 10)
-                                .frame(width: 190, height: 40)
-                                .foregroundColor(Color("UIColour"))
-                            Stepper(value: $age, in: 12...19, step: 1){
-                                Text("Age: \(age)")
-                            }
-                            .padding(.horizontal, 50)
-                        }
+            ScrollView {
+                VStack {
+                    VStack {
+                        Text("GOALS")
+                            .font(.system(size: 60))
+                            .bold()
+                            .offset(y: 1)
+                        Image("TargetBoard")
+                            .resizable()
+                            .scaleEffect(0.4)
+                            .offset(y: -150)
                         
-                        ZStack{
-                            RoundedRectangle(cornerRadius: 10)
-                                .frame(width: 190, height: 40)
-                                .foregroundColor(Color("UIColour"))
-                            Picker("Sex",selection: $Sex){
-                                Text("Male").tag(true)
-                                Text("Female").tag(false)
-                            }
-                            .offset(x: Sex ? -60 : -50)
-                            .accentColor(.black)
-                        }
-                    }
-                    .padding(.horizontal, 60)
-                    .offset(y: -250)
-                    .offset(x: -75)
-                    
-                    Text("AUTO CALCULATION")
-                        .font(.system(size: 20))
-                        .foregroundStyle(.gray)
-                        .offset(y: -160)
-                        .position(x: 153)
-                    Slider(value: $sitUps, in: 0...100, step: 1.0)
-                        .scaleEffect(0.6)
-                        .offset(y: -130)
-                        .position(x: 150)
-                        .onChange(of: sitUps){
-                            endCalc = "\(calculateSitUpsGrade(age: age, sex: Sex, sitUps: autoCalc))"
-                        }
-                    Text(String(format: "%.0f", sitUps))
-                        .offset(y: -200)
-                        .position(x: 150)
-                    Text("Your grade is: \(calculateSitUpsGrade(age: age, sex: Sex, sitUps: Int(sitUps)))")
-                        .offset(y: -140)
-                        .position(x: 150)
-                }
-                
-                Text("RESULTS")
-                    .font(.system(size: 20))
-                    .foregroundStyle(.gray)
-                    .offset(y: -130)
-                    .position(x: 100)
-                
-                Grid{
-                    
-                    let offset = Nil.sorted { $0 && !$1 }[0]
-                    
-                    GridRow{
-                        Text("Previous\nGrade")
-                            .font(.system(size: 17))
-                            .offset(x: 180)
-                            .padding()
-                            .fixedSize(horizontal: true, vertical: true)
-                            .multilineTextAlignment(.center)
-                            .gridColumnAlignment(.center)
-                            .lineLimit(2)
-                        Text("Target\nGrade")
-                            .font(.system(size: 17))
-                            .offset(x: 180)
-                            .padding()
-                            .multilineTextAlignment(.center)
-                            .gridColumnAlignment(.leading)
-                            .lineLimit(2)
-                    }
-                    
-                    ForEach(exercises.indices, id:\.self){ index in
-                        GridRow{
-                            Button{
-                                withAnimation{
-                                    Nil[index].toggle()
-                                }
-                                targ[index] = Nil[index] ? "": "false"
-                                prev[index] = Nil[index] ? "": "false"
-                            } label: {
-                                Label("", systemImage:
-                                        Nil[index] ? "checkmark.square.fill" : "checkmark.square")
-                                .font(.system(size: 20))
-                            }
-                            .offset(x: offset ? 23 : 20)
-                            
-                            Text(exercises[index])
-                                .multilineTextAlignment(.center)
-                                .fixedSize(horizontal: false, vertical: true)
-                                .frame(width: 100)
-                                .offset(x: offset ? 10 : 0)
-                            
-                            if Nil[index]{
-                                Picker("prev", selection: $prev[index]){
-                                    ForEach(grades, id: \.self){ grade in
-                                        Text(grade).tag(grade)
-                                    }
-                                }
-                                
-                                Picker("targ", selection: $targ[index]){
-                                    ForEach(grades, id: \.self){ grade in
-                                        Text(grade).tag(grade)
-                                    }
-                                }
-                                .gridCellAnchor(.trailing)
-                            }
-                            Spacer()
-                        }
-                        .padding(.vertical, 10)
-                    }
-                }
-                .offset(y: -150)
-                
-                DatePicker(selection: $info.NAPHA_Date, displayedComponents: .date){
-                    Text("Select your Napha Data")
-                }
-                .padding(.horizontal, 50)
-                .offset(y: -150)
-                
-                Grid{
-                    ForEach(Goals.indices, id: \.self){ index in
-                        GridRow{
-                            TextField(text: $Goals[index][0]){
-                                Text("input goal for exercise...")
-                            }
-                            .textFieldStyle(.roundedBorder)
-                            .offset(x: 30)
-                            Picker("exercise", selection: $Goals[index][1]){
-                                ForEach(exercises, id: \.self){ exercise in
-                                    Text(exercise).tag(exercise)
-                                }
-                            }
-                            .offset(x: -30)
-                        }
-                        .padding(.horizontal, 30)
-                        .padding(.vertical, -30)
-                    }
-                    .padding(.vertical)
-                    .offset(y: -140)
-                    
-                    Button{
-                        Goals.append(["", ""])
-                    } label: {
-                        Text("Create New Goal")
-                    }
-                    .offset(y: -140)
-                }
-                
-                
-                Text("SCHEDULE")
-                    .font(.system(size: 20))
-                    .foregroundStyle(.gray)
-                    .offset(x: -110)
-                    .offset(y: -110)
-                
-                HStack(spacing: 15){
-                    ForEach(Days.indices, id: \.self){day in  Text(String(Days[day]).prefix(1))
+                        Text("AUTO CALCULATION")
                             .font(.system(size: 20))
-                            .foregroundColor(.white)
-                            .frame(width: 35, height: 35)
-                            .background(Circle().fill(selectedDays.contains(day) ? Color.blue : Color.gray)
-                                .animation(.easeInOut(duration: 0.3), value: selectedDays))
-                            .onTapGesture {
-                                withAnimation(.easeInOut(duration: 0.3)){
-                                    if selectedDays.contains(day){
-                                        selectedTimes.remove(at: selectedDays.firstIndex(of: day)!)
-                                        selectedDays.removeAll {$0 == day}
-                                        
-                                    } else {
-                                        selectedDays.append(day)
-                                        selectedTimes.append(times[day])
-                                    }
-                                }
+                            .foregroundStyle(.gray)
+                            .offset(y: -160)
+                            .position(x: 153)
+                        Slider(value: $sitUps, in: 0...100, step: 1.0)
+                            .scaleEffect(0.6)
+                            .offset(y: -130)
+                            .position(x: 150)
+                            .onChange(of: sitUps){
+                                endCalc = "\(calculateSitUpsGrade(age: info.Age, sex: Sex, sitUps: autoCalc))"
                             }
+                        Text(String(format: "%.0f", sitUps))
+                            .offset(y: -200)
+                            .position(x: 150)
+                        Text("Your grade is: \(calculateSitUpsGrade(age: info.Age, sex: Sex, sitUps: Int(sitUps)))")
+                            .offset(y: -140)
+                            .position(x: 150)
                     }
-                    .bold()
-                    .offset(y: -90)
-                }
-                ForEach(selectedTimes, id: \.self){ i in
-                    Text(dateFormatter.string(from: i))
-                    //used for testing, remove later
-                }
-                ForEach(selectedDays, id: \.self){i in
-                    Text((String(i+1)))
-                }
-                Text("TIMING")
-                    .font(.system(size: 20))
-                    .foregroundStyle(.gray)
-                    .offset(x: -130)
-                    .offset(y: -60)
-                VStack(spacing: 30){
                     
-                    ForEach(selectedDays.sorted(), id:
-                                \.self){selectedDay in
-                        HStack(alignment: .center){
-                            Text(Days[selectedDay].prefix(3))
-                                .offset(x: -90)
-                                .font(.system(size: 25))
-                                .frame(width: 50, alignment: .leading)
-                            DatePicker(Days[selectedDay].prefix(3), selection: $times[selectedDay]
-                                       , displayedComponents: .hourAndMinute)
-                            .labelsHidden()
-                            .onChange(of: times[selectedDay]){ if selectedDays.contains(selectedDay){
-                                selectedTimes.remove(at: selectedDays.firstIndex(of: selectedDay)!)
-                                selectedDays.removeAll {$0 == selectedDay}
-                                selectedDays.append(selectedDay)
-                                selectedTimes.append(times[selectedDay])
-                            }
-                                
-                            }
-                            
+                    Text("RESULTS")
+                        .font(.system(size: 20))
+                        .foregroundStyle(.gray)
+                        .offset(y: -130)
+                        .position(x: 100)
+                    
+                    Grid{
+                        
+                        let offset = Nil.sorted { $0 && !$1 }[0]
+                        
+                        GridRow{
+                            Text("Previous\nGrade")
+                                .font(.system(size: 17))
+                                .offset(x: 180)
+                                .padding()
+                                .fixedSize(horizontal: true, vertical: true)
+                                .multilineTextAlignment(.center)
+                                .gridColumnAlignment(.center)
+                                .lineLimit(2)
+                            Text("Target\nGrade")
+                                .font(.system(size: 17))
+                                .offset(x: 180)
+                                .padding()
+                                .multilineTextAlignment(.center)
+                                .gridColumnAlignment(.leading)
+                                .lineLimit(2)
                         }
                         
+                        ForEach(exercises.indices, id:\.self){ index in
+                            GridRow{
+                                Button{
+                                    withAnimation{
+                                        Nil[index].toggle()
+                                    }
+                                    targ[index] = Nil[index] ? "": "false"
+                                    prev[index] = Nil[index] ? "": "false"
+                                } label: {
+                                    Label("", systemImage:
+                                            Nil[index] ? "checkmark.square.fill" : "checkmark.square")
+                                    .font(.system(size: 20))
+                                }
+                                .offset(x: offset ? 23 : 20)
+                                
+                                Text(exercises[index])
+                                    .multilineTextAlignment(.center)
+                                    .fixedSize(horizontal: false, vertical: true)
+                                    .frame(width: 100)
+                                    .offset(x: offset ? 10 : 0)
+                                
+                                if Nil[index]{
+                                    Picker("prev", selection: $prev[index]){
+                                        ForEach(grades, id: \.self){ grade in
+                                            Text(grade).tag(grade)
+                                        }
+                                    }
+                                    
+                                    Picker("targ", selection: $targ[index]){
+                                        ForEach(grades, id: \.self){ grade in
+                                            Text(grade).tag(grade)
+                                        }
+                                    }
+                                    .gridCellAnchor(.trailing)
+                                }
+                                Spacer()
+                            }
+                            .padding(.vertical, 10)
+                        }
                     }
+                    .offset(y: -150)
+                    
+                    
+                    
+                    Grid{
+                        ForEach(Goals.indices, id: \.self){ index in
+                            GridRow{
+                                TextField(text: $Goals[index][0]){
+                                    Text("input goal for exercise...")
+                                }
+                                .textFieldStyle(.roundedBorder)
+                                .offset(x: 30)
+                                Picker("exercise", selection: $Goals[index][1]){
+                                    ForEach(exercises, id: \.self){ exercise in
+                                        Text(exercise).tag(exercise)
+                                    }
+                                }
+                                .offset(x: -30)
+                            }
+                            .padding(.horizontal, 30)
+                            .padding(.vertical, -30)
+                        }
+                        .padding(.vertical)
+                        .offset(y: -140)
+                        
+                        Button{
+                            Goals.append(["", ""])
+                        } label: {
+                            Text("Create New Goal")
+                        }
+                        .offset(y: -140)
+                    }
+                    Button{
+                        info.Gender = Sex
+                        info.target = targ
+                        info.prev = prev
+                        info.Goals = Goals
+                        dismiss()
+                        
+                        
+                    } label: {
+                        ZStack{
+                            RoundedRectangle(cornerRadius: 20)
+                                .fill(Color(.green))
+                                .frame(width: 70, height: 50)
+                            Text("Save")
+                                .foregroundStyle(.white)
+                        }
+                    }
+                    .offset(y: 0)
                 }
-            }
-            Button{
-                info.Gender = Sex
-                info.target = targ
-                info.prev = prev
-                info.Goals = Goals
-                info.Age = age
-                dismiss()
                 
-            } label: {
-                ZStack{
-                    RoundedRectangle(cornerRadius: 20)
-                        .fill(Color(.green))
-                        .frame(width: 70, height: 50)
-                    Text("Save")
-                        .foregroundStyle(.white)
-                }
             }
-            .offset(y: 0)
         }
     }
 }
-
-
-#Preview {Goal_Page(info: .constant(data(Age: 0, Gender: false, prev: [], target: [], schedule: [], NAPHA_Date: Date.now, Goals: [])))
-}
-
-
+            #Preview {
+                Goal_Page(info: .constant(data(Age: 0, Gender: false, prev: [], target: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), Sex: .constant(true))
+            }
+        
