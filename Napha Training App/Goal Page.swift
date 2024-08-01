@@ -96,7 +96,7 @@ struct Goal_Page: View {
                             RoundedRectangle(cornerRadius: 10)
                                 .frame(width: 190, height: 40)
                                 .foregroundColor(Color("UIColour"))
-                            Stepper(value: $age, in: 12...24, step: 1){
+                            Stepper(value: $age, in: 12...19, step: 1){
                                 Text("Age: \(age)")
                             }
                             .padding(.horizontal, 50)
@@ -131,7 +131,11 @@ struct Goal_Page: View {
                             endCalc = "\(calculateSitUpsGrade(age: age, sex: Sex, sitUps: autoCalc))"
                         }
                     Text(String(format: "%.0f", sitUps))
+                        .offset(y: -200)
+                        .position(x: 150)
                     Text("Your grade is: \(calculateSitUpsGrade(age: age, sex: Sex, sitUps: Int(sitUps)))")
+                        .offset(y: -140)
+                        .position(x: 150)
                 }
                 
                 Text("RESULTS")
