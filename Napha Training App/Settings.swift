@@ -46,7 +46,7 @@ struct Settings: View {
                 
             }
             .fullScreenCover(isPresented: $schedulingSheet, content: {
-                Scheduling_(info: $info, selectedDays: .constant([]), selectedTimes: .constant([]))
+                Scheduling_(info: $info, selectedDays: $selectedDaysSettings, selectedTimes: $selectedTimedSettings)
             })
         }   }
 }
