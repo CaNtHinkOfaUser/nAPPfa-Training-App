@@ -15,6 +15,7 @@ struct Goal_Page: View {
     @State private var Nil = [false, false,  false, false, false, false]
     @State private var Goals: [[String]] = []
     @State private var grades = ["A", "B", "C", "D", "E", "F", "NA"]
+    @Binding var showAlert: Bool
     
     
     
@@ -82,6 +83,7 @@ struct Goal_Page: View {
                             .onChange(of: sitUps){
                                 endCalc = "\(calculateSitUpsGrade(age: info.Age, sex: Sex, sitUps: autoCalc))"
                             }
+                        
                         Text(String(format: "%.0f", sitUps))
                             .offset(y: -200)
                             .position(x: 150)
@@ -207,14 +209,17 @@ struct Goal_Page: View {
                                 .foregroundStyle(.white)
                         }
                     }
+                    
                     .offset(y: 0)
+                    .padding(.top) // Add padding to the top
+                    .ignoresSafeArea(.all, edges:.top) // Ignore safe area at the top
                 }
                 
             }
         }
     }
 }
-            #Preview {
-                Goal_Page(info: .constant(data(Age: 0, Gender: false, prev: [], target: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), Sex: .constant(true))
-            }
-        
+#Preview {
+    Goal_Page(info: .constant(data(Age: 0, Gender: false, prev: [], target: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), Sex: .constant(true), showAlert: .constant(false))
+}
+

@@ -13,45 +13,80 @@ struct Settings: View {
     @State var GoalSheet = false
     @Binding var selectedTimedSettings: [Date]
     @Binding var selectedDaysSettings: [Int]
-    @State var AgeAndGender = false
     @Binding var Sex: Bool
     @Binding var age: Int
-    @State var schedulingSheet = false
+  
+    
     var body: some View {
-        VStack {
-            Button{
-                GoalSheet.toggle()
-            } label: {
-                Label("Goal Setting", systemImage: "target")
+        NavigationView {
+            VStack(alignment:.leading) {
+                HStack {
+                    Text("General")
+                        .font(.largeTitle)
+                        .bold()
+                    
+                    Spacer()
+                }
+                .padding()
+                .background(Color.white)
                 
-            }
-            .fullScreenCover(isPresented: $GoalSheet){
-                Goal_Page(info: $info, Sex: $Sex)
+                Divider()
                 
-            }
-            
-            Button {
-                AgeAndGender.toggle()
-            } label: {
-                Text("Age and Gender")
+                Button(action: {
+                    GoalSheet.toggle()
+                }) {
+                    HStack {
+                        Image(systemName: "target")
+                            .imageScale(.large)
+                            .foregroundColor(.blue)
+                        Text("Goal Setting")
+                            .foregroundColor(.primary)
+                    }
+                    .padding()
+                    .background(Color.white)
+                    .cornerRadius(10)
+                }
+                .fullScreenCover(isPresented: $GoalSheet) {
+                    Goal_Page(info: $info, Sex: $Sex, showAlert: .constant(false))
+                }
+                NavigationLink {
+                    Age_Gender(info: $info)
+                } label: {
+                    HStack {
+                        Image(systemName: "person")
+                            .imageScale(.large)
+                            .foregroundColor(.blue)
+                        Text("Age and Gender")
+                            .foregroundColor(.primary)
+                    }
+                    .padding()
+                    .background(Color.white)
+                    .cornerRadius(10)
+                }
                 
+                NavigationLink {
+                    Scheduling_(info: $info, selectedDays: $selectedDaysSettings, selectedTimes: $selectedTimedSettings)
+                } label: {
+                    HStack {
+                        Image(systemName: "clock")
+                            .imageScale(.large)
+                            .foregroundColor(.blue)
+                        Text("Scheduling")
+                            .foregroundColor(.primary)
+                    }
+                    .padding()
+                    .background(Color.white)
+                    .cornerRadius(10)
+                }
             }
-            .fullScreenCover(isPresented: $AgeAndGender, content: {
-                Age_Gender(info: $info)
-            })
-            Button {
-                schedulingSheet.toggle()
-            } label: {
-                Text("Scheduling")
-                
-            }
-            .fullScreenCover(isPresented: $schedulingSheet, content: {
-                Scheduling_(info: $info, selectedDays: .constant([]), selectedTimes: .constant([]))
-            })
-        }   }
+            .padding(.horizontal)
+            .navigationBarHidden(true)
+        }
+    }
 }
 
-
-#Preview {
-    Settings(info: .constant(data(Age: 0, Gender: false, prev: [], target: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), selectedTimedSettings: .constant([]), selectedDaysSettings: .constant([]), Sex: .constant(true), age: .constant(0))
+struct Settings_Previews: PreviewProvider {
+    static var previews: some View {
+        Settings(info:.constant(data(Age: 0, Gender: false, prev: [], target: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), selectedTimedSettings:.constant([]), selectedDaysSettings:.constant([]), Sex:.constant(true), age:.constant(0))
+    }
 }

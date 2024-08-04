@@ -8,57 +8,37 @@
 import SwiftUI
 
 struct Age_Gender: View {
-    
-    @Environment(\.dismiss) var dismiss
     @Binding var info: data
     @State var Sex = true
     @State var age = 12
+    
     var body: some View {
-        VStack {
-          
+        VStack(alignment:.leading) {
+            Text("About Me")
+               .font(.title)
+               .bold()
+               .padding(.bottom)
             
-            
-            Text("ABOUT ME")
-                .font(.system(size: 20))
-                .foregroundStyle(.gray)
-                .offset(y: -260)
-                .position(x: 100)
-            VStack{
-                ZStack{
-                    RoundedRectangle(cornerRadius: 10)
-                        .frame(width: 190, height: 40)
-                        .foregroundColor(Color("UIColour"))
-                    Stepper(value: $age, in: 12...19, step: 1){
+            Form {
+                Section(header: Text("Personal Info")) {
+                    Stepper(value: $age, in: 12...19, step: 1) {
                         Text("Age: \(age)")
                     }
-                    .padding(.horizontal, 50)
-                }
-                
-                ZStack{
-                    RoundedRectangle(cornerRadius: 10)
-                        .frame(width: 190, height: 40)
-                        .foregroundColor(Color("UIColour"))
-                    Picker("Sex",selection: $Sex){
+                    
+                    Picker("Sex", selection: $Sex) {
                         Text("Male").tag(true)
                         Text("Female").tag(false)
                     }
-                    .offset(x: Sex ? -60 : -50)
-                    .accentColor(.black)
-                }
-                Button{
-                    info.Age = age
-                    dismiss()
-                } label: {
-                    Text("done")
+                   .labelsHidden()
                 }
             }
-            .padding(.horizontal, 60)
-            .offset(y: -250)
-            .offset(x: -75)
+           .padding(.horizontal)
         }
     }
 }
 
-#Preview {
-    Age_Gender(info: .constant(data(Age: 0, Gender: false, prev: [], target: [], schedule: [], NAPHA_Date: Date.now, Goals: [])))
+struct Age_Gender_Previews: PreviewProvider {
+    static var previews: some View {
+        Age_Gender(info:.constant(data(Age: 0, Gender: false, prev: [], target: [], schedule: [], NAPHA_Date: Date.now, Goals: [])))
+    }
 }

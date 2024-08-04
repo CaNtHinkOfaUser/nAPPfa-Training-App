@@ -1,13 +1,4 @@
-//
-//  ContentView.swift
-//  Napha Training App
-//
-//  Created by Kui Jun on 24/5/24.
-//
-
 import SwiftUI
-
-
 struct data{
     var Age: Int
     var Gender: Bool

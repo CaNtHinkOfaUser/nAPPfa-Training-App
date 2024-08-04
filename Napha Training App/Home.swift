@@ -145,15 +145,6 @@ struct Home: View {
                 }
                 .offset(y: -150)
             }
-            .toolbar{
-                ToolbarItem(placement: .topBarTrailing){
-                    Button{
-                        
-                    } label: {
-                        Text("Workout Modifier")
-                    }
-                }
-            }
         }
         .onAppear{
             if !notificationAuthorized {
