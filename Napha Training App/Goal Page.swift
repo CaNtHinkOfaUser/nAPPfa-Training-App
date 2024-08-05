@@ -16,6 +16,7 @@ struct Goal_Page: View {
     @State private var Goals: [[String]] = []
     @State private var grades = ["A", "B", "C", "D", "E", "F", "NA"]
     @Binding var showAlert: Bool
+    @State var SitUpGrade = ""
     
     
     
@@ -82,6 +83,8 @@ struct Goal_Page: View {
                             .position(x: 150)
                             .onChange(of: sitUps){
                                 endCalc = "\(calculateSitUpsGrade(age: info.Age, sex: Sex, sitUps: autoCalc))"
+                                UserDefaults.standard.setValue(sitUps, forKey: "storedSit")
+
                             }
                         
                         Text(String(format: "%.0f", sitUps))
@@ -125,9 +128,12 @@ struct Goal_Page: View {
                                 Button{
                                     withAnimation{
                                         Nil[index].toggle()
-                                    }
+                                        UserDefaults.standard.setValue(Nil, forKey: "Lin")
+                                                                            }
                                     targ[index] = Nil[index] ? "": "false"
                                     prev[index] = Nil[index] ? "": "false"
+                                    UserDefaults.standard.setValue(prev, forKey: "prev")
+                                    UserDefaults.standard.setValue(targ, forKey: "targ")
                                 } label: {
                                     Label("", systemImage:
                                             Nil[index] ? "checkmark.square.fill" : "checkmark.square")
@@ -147,12 +153,19 @@ struct Goal_Page: View {
                                             Text(grade).tag(grade)
                                         }
                                     }
+                                    .onChange(of: prev[index]){
+                                        UserDefaults.standard.setValue(prev, forKey: "prev")
+                                    }
                                     
                                     Picker("targ", selection: $targ[index]){
                                         ForEach(grades, id: \.self){ grade in
                                             Text(grade).tag(grade)
                                         }
                                     }
+                                    .onChange(of: targ[index]){
+                                        UserDefaults.standard.setValue(targ, forKey: "targ")
+                                    }
+
                                     .gridCellAnchor(.trailing)
                                 }
                                 Spacer()
@@ -216,6 +229,27 @@ struct Goal_Page: View {
                 }
                 
             }
+        }
+        .onAppear{
+            if let storedSitUps = UserDefaults.standard.object(forKey: "storedSit") as? Float{
+                sitUps = storedSitUps
+            }
+            UserDefaults.standard.setValue(sitUps, forKey: "storedSit")
+            
+            if let storedPrev = UserDefaults.standard.object(forKey: "prev") as? [String] {
+                prev = storedPrev
+            }
+            UserDefaults.standard.setValue(prev, forKey: "prev")
+            
+            if let storedTarg = UserDefaults.standard.object(forKey: "targ") as? [String] {
+                targ = storedTarg
+            }
+            UserDefaults.standard.setValue(targ, forKey: "targ")
+            
+            if let Lin = UserDefaults.standard.object(forKey: "Lin") as? [Bool] {
+                Nil = Lin
+            }
+            UserDefaults.standard.setValue(Nil, forKey: "Lin")
         }
     }
 }
