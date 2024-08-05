@@ -1,13 +1,22 @@
-//
-//  ContentView.swift
-//  Napha Training App
-//
-//  Created by Kui Jun on 24/5/24.
-//
-
 import SwiftUI
-import SwiftPersistence
+import AVFoundation
 
+class SoundManager {
+    static let instance = SoundManager()
+    
+    var player: AVAudioPlayer?
+    
+    func playSound() {
+        guard let url = Bundle.main.url(forResource: "Alarm", withExtension: ".mp3") else { return }
+        
+        do {
+            player = try AVAudioPlayer(contentsOf: url)
+            player?.play()
+        } catch {
+            print("Error playing sound")
+        }
+    }
+}
 
 struct data{
     var Age: Int
@@ -44,13 +53,16 @@ struct ContentView: View {
     @State var info = data(Age: 12, Gender: false, prev: [], target: [], schedule: [], NAPHA_Date: Date.now, Goals: [])
     @State var selectedTimesCV: [Date] = []
     @State var selectedDaysCV: [Int] = []
+    @State var Sex: Bool = true
+    @State var age: Int = 12
     var body: some View {
         TabView{
             Home(info: $info, homeSelectedTimed: $selectedTimesCV, homeSelectedDays: $selectedDaysCV)
                 .tabItem {
                     Label("Home", systemImage: "house")
                 }
-            Settings(info: $info, selectedTimedSettings: $selectedTimesCV, selectedDaysSettings: $selectedDaysCV)
+            Text("")
+            Settings(info: $info, selectedTimedSettings: $selectedTimesCV, selectedDaysSettings: $selectedDaysCV, Sex: $Sex, age: $age)
                 .tabItem {
                     Label("Settings", systemImage: "gearshape.fill")
                 }
