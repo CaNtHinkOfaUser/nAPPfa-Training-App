@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		313420972C5B9E7800AEF150 /* Age_Gender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 313420962C5B9E7800AEF150 /* Age_Gender.swift */; };
+		3134209B2C5C838200AEF150 /* Scheduling .swift in Sources */ = {isa = PBXBuildFile; fileRef = 3134209A2C5C838200AEF150 /* Scheduling .swift */; };
+		319E61452C60BDCA002A3EDD /* Starting page.swift in Sources */ = {isa = PBXBuildFile; fileRef = 319E61442C60BDCA002A3EDD /* Starting page.swift */; };
+		31C63FE92C60C7DC004F3168 /* Goal_Page_Login.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31C63FE82C60C7DC004F3168 /* Goal_Page_Login.swift */; };
 		7705B7342C00621500111DBE /* Napha_Training_AppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7705B7332C00621500111DBE /* Napha_Training_AppApp.swift */; };
 		7705B7362C00621500111DBE /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7705B7352C00621500111DBE /* ContentView.swift */; };
 		7705B7382C00621700111DBE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7705B7372C00621700111DBE /* Assets.xcassets */; };
@@ -14,11 +18,11 @@
 		7705B7452C00621700111DBE /* Napha_Training_AppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7705B7442C00621700111DBE /* Napha_Training_AppTests.swift */; };
 		7705B74F2C00621700111DBE /* Napha_Training_AppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7705B74E2C00621700111DBE /* Napha_Training_AppUITests.swift */; };
 		7705B7512C00621700111DBE /* Napha_Training_AppUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7705B7502C00621700111DBE /* Napha_Training_AppUITestsLaunchTests.swift */; };
+		77B0B38B2C60C15E002102AA /* Workout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77B0B38A2C60C15E002102AA /* Workout.swift */; };
 		77BA9C1A2C29670B0045BA5B /* Login.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77BA9C192C29670B0045BA5B /* Login.swift */; };
 		77BA9C1C2C29673A0045BA5B /* Home.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77BA9C1B2C29673A0045BA5B /* Home.swift */; };
 		77BA9C1E2C296A960045BA5B /* Goal Page.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77BA9C1D2C296A960045BA5B /* Goal Page.swift */; };
 		77BFA61A2C36E8830072B92E /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77BFA6192C36E8830072B92E /* Settings.swift */; };
-		77DA52872C296F380021EC9A /* SwiftPersistence in Frameworks */ = {isa = PBXBuildFile; productRef = 77DA52862C296F380021EC9A /* SwiftPersistence */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,6 +43,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		313420962C5B9E7800AEF150 /* Age_Gender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Age_Gender.swift; sourceTree = "<group>"; };
+		3134209A2C5C838200AEF150 /* Scheduling .swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Scheduling .swift"; sourceTree = "<group>"; };
+		319E61442C60BDCA002A3EDD /* Starting page.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Starting page.swift"; sourceTree = "<group>"; };
+		31C63FE82C60C7DC004F3168 /* Goal_Page_Login.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Goal_Page_Login.swift; sourceTree = "<group>"; };
 		7705B7302C00621500111DBE /* Napha Training App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Napha Training App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7705B7332C00621500111DBE /* Napha_Training_AppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Napha_Training_AppApp.swift; sourceTree = "<group>"; };
 		7705B7352C00621500111DBE /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -49,6 +57,7 @@
 		7705B74A2C00621700111DBE /* Napha Training AppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Napha Training AppUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7705B74E2C00621700111DBE /* Napha_Training_AppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Napha_Training_AppUITests.swift; sourceTree = "<group>"; };
 		7705B7502C00621700111DBE /* Napha_Training_AppUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Napha_Training_AppUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		77B0B38A2C60C15E002102AA /* Workout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Workout.swift; sourceTree = "<group>"; };
 		77BA9C192C29670B0045BA5B /* Login.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Login.swift; sourceTree = "<group>"; };
 		77BA9C1B2C29673A0045BA5B /* Home.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Home.swift; sourceTree = "<group>"; };
 		77BA9C1D2C296A960045BA5B /* Goal Page.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Goal Page.swift"; sourceTree = "<group>"; };
@@ -60,7 +69,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				77DA52872C296F380021EC9A /* SwiftPersistence in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -84,6 +92,7 @@
 		7705B7272C00621500111DBE = {
 			isa = PBXGroup;
 			children = (
+				319E61442C60BDCA002A3EDD /* Starting page.swift */,
 				7705B7322C00621500111DBE /* Napha Training App */,
 				7705B7432C00621700111DBE /* Napha Training AppTests */,
 				7705B74D2C00621700111DBE /* Napha Training AppUITests */,
@@ -105,10 +114,14 @@
 			isa = PBXGroup;
 			children = (
 				7705B7332C00621500111DBE /* Napha_Training_AppApp.swift */,
-				77BA9C1B2C29673A0045BA5B /* Home.swift */,
-				77BA9C1D2C296A960045BA5B /* Goal Page.swift */,
 				7705B7352C00621500111DBE /* ContentView.swift */,
+				77BA9C1B2C29673A0045BA5B /* Home.swift */,
+				77B0B38A2C60C15E002102AA /* Workout.swift */,
+				3134209A2C5C838200AEF150 /* Scheduling .swift */,
+				77BA9C1D2C296A960045BA5B /* Goal Page.swift */,
+				31C63FE82C60C7DC004F3168 /* Goal_Page_Login.swift */,
 				77BFA6192C36E8830072B92E /* Settings.swift */,
+				313420962C5B9E7800AEF150 /* Age_Gender.swift */,
 				77BA9C192C29670B0045BA5B /* Login.swift */,
 				7705B7372C00621700111DBE /* Assets.xcassets */,
 				7705B7392C00621700111DBE /* Preview Content */,
@@ -158,7 +171,6 @@
 			);
 			name = "Napha Training App";
 			packageProductDependencies = (
-				77DA52862C296F380021EC9A /* SwiftPersistence */,
 			);
 			productName = "Napha Training App";
 			productReference = 7705B7302C00621500111DBE /* Napha Training App.app */;
@@ -278,8 +290,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				77BFA61A2C36E8830072B92E /* Settings.swift in Sources */,
+				31C63FE92C60C7DC004F3168 /* Goal_Page_Login.swift in Sources */,
+				319E61452C60BDCA002A3EDD /* Starting page.swift in Sources */,
 				77BA9C1E2C296A960045BA5B /* Goal Page.swift in Sources */,
+				77B0B38B2C60C15E002102AA /* Workout.swift in Sources */,
+				3134209B2C5C838200AEF150 /* Scheduling .swift in Sources */,
 				77BA9C1A2C29670B0045BA5B /* Login.swift in Sources */,
+				313420972C5B9E7800AEF150 /* Age_Gender.swift in Sources */,
 				7705B7362C00621500111DBE /* ContentView.swift in Sources */,
 				77BA9C1C2C29673A0045BA5B /* Home.swift in Sources */,
 				7705B7342C00621500111DBE /* Napha_Training_AppApp.swift in Sources */,
@@ -446,6 +463,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Napha Training App/Preview Content\"";
+				DEVELOPMENT_TEAM = Q5X3YFN7M4;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -474,6 +492,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Napha Training App/Preview Content\"";
+				DEVELOPMENT_TEAM = Q5X3YFN7M4;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -617,14 +636,6 @@
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		77DA52862C296F380021EC9A /* SwiftPersistence */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 77DA52852C296F370021EC9A /* XCRemoteSwiftPackageReference "SwiftPersistence" */;
-			productName = SwiftPersistence;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 7705B7282C00621500111DBE /* Project object */;
 }
