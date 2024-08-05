@@ -183,11 +183,18 @@ struct Goal_Page: View {
                                 TextField(text: $Goals[index][0]){
                                     Text("input goal for exercise...")
                                 }
+                                .onChange(of: Goals[index][0]){
+                                    UserDefaults.standard.setValue(Goals, forKey: "sGoals")
+                                }
                                 .textFieldStyle(.roundedBorder)
                                 .offset(x: 30)
                                 Picker("exercise", selection: $Goals[index][1]){
                                     ForEach(exercises, id: \.self){ exercise in
                                         Text(exercise).tag(exercise)
+                                    }
+                                    .onChange(of: Goals[index][1]){
+                                        UserDefaults.standard.setValue(Goals, forKey: "sGoals")
+
                                     }
                                 }
                                 .offset(x: -30)
@@ -250,6 +257,11 @@ struct Goal_Page: View {
                 Nil = Lin
             }
             UserDefaults.standard.setValue(Nil, forKey: "Lin")
+            
+            if let storedGoals = UserDefaults.standard.object(forKey: "sGoals") as? [[String]] {
+                Goals = storedGoals
+            }
+            UserDefaults.standard.setValue(Goals, forKey: "sGoals")
         }
     }
 }
