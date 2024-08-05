@@ -48,8 +48,8 @@ struct Scheduling_: View {
                                     selectedDays.removeAll {$0 == day}
                                     UserDefaults.standard.setValue(selectedTimes, forKey: "ST")
                                     UserDefaults.standard.setValue(selectedDays, forKey: "SD")
-
-
+                                    
+                                    
                                 } else {
                                     selectedDays.append(day)
                                     selectedTimes.append(times[day])
@@ -62,12 +62,12 @@ struct Scheduling_: View {
                 .bold()
             }
             /*(ForEach(selectedTimes, id: \.self){ i in
-                Text(dateFormatter.string(from: i))
-                //used for testing, remove later
-            }
-            ForEach(selectedDays, id: \.self){i in
-                Text((String(i+1)))
-            }*/
+             Text(dateFormatter.string(from: i))
+             //used for testing, remove later
+             }
+             ForEach(selectedDays, id: \.self){i in
+             Text((String(i+1)))
+             }*/
             Text("TIMING")
                 .font(.system(size: 20))
                 .foregroundStyle(.gray)
@@ -87,18 +87,19 @@ struct Scheduling_: View {
                                 UserDefaults.standard.setValue(selectedDays, forKey: "SD")
                                 UserDefaults.standard.setValue(selectedTimes, forKey: "ST")
                                 UserDefaults.standard.setValue(times, forKey: "times")
-
+                                
                             } else{
                                 UserDefaults.standard.setValue(selectedDays, forKey: "SD")
                                 UserDefaults.standard.setValue(selectedTimes, forKey: "ST")
                                 UserDefaults.standard.setValue(times, forKey: "times")
-
+                                
                             }
-                        }
+                            }
                     }
                 }
             }
-        Text("Please choose at least three days")}
+            Text("Please choose at least three days")
+            .foregroundStyle(selectedDays.count<3 ? .red : .black)}
         .onAppear{
             if let storedST = UserDefaults.standard.object(forKey: "ST") as? [Date]{
                 selectedTimes = storedST
