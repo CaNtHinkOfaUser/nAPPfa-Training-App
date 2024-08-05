@@ -14,7 +14,6 @@ struct Home: View {
     @State var combined: Date = Date()
     @State private var exercises = ["Sit Ups", "Standing Broad Jump", "Sit & Reach", "Inclined Pull Ups", "Shuttle Run", "2.4km Run"]
     @State private var Goalindx = 0
-    @State var workoutSheet = false
     @Binding var homeSelectedTimed: [Date]
     @State var DayIndex = Calendar.current.component(.weekday, from: Date())
     @Binding var homeSelectedDays: [Int]
@@ -132,27 +131,7 @@ struct Home: View {
                     }
                 }
                 .offset(y: -150)
-                
-                Button{
-                    workoutSheet = true
-                } label: {
-                    ZStack{
-                        Circle()
-                            .foregroundStyle(.black)
-                            .frame(width: 70, height: 70)
-                        Circle()
-                            .foregroundStyle(.red)
-                            .frame(width: 60,height: 60)
-                        Image("Dumbell")
-                            .scaleEffect(0.9)
-                    }
-                }
-                .offset(y: 70)
-                
             }
-        }
-        .fullScreenCover(isPresented: $workoutSheet){
-            Workout(info: $info)
         }
         .onAppear{
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -237,6 +216,8 @@ struct Home: View {
                     nextWorkoutComponents.year = todayComponents.year
                     nextWorkoutComponents.month = todayComponents.month
                     nextWorkoutComponents.day = todayComponents.day! + sortedDays[resultFromFunction]+8 - dayNum
+                    combinedComponents.day = todayComponents.day! + sortedDays[resultFromFunction]+8 - dayNum
+                    combined = Calendar.current.date(from: combinedComponents)!
                     nextWorkout = Calendar.current.date(from: nextWorkoutComponents)!
                 } else {
                     
@@ -250,7 +231,8 @@ struct Home: View {
                 
             }
             timeUntilNextWorkout = Calendar.current.dateComponents([.hour], from: Date(), to: nextWorkout)
-            UserDefaults.standard.setValue(nextWorkout, forKey: "nextWorkout")
+                UserDefaults.standard.setValue(nextWorkout, forKey: "nextWorkout")
+            
 
             }
         }
