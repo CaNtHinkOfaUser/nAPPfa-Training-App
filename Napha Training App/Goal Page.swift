@@ -15,7 +15,8 @@ struct Goal_Page: View {
     @State private var Nil = [false, false,  false, false, false, false]
     @State private var Goals: [[String]] = []
     @State private var grades = ["A", "B", "C", "D", "E", "F", "NA"]
-    @Binding var showAlert: Bool
+    @State var showAlert = false
+    @State var SitUpGrade = ""
     
     
     
@@ -82,6 +83,8 @@ struct Goal_Page: View {
                             .position(x: 150)
                             .onChange(of: sitUps){
                                 endCalc = "\(calculateSitUpsGrade(age: info.Age, sex: Sex, sitUps: autoCalc))"
+                                UserDefaults.standard.setValue(sitUps, forKey: "storedSit")
+                                
                             }
                         
                         Text(String(format: "%.0f", sitUps))
@@ -125,9 +128,12 @@ struct Goal_Page: View {
                                 Button{
                                     withAnimation{
                                         Nil[index].toggle()
+                                        UserDefaults.standard.setValue(Nil, forKey: "Lin")
                                     }
                                     targ[index] = Nil[index] ? "": "false"
                                     prev[index] = Nil[index] ? "": "false"
+                                    UserDefaults.standard.setValue(prev, forKey: "prev")
+                                    UserDefaults.standard.setValue(targ, forKey: "targ")
                                 } label: {
                                     Label("", systemImage:
                                             Nil[index] ? "checkmark.square.fill" : "checkmark.square")
@@ -147,12 +153,19 @@ struct Goal_Page: View {
                                             Text(grade).tag(grade)
                                         }
                                     }
+                                    .onChange(of: prev[index]){
+                                        UserDefaults.standard.setValue(prev, forKey: "prev")
+                                    }
                                     
                                     Picker("targ", selection: $targ[index]){
                                         ForEach(grades, id: \.self){ grade in
                                             Text(grade).tag(grade)
                                         }
                                     }
+                                    .onChange(of: targ[index]){
+                                        UserDefaults.standard.setValue(targ, forKey: "targ")
+                                    }
+                                    
                                     .gridCellAnchor(.trailing)
                                 }
                                 Spacer()
@@ -170,11 +183,18 @@ struct Goal_Page: View {
                                 TextField(text: $Goals[index][0]){
                                     Text("input goal for exercise...")
                                 }
+                                .onChange(of: Goals[index][0]){
+                                    UserDefaults.standard.setValue(Goals, forKey: "sGoals")
+                                }
                                 .textFieldStyle(.roundedBorder)
                                 .offset(x: 30)
                                 Picker("exercise", selection: $Goals[index][1]){
                                     ForEach(exercises, id: \.self){ exercise in
                                         Text(exercise).tag(exercise)
+                                    }
+                                    .onChange(of: Goals[index][1]){
+                                        UserDefaults.standard.setValue(Goals, forKey: "sGoals")
+                                        
                                     }
                                 }
                                 .offset(x: -30)
@@ -192,34 +212,65 @@ struct Goal_Page: View {
                         }
                         .offset(y: -140)
                     }
-                    Button{
-                        info.Gender = Sex
-                        info.target = targ
-                        info.prev = prev
-                        info.Goals = Goals
-                        dismiss()
+                    Button(action:  {
+                        showAlert.toggle()
                         
-                        
-                    } label: {
-                        ZStack{
-                            RoundedRectangle(cornerRadius: 20)
-                                .fill(Color(.green))
-                                .frame(width: 70, height: 50)
-                            Text("Save")
-                                .foregroundStyle(.white)
-                        }
+                    }) { Text("Save")
                     }
+                    .alert(isPresented: $showAlert, content: {
+                        Alert(title: Text("Changing the results will alter workout programme."),
+                              primaryButton: .destructive(Text("Save"), action:  {
+                            info.Gender = Sex
+                            info.target = targ
+                            info.prev = prev
+                            info.Goals = Goals
+                            dismiss()
+                            
+                        }),
+                              secondaryButton: .cancel())
+                    })
+                    .offset(y: 0)// Add padding to the top
+                    .padding()
+                    .ignoresSafeArea(.all, edges: .top)
+                    .background(Color.green)
+                    .cornerRadius(20)
+                    .foregroundColor(.white)
+                    .font(.headline)
                     
-                    .offset(y: 0)
-                    .padding(.top) // Add padding to the top
-                    .ignoresSafeArea(.all, edges:.top) // Ignore safe area at the top
+                    // Ignore safe area at the top
                 }
-                
             }
+            
+        }
+        .onAppear{
+            if let storedSitUps = UserDefaults.standard.object(forKey: "storedSit") as? Float{
+                sitUps = storedSitUps
+            }
+            UserDefaults.standard.setValue(sitUps, forKey: "storedSit")
+            
+            if let storedPrev = UserDefaults.standard.object(forKey: "prev") as? [String] {
+                prev = storedPrev
+            }
+            UserDefaults.standard.setValue(prev, forKey: "prev")
+            
+            if let storedTarg = UserDefaults.standard.object(forKey: "targ") as? [String] {
+                targ = storedTarg
+            }
+            UserDefaults.standard.setValue(targ, forKey: "targ")
+            
+            if let Lin = UserDefaults.standard.object(forKey: "Lin") as? [Bool] {
+                Nil = Lin
+            }
+            UserDefaults.standard.setValue(Nil, forKey: "Lin")
+            
+            if let storedGoals = UserDefaults.standard.object(forKey: "sGoals") as? [[String]] {
+                Goals = storedGoals
+            }
+            UserDefaults.standard.setValue(Goals, forKey: "sGoals")
         }
     }
 }
 #Preview {
-    Goal_Page(info: .constant(data(Age: 0, Gender: false, prev: [], target: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), Sex: .constant(true), showAlert: .constant(false))
+    Goal_Page(info: .constant(data(Age: 0, Gender: false, prev: [], target: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), Sex: .constant(true), showAlert: false)
 }
 

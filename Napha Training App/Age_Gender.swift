@@ -18,6 +18,7 @@ struct Age_Gender: View {
                .font(.title)
                .bold()
                .padding(.bottom)
+            Text(String(Sex))
             
             Form {
                 Section(header: Text("Personal Info")) {
@@ -25,14 +26,31 @@ struct Age_Gender: View {
                         Text("Age: \(age)")
                     }
                     
+                    .onChange(of: age){
+                        UserDefaults.standard.setValue(age, forKey: "age")
+                    }
                     Picker("Sex", selection: $Sex) {
                         Text("Male").tag(true)
                         Text("Female").tag(false)
                     }
                    .labelsHidden()
+                   .onChange(of: Sex){
+                       UserDefaults.standard.setValue(Sex, forKey: "sex")
+                   }
                 }
             }
            .padding(.horizontal)
+        }
+        .onAppear{
+            if let storedSex = UserDefaults.standard.object(forKey: "sex") as? Bool {
+                Sex = storedSex
+                
+            }
+            if let storedAge = UserDefaults.standard.object(forKey: "age") as? Int{
+                age = storedAge
+            }
+            UserDefaults.standard.setValue(age, forKey: "age")
+            UserDefaults.standard.setValue(Sex ,forKey: "sex")
         }
     }
 }
