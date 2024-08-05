@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct Goal_Page: View {
+struct Goal_Page_Login: View {
     
     @Environment(\.dismiss) private var dismiss
     
@@ -220,7 +220,6 @@ struct Goal_Page: View {
     }
 }
 #Preview {
-    Goal_Page(info: .constant(data(Age: 0, Gender: false, prev: [], target: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), Sex: .constant(true), showAlert: .constant(false))
+    Goal_Page_Login(info: .constant(data(Age: 0, Gender: false, prev: [], target: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), Sex: .constant(true), showAlert: .constant(false))
 }
-
 
