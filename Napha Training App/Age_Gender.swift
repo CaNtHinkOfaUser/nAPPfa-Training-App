@@ -18,6 +18,7 @@ struct Age_Gender: View {
                .font(.title)
                .bold()
                .padding(.bottom)
+            Text(String(Sex))
             
             Form {
                 Section(header: Text("Personal Info")) {
@@ -30,9 +31,19 @@ struct Age_Gender: View {
                         Text("Female").tag(false)
                     }
                    .labelsHidden()
+                   .onChange(of: Sex){ newSex, _ in
+                       UserDefaults.standard.setValue(Sex, forKey: "sex")
+                   }
                 }
             }
            .padding(.horizontal)
+        }
+        .onAppear{
+            if let storedSex = UserDefaults.standard.object(forKey: "sex") as? Bool {
+                Sex = storedSex
+                
+            }
+            UserDefaults.standard.setValue(Sex ,forKey: "sex")
         }
     }
 }
