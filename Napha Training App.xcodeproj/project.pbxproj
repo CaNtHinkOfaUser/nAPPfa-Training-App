@@ -10,6 +10,7 @@
 		313420972C5B9E7800AEF150 /* Age_Gender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 313420962C5B9E7800AEF150 /* Age_Gender.swift */; };
 		3134209B2C5C838200AEF150 /* Scheduling .swift in Sources */ = {isa = PBXBuildFile; fileRef = 3134209A2C5C838200AEF150 /* Scheduling .swift */; };
 		319E61452C60BDCA002A3EDD /* Starting page.swift in Sources */ = {isa = PBXBuildFile; fileRef = 319E61442C60BDCA002A3EDD /* Starting page.swift */; };
+		31C63FE92C60C7DC004F3168 /* Goal_Page_Login.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31C63FE82C60C7DC004F3168 /* Goal_Page_Login.swift */; };
 		7705B7342C00621500111DBE /* Napha_Training_AppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7705B7332C00621500111DBE /* Napha_Training_AppApp.swift */; };
 		7705B7362C00621500111DBE /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7705B7352C00621500111DBE /* ContentView.swift */; };
 		7705B7382C00621700111DBE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7705B7372C00621700111DBE /* Assets.xcassets */; };
@@ -45,6 +46,7 @@
 		313420962C5B9E7800AEF150 /* Age_Gender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Age_Gender.swift; sourceTree = "<group>"; };
 		3134209A2C5C838200AEF150 /* Scheduling .swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Scheduling .swift"; sourceTree = "<group>"; };
 		319E61442C60BDCA002A3EDD /* Starting page.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Starting page.swift"; sourceTree = "<group>"; };
+		31C63FE82C60C7DC004F3168 /* Goal_Page_Login.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Goal_Page_Login.swift; sourceTree = "<group>"; };
 		7705B7302C00621500111DBE /* Napha Training App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Napha Training App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7705B7332C00621500111DBE /* Napha_Training_AppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Napha_Training_AppApp.swift; sourceTree = "<group>"; };
 		7705B7352C00621500111DBE /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -117,6 +119,7 @@
 				77B0B38A2C60C15E002102AA /* Workout.swift */,
 				3134209A2C5C838200AEF150 /* Scheduling .swift */,
 				77BA9C1D2C296A960045BA5B /* Goal Page.swift */,
+				31C63FE82C60C7DC004F3168 /* Goal_Page_Login.swift */,
 				77BFA6192C36E8830072B92E /* Settings.swift */,
 				313420962C5B9E7800AEF150 /* Age_Gender.swift */,
 				77BA9C192C29670B0045BA5B /* Login.swift */,
@@ -287,6 +290,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				77BFA61A2C36E8830072B92E /* Settings.swift in Sources */,
+				31C63FE92C60C7DC004F3168 /* Goal_Page_Login.swift in Sources */,
 				319E61452C60BDCA002A3EDD /* Starting page.swift in Sources */,
 				77BA9C1E2C296A960045BA5B /* Goal Page.swift in Sources */,
 				77B0B38B2C60C15E002102AA /* Workout.swift in Sources */,

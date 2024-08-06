@@ -46,23 +46,28 @@ struct Scheduling_: View {
                                 if selectedDays.contains(day){
                                     selectedTimes.remove(at: selectedDays.firstIndex(of: day)!)
                                     selectedDays.removeAll {$0 == day}
+                                    UserDefaults.standard.setValue(selectedTimes, forKey: "ST")
+                                    UserDefaults.standard.setValue(selectedDays, forKey: "SD")
+                                    
                                     
                                 } else {
                                     selectedDays.append(day)
                                     selectedTimes.append(times[day])
+                                    UserDefaults.standard.setValue(selectedTimes, forKey: "ST")
+                                    UserDefaults.standard.setValue(selectedDays, forKey: "SD")
                                 }
                             }
                         }
                 }
                 .bold()
             }
-            ForEach(selectedTimes, id: \.self){ i in
-                Text(dateFormatter.string(from: i))
-                //used for testing, remove later
-            }
-            ForEach(selectedDays, id: \.self){i in
-                Text((String(i+1)))
-            }
+            /*(ForEach(selectedTimes, id: \.self){ i in
+             Text(dateFormatter.string(from: i))
+             //used for testing, remove later
+             }
+             ForEach(selectedDays, id: \.self){i in
+             Text((String(i+1)))
+             }*/
             Text("TIMING")
                 .font(.system(size: 20))
                 .foregroundStyle(.gray)
@@ -79,11 +84,35 @@ struct Scheduling_: View {
                                 selectedDays.removeAll {$0 == selectedDay}
                                 selectedDays.append(selectedDay)
                                 selectedTimes.append(times[selectedDay])
+                                UserDefaults.standard.setValue(selectedDays, forKey: "SD")
+                                UserDefaults.standard.setValue(selectedTimes, forKey: "ST")
+                                UserDefaults.standard.setValue(times, forKey: "times")
+                                
+                            } else{
+                                UserDefaults.standard.setValue(selectedDays, forKey: "SD")
+                                UserDefaults.standard.setValue(selectedTimes, forKey: "ST")
+                                UserDefaults.standard.setValue(times, forKey: "times")
+                                
                             }
-                        }
+                            }
                     }
                 }
             }
+            Text("Please choose at least three days")
+            .foregroundStyle(selectedDays.count<3 ? .red : .black)}
+        .onAppear{
+            if let storedST = UserDefaults.standard.object(forKey: "ST") as? [Date]{
+                selectedTimes = storedST
+            }
+            UserDefaults.standard.setValue(selectedTimes, forKey: "ST")
+            if let storedSD = UserDefaults.standard.object(forKey: "SD") as? [Int]{
+                selectedDays = storedSD
+            }
+            UserDefaults.standard.setValue(selectedDays, forKey: "SD")
+            if let storedTimes = UserDefaults.standard.object(forKey: "times") as? [Date]{
+                times = storedTimes
+            }
+            UserDefaults.standard.setValue(times, forKey: "times")
         }
     }
 }
