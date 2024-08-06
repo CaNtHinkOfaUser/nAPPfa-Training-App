@@ -11,9 +11,9 @@ import UserNotifications
 struct Home: View {
     
     @Binding var info: data
+    @State var combined: Date = Date()
     @State private var exercises = ["Sit Ups", "Standing Broad Jump", "Sit & Reach", "Inclined Pull Ups", "Shuttle Run", "2.4km Run"]
     @State private var Goalindx = 0
-    @State var workoutSheet = false
     @Binding var homeSelectedTimed: [Date]
     @State var DayIndex = Calendar.current.component(.weekday, from: Date())
     @Binding var homeSelectedDays: [Int]
@@ -27,6 +27,7 @@ struct Home: View {
     var todayComponents: DateComponents {
         Calendar.current.dateComponents([.year, .month, .day], from: Date())
     }
+    @State var combinedComponents = DateComponents()
     var adjustedDates: [Date] {
         let calendar = Calendar.current
         let todayComponents = self.todayComponents
@@ -67,27 +68,9 @@ struct Home: View {
                  Text((String(i+1)))
                  
                  }*/
-                Text(dateFormatter.string(from: nextWorkout))
-                Text(sortedDays.isEmpty ? "0" : String(sortedDays[resultFromFunction]))
-                Text(String(dayNum))
-                Text("Sorted Days: \(sortedDays.map { String($0) }.joined(separator: ", "))")
-                    .font(.system(size: 16))
-                    .foregroundColor(.gray)
-                Button("send notif"){
-                    let content = UNMutableNotificationContent()
-                    content.title = "Feed the cat"
-                    content.subtitle = "It looks hungry"
-                    content.sound = UNNotificationSound.default
-                    
-                    // show this notification five seconds from now
-                    let trigger = UNCalendarNotificationTrigger(dateMatching: nextWorkoutComponents, repeats: true)
-                    
-                    // choose a random identifier
-                    let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
-                    
-                    // add our notification request
-                    UNUserNotificationCenter.current().add(request)
-                }
+                
+                
+                
                 Text("NAPFA EXAMINATION IN")
                     .font(.system(size: 20))
                     .bold()
@@ -112,10 +95,13 @@ struct Home: View {
                             Image("Calendar")
                                 .scaledToFit()
                                 .scaleEffect(0.55)
-                            Text(timeUntilNextWorkout.hour! >= 24 ?
-                                 String(Int(ceil(Double(timeUntilNextWorkout.hour!/24)))+1) : String(timeUntilNextWorkout.hour!) )
+                            Text(/*timeUntilNextWorkout.hour! >= 24 ?
+                                  String(Int(ceil(Double(timeUntilNextWorkout.hour!/24)))+1) :*/ timeUntilNextWorkout.hour! > 0 ? String(timeUntilNextWorkout.hour!+1) : String(0))
                             .font(.system(size: 60))
                             .bold()
+                            .contextMenu(ContextMenu(menuItems: {
+                                Text(dateFormatter.string(from: combined))
+                            }))
                         }
                         .gridColumnAlignment(.leading)
                     }
@@ -130,7 +116,6 @@ struct Home: View {
                             Goalindx += 1
                         }
                     }
-                    print(Calendar.current.dateComponents([.month,.day], from: Date.now, to: info.NAPHA_Date))
                 } label: {
                     ZStack{
                         RoundedRectangle(cornerRadius: 40)
@@ -146,58 +131,27 @@ struct Home: View {
                 }
                 .offset(y: -150)
                 
-                Button{
-                    workoutSheet = true
-                } label: {
-                    ZStack{
-                        Circle()
-                            .foregroundStyle(.black)
-                            .frame(width: 70, height: 70)
-                        Circle()
-                            .foregroundStyle(.red)
-                            .frame(width: 60,height: 60)
-                        Image("Dumbell")
-                            .scaleEffect(0.9)
-                    }
-                }
-                .offset(y: 70)
-                
             }
-        }
-        .fullScreenCover(isPresented: $workoutSheet){
-            Workout(info: $info)
         }
         .onAppear{
-            if !notificationAuthorized {
-                UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { success, error in
-                    if success {
-                        notificationAuthorized = true
-                    } else if let error {
-                        print(error.localizedDescription)
-                    }
-                }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                // Schedule the notification here
+                let content = UNMutableNotificationContent()
+                content.title = "Time for your workout"
+                content.subtitle = "Exercise now!"
+                content.sound = UNNotificationSound.default
+                
+                let trigger = UNCalendarNotificationTrigger(dateMatching: nextWorkoutComponents, repeats: true)
+                
+                let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+                
+                UNUserNotificationCenter.current().add(request)
             }
-            
-    
-            let notificationIdentifier = "workoutNotification"
-            
-            
-                            UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [notificationIdentifier])
-            
-                            // Create a new notification request with the fixed identifier
-                            let content = UNMutableNotificationContent()
-                            content.title = "Time for your workout!"
-                            content.subtitle = "Exercise Now"
-                            content.sound = UNNotificationSound.default
-            
-                          
-            var nextWorkoutComponents = Calendar.current.dateComponents([.hour, .minute, .day, .month, .year], from: nextWorkout)
-            let trigger = UNCalendarNotificationTrigger(dateMatching: nextWorkoutComponents, repeats: false)
-            let request = UNNotificationRequest(identifier: notificationIdentifier, content: content, trigger: trigger)
+            if let storedDate = UserDefaults.standard.object(forKey: "nextWorkout") as? Date {
+                nextWorkout = storedDate
+            }
 
-            
-                            
-                            UNUserNotificationCenter.current().add(request)
+
            
             
             /*daySelected = false
@@ -237,15 +191,13 @@ struct Home: View {
                 }
             }
             if sortedTimes.isEmpty == false {
-                print(sortedTimes)
-                print(resultFromFunction)
                 nextWorkout = sortedTimes[resultFromFunction]
                  nextWorkoutComponents = Calendar.current.dateComponents([.hour, .minute], from: nextWorkout)
                 
                 let todayComponents = Calendar.current.dateComponents([.year, .month, .day], from: Date())
                 let comparingComponents = Calendar.current.dateComponents([.hour, .minute, .year, .month, .day], from: Date())
-                let comparingDate = Calendar.current.date(from: comparingComponents)
-                var combinedComponents = DateComponents()
+                
+                combinedComponents = DateComponents()
                 combinedComponents.hour = nextWorkoutComponents.hour
                 combinedComponents.minute = nextWorkoutComponents.minute
                 combinedComponents.day = todayComponents.day
@@ -255,12 +207,14 @@ struct Home: View {
                 
                 combinedComponents.month = todayComponents.month
                 combinedComponents.year = todayComponents.year
-                let combined = Calendar.current.date(from: combinedComponents)!
+                combined = Calendar.current.date(from: combinedComponents)!
                 
                 if (Date()>combined){
                     nextWorkoutComponents.year = todayComponents.year
                     nextWorkoutComponents.month = todayComponents.month
                     nextWorkoutComponents.day = todayComponents.day! + sortedDays[resultFromFunction]+8 - dayNum
+                    combinedComponents.day = todayComponents.day! + sortedDays[resultFromFunction]+8 - dayNum
+                    combined = Calendar.current.date(from: combinedComponents)!
                     nextWorkout = Calendar.current.date(from: nextWorkoutComponents)!
                 } else {
                     
@@ -274,7 +228,9 @@ struct Home: View {
                 
             }
             timeUntilNextWorkout = Calendar.current.dateComponents([.hour], from: Date(), to: nextWorkout)
-           
+                UserDefaults.standard.setValue(nextWorkout, forKey: "nextWorkout")
+            
+
             }
         }
 }
@@ -282,5 +238,5 @@ struct Home: View {
 
 
 #Preview {
-    Home(info: .constant(data(Age: 0, Gender: false, prev: [], target: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), homeSelectedTimed: .constant([]), homeSelectedDays: .constant([]))
+    Home(info: .constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), homeSelectedTimed: .constant([]), homeSelectedDays: .constant([]))
 }

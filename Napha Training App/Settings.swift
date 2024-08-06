@@ -87,6 +87,6 @@ struct Settings: View {
 
 struct Settings_Previews: PreviewProvider {
     static var previews: some View {
-        Settings(info:.constant(data(Age: 0, Gender: false, prev: [], target: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), selectedTimedSettings:.constant([]), selectedDaysSettings:.constant([]), Sex:.constant(true), age:.constant(0))
+        Settings(info:.constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), selectedTimedSettings:.constant([]), selectedDaysSettings:.constant([]), Sex:.constant(true), age:.constant(0))
     }
 }
