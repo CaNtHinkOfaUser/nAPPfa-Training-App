@@ -67,10 +67,11 @@ struct ContentView: View {
                     Label("Settings", systemImage: "gearshape.fill")
                 }
         }
-        
+        .preferredColorScheme(.light)
     }
-}
 
+}
+    
 #Preview {
     ContentView()
 }

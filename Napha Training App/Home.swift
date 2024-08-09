@@ -138,17 +138,17 @@ struct Home: View {
                     workoutSheet = true
                 } label: {
                     ZStack{
+                        
                         Circle()
-                            .foregroundStyle(.black)
-                            .frame(width: 70, height: 70)
-                        Circle()
-                            .foregroundStyle(.red)
+                            .foregroundStyle(.blue)
                             .frame(width: 60,height: 60)
-                        Image("Dumbell")
-                            .scaleEffect(0.8)
+                        Image(systemName: "dumbbell.fill")
+                            .scaleEffect(2)
+                            .foregroundStyle(.white)
                         Text("Workout Now!")
                             .offset(y: 50)
-                            .font(.system(size: 5))
+                            .font(.system(size: 13))
+                            .foregroundStyle(.black)
                     }
                 }
                 .offset(y: 30)
