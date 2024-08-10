@@ -1,8 +1,6 @@
 import SwiftUI
 import AVFoundation
 
-
-
 class SoundManager {
     static let instance = SoundManager()
     
