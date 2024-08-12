@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct Scheduling_: View {
+    @Environment(\.dismiss) private var dismiss
+
     @Binding var info: data
     @State private var Days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
     @Binding var selectedDays: [Int]
@@ -100,8 +102,23 @@ struct Scheduling_: View {
             }
             Text("Please choose at least three days")
             .foregroundStyle(selectedDays.count<3 ? .red : .black)}
+        Button{
+            
+            dismiss()
+            
+            
+        } label: {
+            ZStack{
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(Color(.green))
+                    .frame(width: 100, height: 50)
+                Text("Save")
+                    .foregroundStyle(.white)
+            }
+        }
         .onAppear{
-            if let storedST = UserDefaults.standard.object(forKey: "ST") as? [Date]{
+            
+          if let storedST = UserDefaults.standard.object(forKey: "ST") as? [Date]{
                 selectedTimes = storedST
             }
             UserDefaults.standard.setValue(selectedTimes, forKey: "ST")

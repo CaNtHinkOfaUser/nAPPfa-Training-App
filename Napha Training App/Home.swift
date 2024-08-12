@@ -9,12 +9,13 @@ import UserNotifications
 
 
 struct Home: View {
-    
+   
     @Binding var info: data
+    @Binding var prevWorkout: String
     @State var combined: Date = Date()
     @State private var exercises = ["Sit Ups", "Standing Broad Jump", "Sit & Reach", "Inclined Pull Ups", "Shuttle Run", "2.4km Run"]
+    @State var sent_before = false
     @State private var Goalindx = 0
-    @State var workoutSheet = false
     @Binding var homeSelectedTimed: [Date]
     @State var DayIndex = Calendar.current.component(.weekday, from: Date())
     @Binding var homeSelectedDays: [Int]
@@ -88,7 +89,13 @@ struct Home: View {
                             RoundedRectangle(cornerRadius: 25.0)
                                 .frame(width: 150,height: 200)
                                 .foregroundColor(.yellow)
-                            Text("Placeholder")
+                            if(prevWorkout == ""){
+                                Text("\(prevWorkout == "" ? "You havent worked out yet" : prevWorkout)")
+                                    .padding()
+                            }
+                            else{
+                                Image("\(prevWorkout)")
+                            }
                         }
                         .gridColumnAlignment(.trailing)
                         .offset(x: 60)
@@ -133,46 +140,16 @@ struct Home: View {
                 }
                 .offset(y: -150)
                 
-                Button{
-                    workoutSheet = true
-                } label: {
-                    ZStack{
-                        
-                        Circle()
-                            .foregroundStyle(.blue)
-                            .frame(width: 60,height: 60)
-                        Image(systemName: "dumbbell.fill")
-                            .scaleEffect(2)
-                            .foregroundStyle(.white)
-                        Text("Workout Now!")
-                            .offset(y: 50)
-                            .font(.system(size: 13))
-                            .foregroundStyle(.black)
-                    }
-                }
-                .offset(y: 30)
-                
             }
         }
         .onAppear{
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                // Schedule the notification here
-                let content = UNMutableNotificationContent()
-                content.title = "Time for your workout"
-                content.subtitle = "Exercise now!"
-                content.sound = UNNotificationSound.default
-                
-                let trigger = UNCalendarNotificationTrigger(dateMatching: nextWorkoutComponents, repeats: true)
-                
-                let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
-                
-                UNUserNotificationCenter.current().add(request)
-            }
             if let storedDate = UserDefaults.standard.object(forKey: "nextWorkout") as? Date {
                 nextWorkout = storedDate
             }
             print(nextWorkout)
 
+            
+            
 
            
             
@@ -189,6 +166,7 @@ struct Home: View {
             sortedDays = zippedTimeDay.map { $0.0 }
             sortedTimes = zippedTimeDay.map { $0.1 }
             dayNum = (Calendar.current.component(.weekday, from: Date())+5) % 7 + 1
+            print("zipeed: \(zippedTimeDay)")
             if sortedTimes.isEmpty == false {
                 if sortedDays.contains(dayNum) {
                     
@@ -224,7 +202,7 @@ struct Home: View {
                 combinedComponents.minute = nextWorkoutComponents.minute
                 combinedComponents.day = todayComponents.day
                 let dayOffset = sortedDays[resultFromFunction] + 1 - dayNum
-                                combinedComponents.day = todayComponents.day! + dayOffset
+                combinedComponents.day = todayComponents.day! + dayOffset
                 combinedComponents.day! = todayComponents.day! + dayOffset
                 
                 combinedComponents.month = todayComponents.month
@@ -248,11 +226,31 @@ struct Home: View {
                     
                 }
                 
+                print("selected Days: \(homeSelectedDays)")
             }
             timeUntilNextWorkout = Calendar.current.dateComponents([.hour], from: Date(), to: nextWorkout)
+            print("nextWorkout \(nextWorkout)")
                 UserDefaults.standard.setValue(nextWorkout, forKey: "nextWorkout")
             
+            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+                    if granted {
+                        let content = UNMutableNotificationContent()
+                        content.title = "Time for your workout"
+                        content.subtitle = "Exercise now!"
+                        content.sound = UNNotificationSound.default
+                        
+                        let trigger = UNCalendarNotificationTrigger(dateMatching: nextWorkoutComponents, repeats: true)
+                        
+                        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+                        
 
+                            UNUserNotificationCenter.current().add(request)
+                            
+                        print("notification sent")
+                    } else {
+                        print("Notification authorization denied")
+                    }
+                }
             }
         }
 }
@@ -260,5 +258,5 @@ struct Home: View {
 
 
 #Preview {
-    Home(info: .constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), homeSelectedTimed: .constant([]), homeSelectedDays: .constant([]))
+    Home(info: .constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), prevWorkout: .constant(""), homeSelectedTimed: .constant([]), homeSelectedDays: .constant([]))
 }

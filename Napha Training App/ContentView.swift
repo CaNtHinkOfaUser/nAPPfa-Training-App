@@ -35,6 +35,8 @@ struct data{
         self.schedule = schedule
         self.NAPHA_Date = NAPHA_Date
         self.Goals = Goals
+        
+        UITabBar.appearance().isHidden = true
     }
     
     //    init(from decoder:  Decoder) throws {
@@ -55,30 +57,130 @@ struct ContentView: View {
     @State var selectedDaysCV: [Int] = []
     @State var Sex: Bool = true
     @State var age: Int = 12
-    
+    @State var prevWorkout = ""
+    @State var firstTime = true
+    @State var GoalSheetCV = false
+    @State var AgeSheetCV = false
+    @State var SchedSheetCV = false
+<<<<<<< HEAD
+    @State var Startingpage = false
     var body: some View {
         TabView{
-            Home(info: $info, homeSelectedTimed: $selectedTimesCV, homeSelectedDays: $selectedDaysCV)
+=======
+    @State var selectedTab: Tab = .house
+    var body: some View {
+        if selectedTab == .house {
+>>>>>>> main
+            Home(info: $info, prevWorkout: $prevWorkout, homeSelectedTimed: $selectedTimesCV, homeSelectedDays: $selectedDaysCV)
                 .tabItem {
                     Label("Home", systemImage: "house")
                 }
-            Workout(info: $info)
-                .tabItem {
-                    Image("Dumbell")
-                        .scaleEffect(0.9)
+<<<<<<< HEAD
+                .fullScreenCover(isPresented: $Startingpage) {
+                    StartingPage(info: $info, TabViewSheet: false, showNewView: false, nextAction: {}) }
+               /* .fullScreenCover(isPresented: $AgeSheetCV){
+=======
+                .fullScreenCover(isPresented: $AgeSheetCV){
+>>>>>>> main
+                    Age_Gender(info: $info, ageFirstTime: $firstTime, ageSheet: $AgeSheetCV)
                 }
-            Settings(info: $info, selectedTimedSettings: $selectedTimesCV, selectedDaysSettings: $selectedDaysCV, Sex: $Sex, age: $age)
+                .onChange(of: AgeSheetCV){
+                    if AgeSheetCV == false{
+                        SchedSheetCV = true
+                        print("schedSheet CV is true")
+                    }
+                }
+                .fullScreenCover(isPresented: $SchedSheetCV){
+                    Scheduling_(info: $info, selectedDays: $selectedDaysCV, selectedTimes: $selectedTimesCV)
+                }
+                .onChange(of: SchedSheetCV){
+                    if SchedSheetCV == false{
+                        GoalSheetCV = true
+                        print("GoalSheet CV is true")
+                    }
+                }
+                .fullScreenCover(isPresented: $GoalSheetCV){
+                    Goal_Page(info: $info, Sex: $Sex, Age: $age, GoalSheet: $GoalSheetCV)
+                }
+                .onChange(of: GoalSheetCV){
+                    if GoalSheetCV == false{
+                        firstTime = false
+                        UserDefaults.standard.setValue(false, forKey: "fT")
+<<<<<<< HEAD
+
+                        print("firstTime is now false")
+                    }
+                }
+            */
+
+=======
+                        
+                        print("firstTime is now false")
+                    }
+                }
+            
+        } else if selectedTab == .dumbbell{
+>>>>>>> main
+            Workout(prevWorkout: $prevWorkout, info: $info)
+                .tabItem {
+                    ZStack{
+                        Circle()
+                            .foregroundStyle(.blue)
+                            .frame(width: 60,height: 60)
+                        Image(systemName: "dumbbell.fill")
+                            .scaleEffect(2)
+                            .foregroundStyle(.white)
+                        Text("Workout Now!")
+                            .offset(y: 50)
+                            .font(.system(size: 13))
+                            .foregroundStyle(.black)
+                    }
+                }
+<<<<<<< HEAD
+=======
+        } else {
+>>>>>>> main
+            Settings(info: $info, GoalSheet: $GoalSheetCV, AgeSheet: $AgeSheetCV, SchedSheet: $SchedSheetCV, selectedTimedSettings: $selectedTimesCV, selectedDaysSettings: $selectedDaysCV, Sex: $Sex, age: $age, ftSettings: $firstTime)
                 .tabItem {
                     Label("Settings", systemImage: "gearshape.fill")
                 }
+<<<<<<< HEAD
+                        }
+=======
         }
+        VStack{
+            CustomTabBar(selectedTab: $selectedTab)
+
+        }
+>>>>>>> main
+        
         .onAppear{
+            if let storedFirst = UserDefaults.standard.object(forKey: "fT") as? Bool {
+                firstTime = storedFirst
+                
+            }
+            if firstTime == true {
+                AgeSheetCV = true
+            }
+            
+            
+            if let storedSex = UserDefaults.standard.object(forKey: "sex") as? Bool {
+                info.Gender = storedSex
+                
+            }
+            if let storedAge = UserDefaults.standard.object(forKey: "age") as? Int{
+                info.Age = storedAge
+            }
+<<<<<<< HEAD
+            UserDefaults.standard.setValue(UserDefaults.standard.bool(forKey: "Downloaded?"), forKey: "Downloaded?")
+=======
             UserDefaults.standard.setValue(UserDefaults.standard.bool(forKey: "Downloaded?") ?? true, forKey: "Downloaded?")
+>>>>>>> main
             if(UserDefaults.standard.bool(forKey: "Downloaded?")){
                 UserDefaults.standard.setValue(Date.now, forKey: "DOWNlOADEDDATE")
                 UserDefaults.standard.setValue(false, forKey: "Downloaded?")
             }
-            print((UserDefaults.standard.object(forKey: "DOWNlOADEDDATE") as? Date)!.formatted(date: .abbreviated, time: .standard))
+            //print((UserDefaults.standard.object(forKey: "DOWNlOADEDDATE") as? Date)!.formatted(date: .abbreviated, time: .standard))
         }
     }
 }
