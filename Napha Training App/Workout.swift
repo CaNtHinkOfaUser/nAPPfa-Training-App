@@ -245,9 +245,8 @@ struct Workout: View {
                 }
                 .offset(y: -200)
                 .onAppear{
-                    print(prevWorkout = exerciseSet[4] as! String)
-                    print(prevWorkout = exerciseSet[4] as! String)
-                    prevWorkout = exerciseSet[4] as! String
+
+                  
                 }
             }
         }
