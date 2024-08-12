@@ -64,8 +64,18 @@ struct ContentView: View {
                 }
             Workout(info: $info)
                 .tabItem {
-                    Image("Dumbell")
-                        .scaleEffect(0.9)
+                    ZStack{
+                        Circle()
+                            .foregroundStyle(.blue)
+                            .frame(width: 60,height: 60)
+                        Image(systemName: "dumbbell.fill")
+                            .scaleEffect(2)
+                            .foregroundStyle(.white)
+                        Text("Workout Now!")
+                            .offset(y: 50)
+                            .font(.system(size: 13))
+                            .foregroundStyle(.black)
+                    }
                 }
             Settings(info: $info, selectedTimedSettings: $selectedTimesCV, selectedDaysSettings: $selectedDaysCV, Sex: $Sex, age: $age)
                 .tabItem {

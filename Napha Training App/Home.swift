@@ -14,7 +14,6 @@ struct Home: View {
     @State var combined: Date = Date()
     @State private var exercises = ["Sit Ups", "Standing Broad Jump", "Sit & Reach", "Inclined Pull Ups", "Shuttle Run", "2.4km Run"]
     @State private var Goalindx = 0
-    @State var workoutSheet = false
     @Binding var homeSelectedTimed: [Date]
     @State var DayIndex = Calendar.current.component(.weekday, from: Date())
     @Binding var homeSelectedDays: [Int]
@@ -132,25 +131,6 @@ struct Home: View {
                     }
                 }
                 .offset(y: -150)
-                
-                Button{
-                    workoutSheet = true
-                } label: {
-                    ZStack{
-                        
-                        Circle()
-                            .foregroundStyle(.blue)
-                            .frame(width: 60,height: 60)
-                        Image(systemName: "dumbbell.fill")
-                            .scaleEffect(2)
-                            .foregroundStyle(.white)
-                        Text("Workout Now!")
-                            .offset(y: 50)
-                            .font(.system(size: 13))
-                            .foregroundStyle(.black)
-                    }
-                }
-                .offset(y: 30)
                 
             }
         }

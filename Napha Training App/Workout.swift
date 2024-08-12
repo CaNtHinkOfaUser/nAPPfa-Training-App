@@ -74,7 +74,7 @@ struct Workout: View {
                         
                         HStack(spacing: 30){
                             Button{
-                                rest = exercise.last as! Int
+                                rest = exerciseSet.last as! Int
                             } label: {
                                 ZStack{
                                     Circle()
@@ -131,19 +131,50 @@ struct Workout: View {
                         Text("Break")
                             .fontWeight(.heavy)
                             .font(.system(size: 50))
-                            .position(CGPoint(x: 200, y: -70))
-                        Text("\(rest < 0 ? "Get back in:\n\(10 + rest)":"\(Int(rest / 60)):\(String(rest - Int(rest / 60)*60).count == 1 ? "0" : "")\(rest - Int(rest / 60)*60)")")
+                            .position(CGPoint(x: 200, y: -200))
+                        Text("\(Int(rest / 60)):\(String(rest - Int(rest / 60)*60).count == 1 ? "0" : "")\(rest - Int(rest / 60)*60)")
                             .fontWeight(.bold)
                             .font(.system(size: 45))
-                            .position(CGPoint(x: 200, y: -70))
+                            .position(CGPoint(x: 200, y: -200))
                             .onReceive(timer){ _ in
-                                if rest > -10{
+                                if rest > 0{
                                     rest -= 1
                                 }
-                                if rest < 0{
+                                if rest == 0{
                                     SoundManager.instance.playSound()
                                 }
                             }
+                        
+                        HStack(spacing: 50){
+                            Text("Remember to\nrehydrate\nyourself")
+                                .font(.system(size: 25))
+                                .offset(x: -30)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .lineLimit(5)
+                            Image(systemName: "waterbottle")
+                                .scaleEffect(6)
+                        }
+                        .offset(y: -100)
+                        
+                        Button{
+                            rest = -10
+                            exerciseNum += 1
+                            if(exerciseNum <= 3){
+                                exercise = (exerciseSet[exerciseNum]) as! [Any]
+                            }
+                            else{
+                                done = true
+                            }
+                        } label: {
+                            ZStack{
+                                RoundedRectangle(cornerRadius: 25)
+                                    .frame(width: 250,height: 100)
+                                Text("End Break")
+                                    .font(.system(size: 35))
+                                    .fontWeight(.bold)
+                                    .foregroundStyle(.white)
+                            }
+                        }
                     }
                 }
                 .onAppear{
@@ -199,16 +230,18 @@ struct Workout: View {
                         .font(.system(size: 50))
                     
                     HStack(spacing: 20){
-                        ForEach(0..<exerciseSet.count - 1, id: \.self){ i in
+                        //ERRORR
+                        
+//                        ForEach(0..<exerciseSet.count - 1, id: \.self){ i in
 //                            Image("\((exerciseSet[i + 1] ?? [""])[0])")
 //                                .resizable()
 //                                .frame(width: 70,height: 70)
-                            Text("hi")
-                                .onAppear{
-                                    print((exerciseSet[i + 1] ?? [""])[0])
-                                    print(exerciseSet)
-                                }
-                        }
+//                            Text("hi")
+//                                .onAppear{
+//                                    print((exerciseSet[i + 1] ?? [""])[0])
+//                                    print(exerciseSet)
+//                                }
+//                        }
                     }
                 }
                 .offset(y: -200)

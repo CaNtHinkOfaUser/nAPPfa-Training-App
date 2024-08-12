@@ -233,7 +233,7 @@ struct Goal_Page: View {
                         Alert(title: Text("Changing the results will alter workout programme."),
                               primaryButton: .destructive(Text("Save"), action:  {
                             info.Gender = Sex
-                            info.target = targ
+                            info.targ = targ
                             info.prev = prev
                             info.Goals = Goals
                             dismiss()
@@ -335,7 +335,7 @@ struct Goal_Page: View {
     }
 }
 #Preview {
-    Goal_Page(info: .constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), Sex: .constant(true), showAlert: .constant(false))
+    Goal_Page(info: .constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), Sex: .constant(true), showAlert: false)
 }
 
 
