@@ -11,7 +11,7 @@ import UserNotifications
 struct Home: View {
     
     @Binding var info: data
-    @Binding var prevWorkout: String
+    @State var prevWorkout = UserDefaults.standard.string(forKey: "prevWorkout") ?? ""
     @State var combined: Date = Date()
     @State private var exercises = ["Sit Ups", "Standing Broad Jump", "Sit & Reach", "Inclined Pull Ups", "Shuttle Run", "2.4km Run"]
     @State private var Goalindx = 0
@@ -247,5 +247,5 @@ struct Home: View {
 
 
 #Preview {
-    Home(info: .constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), prevWorkout: .constant(""), homeSelectedTimed: .constant([]), homeSelectedDays: .constant([]))
+    Home(info: .constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), homeSelectedTimed: .constant([]), homeSelectedDays: .constant([]))
 }

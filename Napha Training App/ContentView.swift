@@ -36,16 +36,6 @@ struct data{
         self.NAPHA_Date = NAPHA_Date
         self.Goals = Goals
     }
-    
-    //    init(from decoder:  Decoder) throws {
-    //        let container = try decoder.container(keyedBy: CodingKeys.self)
-    //        self.Age = try container.decode(Float.self, forKey: .Age)
-    //        self.Gender = try container.decode(Bool.self, forKey: .Gender)
-    //        self.prev = try container.decode(Array.self, forKey: .prev)
-    //        self.target = try container.decode(Array.self, forKey: .target)
-    //        self.schedule = try container.decode(Array.self, forKey: .schedule)
-    //        self.NAPHA_Date = try container.decode(Date.self, forKey: .NAPHA_Date)
-    //    }
 }
 
 struct ContentView: View {
@@ -56,14 +46,15 @@ struct ContentView: View {
     @State var Sex: Bool = true
     @State var age: Int = 12
     @State var prevWorkout = ""
+    @State var selectedTab = 0
     
     var body: some View {
-        TabView{
-            Home(info: $info, prevWorkout: $prevWorkout, homeSelectedTimed: $selectedTimesCV, homeSelectedDays: $selectedDaysCV)
+        TabView(selection: $selectedTab){
+            Home(info: $info, homeSelectedTimed: $selectedTimesCV, homeSelectedDays: $selectedDaysCV)
                 .tabItem {
                     Label("Home", systemImage: "house")
-                }
-            Workout(prevWorkout: $prevWorkout, info: $info)
+                }.tag(1)
+            Workout(selectedTab: $selectedTab, info: $info)
                 .tabItem {
                     ZStack{
                         Circle()
@@ -77,11 +68,11 @@ struct ContentView: View {
                             .font(.system(size: 13))
                             .foregroundStyle(.black)
                     }
-                }
+                }.tag(2)
             Settings(info: $info, selectedTimedSettings: $selectedTimesCV, selectedDaysSettings: $selectedDaysCV, Sex: $Sex, age: $age)
                 .tabItem {
                     Label("Settings", systemImage: "gearshape.fill")
-                }
+                }.tag(3)
         }
         .onAppear{
             UserDefaults.standard.setValue(UserDefaults.standard.bool(forKey: "Downloaded?") ?? true, forKey: "Downloaded?")
@@ -89,7 +80,6 @@ struct ContentView: View {
                 UserDefaults.standard.setValue(Date.now, forKey: "DOWNlOADEDDATE")
                 UserDefaults.standard.setValue(false, forKey: "Downloaded?")
             }
-            print((UserDefaults.standard.object(forKey: "DOWNlOADEDDATE") as? Date)!.formatted(date: .abbreviated, time: .standard))
         }
     }
 }
