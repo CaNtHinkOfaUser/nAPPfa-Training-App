@@ -50,6 +50,7 @@ struct Age_Gender: View {
             }
             UserDefaults.standard.setValue(age, forKey: "age")
             UserDefaults.standard.setValue(Sex ,forKey: "sex")
+            print("Age_gender\(age)\(Sex)")
         }
     }
 }

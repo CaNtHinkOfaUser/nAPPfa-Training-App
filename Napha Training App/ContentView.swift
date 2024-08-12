@@ -84,6 +84,13 @@ struct ContentView: View {
                 }
         }
         .onAppear{
+            if let storedSex = UserDefaults.standard.object(forKey: "sex") as? Bool {
+                info.Gender = storedSex
+                
+            }
+            if let storedAge = UserDefaults.standard.object(forKey: "age") as? Int{
+                info.Age = storedAge
+            }
             UserDefaults.standard.setValue(UserDefaults.standard.bool(forKey: "Downloaded?") ?? true, forKey: "Downloaded?")
             if(UserDefaults.standard.bool(forKey: "Downloaded?")){
                 UserDefaults.standard.setValue(Date.now, forKey: "DOWNlOADEDDATE")

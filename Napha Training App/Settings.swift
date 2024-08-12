@@ -47,7 +47,7 @@ struct Settings: View {
                     .cornerRadius(10)
                 }
                 .fullScreenCover(isPresented: $GoalSheet) {
-                    Goal_Page(info: $info, Sex: $Sex)
+                    Goal_Page(info: $info, Sex: $Sex, Age: $age)
                 }
                 NavigationLink {
                     Age_Gender(info: $info)

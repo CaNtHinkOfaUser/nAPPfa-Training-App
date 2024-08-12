@@ -9,7 +9,7 @@ import UserNotifications
 
 
 struct Home: View {
-    
+   
     @Binding var info: data
     @Binding var prevWorkout: String
     @State var combined: Date = Date()
@@ -143,7 +143,6 @@ struct Home: View {
         }
         .onAppear{
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                // Schedule the notification here
                 let content = UNMutableNotificationContent()
                 content.title = "Time for your workout"
                 content.subtitle = "Exercise now!"
@@ -176,6 +175,7 @@ struct Home: View {
             sortedDays = zippedTimeDay.map { $0.0 }
             sortedTimes = zippedTimeDay.map { $0.1 }
             dayNum = (Calendar.current.component(.weekday, from: Date())+5) % 7 + 1
+            print("zipeed: \(zippedTimeDay)")
             if sortedTimes.isEmpty == false {
                 if sortedDays.contains(dayNum) {
                     
@@ -234,7 +234,7 @@ struct Home: View {
                     nextWorkout = Calendar.current.date(from: nextWorkoutComponents)!
                     
                 }
-                
+                print("selected Days: \(homeSelectedDays)")
             }
             timeUntilNextWorkout = Calendar.current.dateComponents([.hour], from: Date(), to: nextWorkout)
                 UserDefaults.standard.setValue(nextWorkout, forKey: "nextWorkout")
