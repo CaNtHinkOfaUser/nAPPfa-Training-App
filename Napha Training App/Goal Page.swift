@@ -327,6 +327,32 @@ struct Goal_Page: View {
             }
             UserDefaults.standard.setValue(Goals, forKey: "sGoals")
         }
+        .onAppear{
+            if let storedSitUps = UserDefaults.standard.object(forKey: "storedSit") as? Float{
+                sitUps = storedSitUps
+            }
+            UserDefaults.standard.setValue(sitUps, forKey: "storedSit")
+            
+            if let storedPrev = UserDefaults.standard.object(forKey: "prev") as? [String] {
+                prev = storedPrev
+            }
+            UserDefaults.standard.setValue(prev, forKey: "prev")
+            
+            if let storedTarg = UserDefaults.standard.object(forKey: "targ") as? [String] {
+                targ = storedTarg
+            }
+            UserDefaults.standard.setValue(targ, forKey: "targ")
+            
+            if let Lin = UserDefaults.standard.object(forKey: "Lin") as? [Bool] {
+                Nil = Lin
+            }
+            UserDefaults.standard.setValue(Nil, forKey: "Lin")
+            
+            if let storedGoals = UserDefaults.standard.object(forKey: "sGoals") as? [[String]] {
+                Goals = storedGoals
+            }
+            UserDefaults.standard.setValue(Goals, forKey: "sGoals")
+        }
     }
 }
 #Preview {
