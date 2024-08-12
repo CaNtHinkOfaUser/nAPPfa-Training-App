@@ -9,8 +9,7 @@ import SwiftUI
 
 struct Workout: View {
     
-    @State var hi = ["jo", "no"]
-    
+    @Binding var prevWorkout: String
     @Binding var info: data
     @State var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     @State var exercise = ["",[0],0]
@@ -232,19 +231,24 @@ struct Workout: View {
                     HStack(spacing: 20){
                         //ERRORR
                         
-//                        ForEach(0..<exerciseSet.count - 1, id: \.self){ i in
-//                            Image("\((exerciseSet[i + 1] ?? [""])[0])")
-//                                .resizable()
-//                                .frame(width: 70,height: 70)
-//                            Text("hi")
-//                                .onAppear{
-//                                    print((exerciseSet[i + 1] ?? [""])[0])
-//                                    print(exerciseSet)
-//                                }
-//                        }
+                        //                        ForEach(0..<exerciseSet.count - 1, id: \.self){ i in
+                        //                            Image("\((exerciseSet[i + 1] ?? [""])[0])")
+                        //                                .resizable()
+                        //                                .frame(width: 70,height: 70)
+                        //                            Text("hi")
+                        //                                .onAppear{
+                        //                                    print((exerciseSet[i + 1] ?? [""])[0])
+                        //                                    print(exerciseSet)
+                        //                                }
+                        //                        }
                     }
                 }
                 .offset(y: -200)
+                .onAppear{
+                    print(prevWorkout = exerciseSet[4] as! String)
+                    print(prevWorkout = exerciseSet[4] as! String)
+                    prevWorkout = exerciseSet[4] as! String
+                }
             }
         }
         .onReceive(timer){ _ in
@@ -256,6 +260,6 @@ struct Workout: View {
 }
 
 #Preview {
-    Workout(info: .constant(data(Age: 0, Gender: false, prev: ["B","","","","",""], targ: ["A","","","","",""], schedule: [], NAPHA_Date: Date.now, Goals: [])))
+    Workout(prevWorkout: .constant(""), info: .constant(data(Age: 0, Gender: false, prev: ["B","","","","",""], targ: ["A","","","","",""], schedule: [], NAPHA_Date: Date.now, Goals: [])))
 }
 

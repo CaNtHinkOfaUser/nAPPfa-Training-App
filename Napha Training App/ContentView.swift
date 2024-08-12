@@ -55,14 +55,15 @@ struct ContentView: View {
     @State var selectedDaysCV: [Int] = []
     @State var Sex: Bool = true
     @State var age: Int = 12
+    @State var prevWorkout = ""
     
     var body: some View {
         TabView{
-            Home(info: $info, homeSelectedTimed: $selectedTimesCV, homeSelectedDays: $selectedDaysCV)
+            Home(info: $info, prevWorkout: $prevWorkout, homeSelectedTimed: $selectedTimesCV, homeSelectedDays: $selectedDaysCV)
                 .tabItem {
                     Label("Home", systemImage: "house")
                 }
-            Workout(info: $info)
+            Workout(prevWorkout: $prevWorkout, info: $info)
                 .tabItem {
                     ZStack{
                         Circle()
