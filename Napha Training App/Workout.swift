@@ -21,7 +21,7 @@ struct Workout: View {
     @State var breakAlert = false
     @State var weeksRange = [0,0]
     //Crunches, Leg Lifts, Seated Knee-ups, Sit-ups, Reverse Crunches, Leg Lifts with Hip Raises, U-Crunches
-    @State var weeksSinceDownload = 0 - Int((UserDefaults.standard.object(forKey: "DOWNlOADEDDATE") as? Date)!.timeIntervalSinceNow / 604800) + 1
+    @State var weeksSinceDownload = 0
     
     
     //pull combinded components
@@ -177,6 +177,12 @@ struct Workout: View {
                     }
                 }
                 .onAppear{
+                    if let wekdownload = (UserDefaults.standard.object(forKey: "DOWNlOADEDDATE")) as? Date{
+                        weeksSinceDownload = Int(0 - ((wekdownload.timeIntervalSinceNow/604800)+1))
+                    } else {
+                        weeksSinceDownload = 0
+                    }
+    
                     
                     //    diff 5: 1-12
                     //    diff 4: 1-12

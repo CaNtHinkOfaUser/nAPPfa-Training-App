@@ -101,7 +101,8 @@ struct Scheduling_: View {
             Text("Please choose at least three days")
             .foregroundStyle(selectedDays.count<3 ? .red : .black)}
         .onAppear{
-            if let storedST = UserDefaults.standard.object(forKey: "ST") as? [Date]{
+            
+          if let storedST = UserDefaults.standard.object(forKey: "ST") as? [Date]{
                 selectedTimes = storedST
             }
             UserDefaults.standard.setValue(selectedTimes, forKey: "ST")

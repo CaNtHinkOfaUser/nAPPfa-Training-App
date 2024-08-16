@@ -96,7 +96,7 @@ struct ContentView: View {
                 UserDefaults.standard.setValue(Date.now, forKey: "DOWNlOADEDDATE")
                 UserDefaults.standard.setValue(false, forKey: "Downloaded?")
             }
-            print((UserDefaults.standard.object(forKey: "DOWNlOADEDDATE") as? Date)!.formatted(date: .abbreviated, time: .standard))
+            //print((UserDefaults.standard.object(forKey: "DOWNlOADEDDATE") as? Date)!.formatted(date: .abbreviated, time: .standard))
         }
     }
 }

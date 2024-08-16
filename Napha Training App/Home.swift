@@ -14,6 +14,7 @@ struct Home: View {
     @Binding var prevWorkout: String
     @State var combined: Date = Date()
     @State private var exercises = ["Sit Ups", "Standing Broad Jump", "Sit & Reach", "Inclined Pull Ups", "Shuttle Run", "2.4km Run"]
+    @State var sent_before = false
     @State private var Goalindx = 0
     @Binding var homeSelectedTimed: [Date]
     @State var DayIndex = Calendar.current.component(.weekday, from: Date())
@@ -142,23 +143,13 @@ struct Home: View {
             }
         }
         .onAppear{
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                let content = UNMutableNotificationContent()
-                content.title = "Time for your workout"
-                content.subtitle = "Exercise now!"
-                content.sound = UNNotificationSound.default
-                
-                let trigger = UNCalendarNotificationTrigger(dateMatching: nextWorkoutComponents, repeats: true)
-                
-                let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
-                
-                UNUserNotificationCenter.current().add(request)
-            }
             if let storedDate = UserDefaults.standard.object(forKey: "nextWorkout") as? Date {
                 nextWorkout = storedDate
             }
             print(nextWorkout)
 
+            
+            
 
            
             
@@ -239,7 +230,25 @@ struct Home: View {
             timeUntilNextWorkout = Calendar.current.dateComponents([.hour], from: Date(), to: nextWorkout)
                 UserDefaults.standard.setValue(nextWorkout, forKey: "nextWorkout")
             
+            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+                    if granted {
+                        let content = UNMutableNotificationContent()
+                        content.title = "Time for your workout"
+                        content.subtitle = "Exercise now!"
+                        content.sound = UNNotificationSound.default
+                        
+                        let trigger = UNCalendarNotificationTrigger(dateMatching: nextWorkoutComponents, repeats: true)
+                        
+                        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+                        
 
+                            UNUserNotificationCenter.current().add(request)
+                            
+                        print("notification sent")
+                    } else {
+                        print("Notification authorization denied")
+                    }
+                }
             }
         }
 }
