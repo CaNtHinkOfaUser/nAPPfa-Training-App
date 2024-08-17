@@ -11,6 +11,8 @@ struct Settings: View {
     
     @Binding var info: data
     @State var GoalSheet = false
+    @State var AgeSheet = false
+    @State var SchedSheet = false
     @Binding var selectedTimedSettings: [Date]
     @Binding var selectedDaysSettings: [Int]
     @Binding var Sex: Bool
@@ -49,9 +51,9 @@ struct Settings: View {
                 .fullScreenCover(isPresented: $GoalSheet) {
                     Goal_Page(info: $info, Sex: $Sex, Age: $age)
                 }
-                NavigationLink {
-                    Age_Gender(info: $info)
-                } label: {
+                Button(action: {
+                    AgeSheet.toggle()
+                })  {
                     HStack {
                         Image(systemName: "person")
                             .imageScale(.large)
@@ -63,10 +65,13 @@ struct Settings: View {
                     .background(Color.white)
                     .cornerRadius(10)
                 }
+                .fullScreenCover(isPresented: $AgeSheet){
+                    Age_Gender(info: $info)
+                }
                 
-                NavigationLink {
-                    Scheduling_(info: $info, selectedDays: $selectedDaysSettings, selectedTimes: $selectedTimedSettings)
-                } label: {
+                Button(action: {
+                    SchedSheet.toggle()
+                }) {
                     HStack {
                         Image(systemName: "clock")
                             .imageScale(.large)
@@ -77,6 +82,9 @@ struct Settings: View {
                     .padding()
                     .background(Color.white)
                     .cornerRadius(10)
+                }
+                .fullScreenCover(isPresented: $SchedSheet){
+                    Scheduling_(info: $info, selectedDays: $selectedDaysSettings, selectedTimes: $selectedTimedSettings)
                 }
             }
             .padding(.horizontal)

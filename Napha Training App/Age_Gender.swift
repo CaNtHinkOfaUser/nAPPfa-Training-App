@@ -11,6 +11,7 @@ struct Age_Gender: View {
     @Binding var info: data
     @State var Sex = true
     @State var age = 12
+    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         VStack(alignment:.leading) {
@@ -18,6 +19,7 @@ struct Age_Gender: View {
                .font(.title)
                .bold()
                .padding(.bottom)
+               .offset(x:10)
             
             Form {
                 Section(header: Text("Personal Info")) {
@@ -37,8 +39,23 @@ struct Age_Gender: View {
                        UserDefaults.standard.setValue(Sex, forKey: "sex")
                    }
                 }
+                Button{
+                    
+                    dismiss()
+                    
+                    
+                } label: {
+                    ZStack{
+                        RoundedRectangle(cornerRadius: 20)
+                            .fill(Color(.green))
+                            .frame(width: 100, height: 50)
+                        Text("Save")
+                            .foregroundStyle(.white)
+                    }
+                }
             }
            .padding(.horizontal)
+            
         }
         .onAppear{
             if let storedSex = UserDefaults.standard.object(forKey: "sex") as? Bool {
