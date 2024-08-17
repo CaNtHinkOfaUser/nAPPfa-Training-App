@@ -177,8 +177,8 @@ struct Workout: View {
                     }
                 }
                 .onAppear{
-                    if let wekdownload = (UserDefaults.standard.object(forKey: "DOWNlOADEDDATE")) as? Date{
-                        weeksSinceDownload = Int(0 - ((wekdownload.timeIntervalSinceNow/604800)+1))
+                    if let wekdownload = UserDefaults.standard.object(forKey: "DOWNlOADEDDATE") as? Date{
+                        weeksSinceDownload = 0 - Int((wekdownload).timeIntervalSinceNow / 604800) + 1
                     } else {
                         weeksSinceDownload = 0
                     }

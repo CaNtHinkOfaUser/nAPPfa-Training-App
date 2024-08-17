@@ -10,14 +10,18 @@ import SwiftUI
 struct Settings: View {
     
     @Binding var info: data
-    @State var GoalSheet = false
-    @State var AgeSheet = false
-    @State var SchedSheet = false
+    @Binding var GoalSheet : Bool
+    @Binding var AgeSheet   :Bool
+    @Binding var SchedSheet : Bool
     @Binding var selectedTimedSettings: [Date]
     @Binding var selectedDaysSettings: [Int]
     @Binding var Sex: Bool
     @Binding var age: Int
-  
+    @Binding var ftSettings: Bool
+    @State var GoalSheetSettings: Bool = false
+    @State var AgeSheetSettings: Bool = false
+    @State var SchedSheetSettings: Bool = false
+
     
     var body: some View {
         NavigationView {
@@ -35,7 +39,7 @@ struct Settings: View {
                 Divider()
                 
                 Button(action: {
-                    GoalSheet.toggle()
+                    GoalSheetSettings.toggle()
                 }) {
                     HStack {
                         Image(systemName: "target")
@@ -48,11 +52,11 @@ struct Settings: View {
                     .background(Color.white)
                     .cornerRadius(10)
                 }
-                .fullScreenCover(isPresented: $GoalSheet) {
-                    Goal_Page(info: $info, Sex: $Sex, Age: $age)
+                .fullScreenCover(isPresented: $GoalSheetSettings) {
+                    Goal_Page(info: $info, Sex: $Sex, Age: $age, GoalSheet: $GoalSheet)
                 }
                 Button(action: {
-                    AgeSheet.toggle()
+                    AgeSheetSettings.toggle()
                 })  {
                     HStack {
                         Image(systemName: "person")
@@ -65,12 +69,12 @@ struct Settings: View {
                     .background(Color.white)
                     .cornerRadius(10)
                 }
-                .fullScreenCover(isPresented: $AgeSheet){
-                    Age_Gender(info: $info)
+                .fullScreenCover(isPresented: $AgeSheetSettings){
+                    Age_Gender(info: $info, ageFirstTime: $ftSettings, ageSheet: $AgeSheet)
                 }
                 
                 Button(action: {
-                    SchedSheet.toggle()
+                    SchedSheetSettings.toggle()
                 }) {
                     HStack {
                         Image(systemName: "clock")
@@ -83,7 +87,7 @@ struct Settings: View {
                     .background(Color.white)
                     .cornerRadius(10)
                 }
-                .fullScreenCover(isPresented: $SchedSheet){
+                .fullScreenCover(isPresented: $SchedSheetSettings){
                     Scheduling_(info: $info, selectedDays: $selectedDaysSettings, selectedTimes: $selectedTimedSettings)
                 }
             }
@@ -95,6 +99,6 @@ struct Settings: View {
 
 struct Settings_Previews: PreviewProvider {
     static var previews: some View {
-        Settings(info:.constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), selectedTimedSettings:.constant([]), selectedDaysSettings:.constant([]), Sex:.constant(true), age:.constant(0))
+        Settings(info:.constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), GoalSheet:.constant(false), AgeSheet:.constant(false), SchedSheet:.constant(false), selectedTimedSettings:.constant([]), selectedDaysSettings: .constant([]), Sex: .constant(true), age: .constant(0), ftSettings: .constant(true))
     }
 }

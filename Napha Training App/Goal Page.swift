@@ -11,6 +11,7 @@ struct Goal_Page: View {
     @Binding var info: data
     @Binding var Sex: Bool
     @Binding var Age: Int
+    @Binding var GoalSheet: Bool
     @State private var prev = ["", "", "", "", "", ""]
     @State private var targ = ["", "", "", "", "", ""]
     @State private var Nil = [false, false,  false, false, false, false]
@@ -309,7 +310,7 @@ clear = true
     }
 }
 #Preview {
-    Goal_Page(info: .constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), Sex: .constant(true), Age: .constant(0), showAlert: false)
+    Goal_Page(info: .constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), Sex: .constant(true), Age: .constant(0), GoalSheet: .constant(false), showAlert: false)
 }
 
 

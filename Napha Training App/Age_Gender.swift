@@ -11,6 +11,8 @@ struct Age_Gender: View {
     @Binding var info: data
     @State var Sex = true
     @State var age = 12
+    @Binding var ageFirstTime: Bool
+    @Binding var ageSheet: Bool
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
@@ -74,6 +76,6 @@ struct Age_Gender: View {
 
 struct Age_Gender_Previews: PreviewProvider {
     static var previews: some View {
-        Age_Gender(info:.constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])))
+        Age_Gender(info:.constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), ageFirstTime: .constant(false), ageSheet: .constant(false))
     }
 }
