@@ -202,7 +202,7 @@ struct Home: View {
                 combinedComponents.minute = nextWorkoutComponents.minute
                 combinedComponents.day = todayComponents.day
                 let dayOffset = sortedDays[resultFromFunction] + 1 - dayNum
-                                combinedComponents.day = todayComponents.day! + dayOffset
+                combinedComponents.day = todayComponents.day! + dayOffset
                 combinedComponents.day! = todayComponents.day! + dayOffset
                 
                 combinedComponents.month = todayComponents.month
@@ -225,9 +225,11 @@ struct Home: View {
                     nextWorkout = Calendar.current.date(from: nextWorkoutComponents)!
                     
                 }
+                
                 print("selected Days: \(homeSelectedDays)")
             }
             timeUntilNextWorkout = Calendar.current.dateComponents([.hour], from: Date(), to: nextWorkout)
+            print("nextWorkout \(nextWorkout)")
                 UserDefaults.standard.setValue(nextWorkout, forKey: "nextWorkout")
             
             UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
