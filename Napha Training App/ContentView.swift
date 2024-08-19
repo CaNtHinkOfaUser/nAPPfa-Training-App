@@ -35,6 +35,8 @@ struct data{
         self.schedule = schedule
         self.NAPHA_Date = NAPHA_Date
         self.Goals = Goals
+        
+        UITabBar.appearance().isHidden = true
     }
     
     //    init(from decoder:  Decoder) throws {
@@ -60,8 +62,9 @@ struct ContentView: View {
     @State var GoalSheetCV = false
     @State var AgeSheetCV = false
     @State var SchedSheetCV = false
+    @State var selectedTab: Tab = .house
     var body: some View {
-        TabView{
+        if selectedTab == .house {
             Home(info: $info, prevWorkout: $prevWorkout, homeSelectedTimed: $selectedTimesCV, homeSelectedDays: $selectedDaysCV)
                 .tabItem {
                     Label("Home", systemImage: "house")
@@ -91,12 +94,12 @@ struct ContentView: View {
                     if GoalSheetCV == false{
                         firstTime = false
                         UserDefaults.standard.setValue(false, forKey: "fT")
-
+                        
                         print("firstTime is now false")
                     }
                 }
             
-
+        } else if selectedTab == .dumbbell{
             Workout(prevWorkout: $prevWorkout, info: $info)
                 .tabItem {
                     ZStack{
@@ -112,11 +115,16 @@ struct ContentView: View {
                             .foregroundStyle(.black)
                     }
                 }
+        } else {
             Settings(info: $info, GoalSheet: $GoalSheetCV, AgeSheet: $AgeSheetCV, SchedSheet: $SchedSheetCV, selectedTimedSettings: $selectedTimesCV, selectedDaysSettings: $selectedDaysCV, Sex: $Sex, age: $age, ftSettings: $firstTime)
                 .tabItem {
                     Label("Settings", systemImage: "gearshape.fill")
                 }
-                        }
+        }
+        VStack{
+            CustomTabBar(selectedTab: $selectedTab)
+
+        }
         
         .onAppear{
             if let storedFirst = UserDefaults.standard.object(forKey: "fT") as? Bool {
