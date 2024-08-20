@@ -124,6 +124,9 @@ struct Goal_Page: View {
                             .position(x: 150)
                         Text("Your grade is: \(calculateSitUpsGrade(age: info.Age, sex: info.Gender, sitUps: Int(sitUps)))")
                             .offset(y: -140)
+                            .position(x: 150)
+                        Text("Your grade is: \(calculateSitUpsGrade(age: info.Age, sex: info.Gender, sitUps: Int(sitUps)))")
+                            .offset(y: -140)
                            
                             
                     }

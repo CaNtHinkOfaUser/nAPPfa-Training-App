@@ -62,8 +62,7 @@ struct ContentView: View {
     @State var GoalSheetCV = false
     @State var AgeSheetCV = false
     @State var SchedSheetCV = false
-<<<<<<< HEAD
-    @State var Startingpage = false
+    @State var selectedTab: Tab = .house
     var body: some View {
         TabView{
 =======
@@ -106,21 +105,12 @@ struct ContentView: View {
                     if GoalSheetCV == false{
                         firstTime = false
                         UserDefaults.standard.setValue(false, forKey: "fT")
-<<<<<<< HEAD
-
-                        print("firstTime is now false")
-                    }
-                }
-            */
-
-=======
                         
                         print("firstTime is now false")
                     }
                 }
             
         } else if selectedTab == .dumbbell{
->>>>>>> main
             Workout(prevWorkout: $prevWorkout, info: $info)
                 .tabItem {
                     ZStack{
@@ -136,23 +126,16 @@ struct ContentView: View {
                             .foregroundStyle(.black)
                     }
                 }
-<<<<<<< HEAD
-=======
         } else {
->>>>>>> main
             Settings(info: $info, GoalSheet: $GoalSheetCV, AgeSheet: $AgeSheetCV, SchedSheet: $SchedSheetCV, selectedTimedSettings: $selectedTimesCV, selectedDaysSettings: $selectedDaysCV, Sex: $Sex, age: $age, ftSettings: $firstTime)
                 .tabItem {
                     Label("Settings", systemImage: "gearshape.fill")
                 }
-<<<<<<< HEAD
-                        }
-=======
         }
         VStack{
             CustomTabBar(selectedTab: $selectedTab)
 
         }
->>>>>>> main
         
         .onAppear{
             if let storedFirst = UserDefaults.standard.object(forKey: "fT") as? Bool {
@@ -171,11 +154,7 @@ struct ContentView: View {
             if let storedAge = UserDefaults.standard.object(forKey: "age") as? Int{
                 info.Age = storedAge
             }
-<<<<<<< HEAD
-            UserDefaults.standard.setValue(UserDefaults.standard.bool(forKey: "Downloaded?"), forKey: "Downloaded?")
-=======
             UserDefaults.standard.setValue(UserDefaults.standard.bool(forKey: "Downloaded?") ?? true, forKey: "Downloaded?")
->>>>>>> main
             if(UserDefaults.standard.bool(forKey: "Downloaded?")){
                 UserDefaults.standard.setValue(Date.now, forKey: "DOWNlOADEDDATE")
                 UserDefaults.standard.setValue(false, forKey: "Downloaded?")
