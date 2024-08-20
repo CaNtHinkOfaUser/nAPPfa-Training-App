@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		313420972C5B9E7800AEF150 /* Age_Gender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 313420962C5B9E7800AEF150 /* Age_Gender.swift */; };
 		3134209B2C5C838200AEF150 /* Scheduling .swift in Sources */ = {isa = PBXBuildFile; fileRef = 3134209A2C5C838200AEF150 /* Scheduling .swift */; };
+		314BCB0F2C73369200F43C37 /* StartingTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 314BCB0E2C73369200F43C37 /* StartingTabView.swift */; };
 		31B526922C65C54C007D413C /* SplashScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B526912C65C54C007D413C /* SplashScreen.swift */; };
 		7705B7342C00621500111DBE /* Napha_Training_AppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7705B7332C00621500111DBE /* Napha_Training_AppApp.swift */; };
 		7705B7362C00621500111DBE /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7705B7352C00621500111DBE /* ContentView.swift */; };
@@ -45,6 +46,7 @@
 /* Begin PBXFileReference section */
 		313420962C5B9E7800AEF150 /* Age_Gender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Age_Gender.swift; sourceTree = "<group>"; };
 		3134209A2C5C838200AEF150 /* Scheduling .swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Scheduling .swift"; sourceTree = "<group>"; };
+		314BCB0E2C73369200F43C37 /* StartingTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartingTabView.swift; sourceTree = "<group>"; };
 		31B526902C64EDAA007D413C /* Napha-Training-App-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Napha-Training-App-Info.plist"; sourceTree = SOURCE_ROOT; };
 		31B526912C65C54C007D413C /* SplashScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreen.swift; sourceTree = "<group>"; };
 		7705B7302C00621500111DBE /* Napha Training App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Napha Training App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -93,6 +95,7 @@
 		7705B7272C00621500111DBE = {
 			isa = PBXGroup;
 			children = (
+				314BCB0E2C73369200F43C37 /* StartingTabView.swift */,
 				31B526912C65C54C007D413C /* SplashScreen.swift */,
 				7705B7322C00621500111DBE /* Napha Training App */,
 				7705B7432C00621700111DBE /* Napha Training AppTests */,
@@ -292,6 +295,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				77BFA61A2C36E8830072B92E /* Settings.swift in Sources */,
+				314BCB0F2C73369200F43C37 /* StartingTabView.swift in Sources */,
 				77BA9C1E2C296A960045BA5B /* Goal Page.swift in Sources */,
 				77B0B38B2C60C15E002102AA /* Workout.swift in Sources */,
 				A9793E6A2C734063008BF2BC /* CustomTabBar.swift in Sources */,

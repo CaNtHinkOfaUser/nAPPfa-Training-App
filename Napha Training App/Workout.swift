@@ -9,22 +9,20 @@ import SwiftUI
 
 struct Workout: View {
     
-    @Binding var prevWorkout: String
     @Binding var info: data
-    @State private var exercises = ["Sit Ups", "Standing Broad Jump", "Sit & Reach", "Inclined Pull Ups", "Shuttle Run", "2.4km Run"]
     @State var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    @State private var exercises = ["Sit Ups", "Standing Broad Jump", "Sit & Reach", "Inclined Pull Ups", "Shuttle Run", "2.4km Run"]
     @State var currentExercise = ["",[0],0]
     @State var exerciseSet = [["",[0],0],["",[0],0],0]
     @State var exerciseNum = -1
     @State var rest = -10
-    @State var start = [false, ""]
     @State var done = false
+    @State var start = [false, ""]
     @State var totalTime = 0
     @State var breakAlert = false
     @State var weeksRange = [0,0]
-    //Crunches, Leg Lifts, Seated Knee-ups, Sit-ups, Reverse Crunches, Leg Lifts with Hip Raises, U-Crunches
-//    @State var weeksSinceDownload = 0 - Int((UserDefaults.standard.object(forKey: "DOWNlOADEDDATE") as? Date)!.timeIntervalSinceNow / 604800) + 1
-    @State var weeksSinceDownload = 1
+//    Crunches, Leg Lifts, Seated Knee-ups, Sit-ups, Reverse Crunches, Leg Lifts with Hip Raises, U-Crunches
+    @State var weeksSinceDownload = 0 - Int((UserDefaults.standard.object(forKey: "DOWNLOADDATE") as? Date)!.timeIntervalSinceNow / 604800) + 1
     
     
     //pull combinded components
@@ -33,18 +31,18 @@ struct Workout: View {
     @State var SitupsP = 0
     @State var SitupsT = 0
     @State private var Situps = [
-        1:[["Crunches", 10, 1], ["Leg Lifts", 10, 1], ["Seated Knee-ups", 10, 1], ["Sit-ups", "Maximum", 1], 90],
-        2:[["Crunches", 12, 1], ["Reverse Crunches", 12, 1], ["Seated Knee-ups", 12, 1], ["Sit-ups", "Maximum", 1], 90],
-        3:[["U-Crunches", 15, 1], ["Leg Lifts", 15, 1], ["Leg Lifts with Hip Raises", 15, 1], ["Sit-ups", "Maximum", 1], 90],
-        4:[["Crunches", 15, 2], ["Seated Knee-ups", 15, 1], ["Leg Lifts", 15, 1], ["Sit-ups", "Maximum", 1], 90],
-        5:[["Crunches", 10, 1], ["Seated Knee-ups", 10, 1], ["Leg Lifts", 10, 1], ["Sit-ups", "Maximum", 1], 60],
-        6:[["Reverse Crunches", 10,5, 2], ["Leg Lifts with Hip Raises", 10,5, 2], ["U-Crunches", 10,5, 2], ["Sit-ups", "Maximum", 1], 180],
-        7:[["Crunches", 10, 2], ["Reverse Crunchs", 10, 2], ["Leg Lifts", 10, 2], ["Sit-ups", "Maximum", 1], 180],
-        8:[["Seated Knee-ups", 10, 2], ["U-Crunches", 10, 2], ["Crunches", 10, 2], ["Leg Lifts", 10, 2], ["Sit-ups", "Maximum", 1], 180],
-        9:[["Reverse Crunches", 15, 2], ["Leg Lifts with Hip Raises", 15, 2], ["Crunches", 15, 2], ["Sit-ups", "Maximum", 1], 180],
-        10:[["Seated Knee-ups", 15, 2], ["U-Crunches", 15, 2], ["Leg Lifts", 15, 2], ["Crunches", 15, 2], ["Sit-ups", "Maximum", 1], 180],
-        11:[["Crunches", 20,15, 2], ["Reverse Crunches", 20,15, 2], ["U-Crunches", 20,15, 2], ["Sit-ups", "Maximum", 1], 180],
-        12:[["Crunches", 15, 2], ["Seated Knee-ups", 15, 1], ["Leg Lifts", 15, 2], ["Sit-ups", "Maximum", 1], 180]
+        1:[["Crunches", 10], ["Leg Lifts", 10], ["Seated Knee-ups", 10], ["Sit-ups", "Maximum"], 3, 90],
+        2:[["Crunches", 12], ["Reverse Crunches", 12], ["Seated Knee-ups", 12], ["Sit-ups", "Maximum"], 3, 90],
+        3:[["U-Crunches", 15], ["Leg Lifts", 15], ["Leg Lifts with Hip Raises", 15], ["Sit-ups", "Maximum"], 3, 90],
+        4:[["Crunches", 15], ["Seated Knee-ups", 15], ["Leg Lifts", 15], ["Sit-ups", "Maximum"], 3, 90],
+        5:[["Crunches", 10], ["Seated Knee-ups", 10], ["Leg Lifts", 10], ["Sit-ups", "Maximum"], 3, 60],
+        6:[["Reverse Crunches", 10], ["Reverse Crunches", 5], ["Leg Lifts with Hip Raises", 10], ["Leg Lifts with Hip Raises", 5], ["U-Crunches", 10], ["U-Crunches", 5], ["Sit-ups", "Maximum"], 7, 180],
+        7:[["Crunches", 10], ["Crunches", 10], ["Reverse Crunchs", 10], ["Reverse Crunchs", 10], ["Leg Lifts", 10], ["Leg Lifts", 10], ["Sit-ups", "Maximum"], 6, 180],
+        8:[["Seated Knee-ups", 10], ["Seated Knee-ups", 10], ["U-Crunches", 10], ["U-Crunches", 10], ["Crunches", 10], ["Crunches", 10], ["Leg Lifts", 10], ["Leg Lifts", 10], ["Sit-ups", "Maximum"], 8, 180],
+        9:[["Reverse Crunches", 15], ["Reverse Crunches", 15], ["Leg Lifts with Hip Raises", 15], ["Leg Lifts with Hip Raises", 15], ["Crunches", 15], ["Crunches", 15], ["Sit-ups", "Maximum", 1], 6, 180],
+        10:[["Seated Knee-ups", 15], ["Seated Knee-ups", 15], ["U-Crunches", 15], ["U-Crunches", 15], ["Leg Lifts", 15], ["Leg Lifts", 15], ["Crunches", 15], ["Crunches", 15], ["Sit-ups", "Maximum"], 8, 180],
+        11:[["Crunches", 20], ["Crunches", 15], ["Reverse Crunches", 20], ["Reverse Crunches", 15], ["U-Crunches", 20], ["U-Crunches", 15], ["Sit-ups", "Maximum"], 6, 180],
+        12:[["Crunches", 15], ["Crunches", 15], ["Seated Knee-ups", 15], ["Leg Lifts", 15], ["Leg Lifts", 15], ["Sit-ups", "Maximum", 1], 5, 180]
     ]
     
     var body: some View {
@@ -57,6 +55,7 @@ struct Workout: View {
                 if !done{
                     VStack{
                         if(rest == -10){
+                            //EXERCISE PAGE
                             ZStack{
                                 RoundedRectangle(cornerRadius: 50)
                                     .foregroundStyle(.blue)
@@ -69,10 +68,19 @@ struct Workout: View {
                                     .fontWeight(.semibold)
                                     .font(.system(size: currentExercise[0] as! String == "Seated Knee-ups" ? 35: currentExercise[0] as! String == "Leg Lifts with Hip Raises" ? 30:50))
                                     .offset(y: currentExercise[0] as! String == "Reverse Crunches" ? -120:-135)
-                                Text("Reps: \(currentExercise[1]), Sets: \(currentExercise.last as! Int)")
+                                Text("Reps: \(currentExercise[1])")
                                     .fontWeight(.semibold)
                                     .font(.system(size: 25))
                                     .offset(y: -50)
+                            }
+                            .onAppear{
+                                if(exerciseNum <= exerciseSet[exerciseSet.endIndex - 1] as! Int){
+                                    currentExercise = (exerciseSet[exerciseNum]) as! [Any]
+                                }
+                                else{
+                                    done = true
+                                }
+
                             }
                             
                             HStack(spacing: 30){
@@ -87,15 +95,6 @@ struct Workout: View {
                                             .font(.system(size: 30))
                                             .fontWeight(.semibold)
                                             .foregroundStyle(.black)
-                                    }
-                                }
-                                .onAppear{
-                                    exerciseNum += 1
-                                    if(exerciseNum <= 3){
-                                        currentExercise = (exerciseSet[exerciseNum]) as! [Any]
-                                    }
-                                    else{
-                                        done = true
                                     }
                                 }
                                 
@@ -118,12 +117,13 @@ struct Workout: View {
                                         message: Text("Are you sure you want to proceed without having a break?"),
                                         primaryButton: .destructive(Text("Yes")){
                                             exerciseNum += 1
-                                            if(exerciseNum <= 3){
+                                            if(exerciseNum <= exerciseSet[exerciseSet.endIndex - 1] as! Int){
                                                 currentExercise = (exerciseSet[exerciseNum]) as! [Any]
                                             }
                                             else{
                                                 done = true
                                             }
+
                                         },
                                         secondaryButton: .cancel(Text("No"))
                                     )
@@ -131,7 +131,8 @@ struct Workout: View {
                             }
                         }
                         else{
-                            Text("Break")
+                            //BREAK PAGE
+                            Text("BREAK")
                                 .fontWeight(.heavy)
                                 .font(.system(size: 50))
                                 .position(CGPoint(x: 200, y: -200))
@@ -160,15 +161,19 @@ struct Workout: View {
                             .offset(y: -100)
                             
                             Button{
-                                rest = -10
                                 exerciseNum += 1
-                                if(exerciseNum <= 3){
+                                print("skibidi")
+                                print(exerciseNum <= exerciseSet[exerciseSet.endIndex - 2] as! Int)
+                                print(exerciseNum)
+                                print(exerciseSet[exerciseSet.endIndex - 2] as! Int)
+                                if(exerciseNum <= exerciseSet[exerciseSet.endIndex - 2] as! Int){
                                     currentExercise = (exerciseSet[exerciseNum]) as! [Any]
                                 }
                                 else{
+                                    print("done")
                                     done = true
-                                    
                                 }
+                                rest = -10
                             } label: {
                                 ZStack{
                                     RoundedRectangle(cornerRadius: 25)
@@ -182,6 +187,7 @@ struct Workout: View {
                         }
                     }
                     .onAppear{
+                        
                         //    diff 5: 1-12
                         //    diff 4: 1-12
                         //    diff 3: Below E: 1-9, D: 5-12
@@ -215,108 +221,72 @@ struct Workout: View {
                         }
                         print(weeksRange)
                         exerciseSet = (Situps[weeksRange[0] + weeksSinceDownload - 1]) ?? [[[]]]
-                        print(exerciseSet)
                     }
                 }
-                .onAppear{
-                    if let wekdownload = UserDefaults.standard.object(forKey: "DOWNlOADEDDATE") as? Date{
-                        weeksSinceDownload = 0 - Int((wekdownload).timeIntervalSinceNow / 604800) + 1
-                    } else {
-                        weeksSinceDownload = 0
-                    }
-    
-                    
-                    //    diff 5: 1-12
-                    //    diff 4: 1-12
-                    //    diff 3: Below E: 1-9, D: 5-12
-                    //    diff 2: Below E: 1-9, D: 5-12
-                    //    diff 1: Below E: 1-5, D-C: 5-9, Above: 9-12
-                    
-                    SitupsP = info.prev[0] == "A" ? 5:(info.prev[0] == "B" ? 4:(info.prev[0] == "C" ? 3:(info.prev[0] == "D" ? 2:(info.prev[0] == "E" ? 1:0))))
-                    SitupsT = info.targ[0] == "A" ? 5:(info.targ[0] == "B" ? 4:(info.targ[0] == "C" ? 3:(info.targ[0] == "D" ? 2:(info.targ[0] == "E" ? 1:0))))
-                    
-                    if ((SitupsT - SitupsP) >= 4){
-                        weeksRange = [1,12]
-                    }
-                    else if ((SitupsT - SitupsP) >= 2){
-                        if(SitupsP < 2){
-                            weeksRange = [1,9]
-                        }
-                        else{
-                            weeksRange = [5,12]
-                        }
-                    }
-                    else if ((SitupsT - SitupsP) <= 1){
-                        if (SitupsP <= 1){
-                            weeksRange = [1,5]
-                        }
-                        else if (SitupsP <= 3){
-                            weeksRange = [5,9]
-                        }
-                        else{
-                            weeksRange = [9,12]
+                else{
+                    VStack{
+                        Text("You worked out on")
+                            .fontWeight(.semibold)
+                            .font(.system(size: 35))
+                        Text("\(start[1])")
+                            .fontWeight(.heavy)
+                            .font(.system(size: 40))
+                        Text("for")
+                            .fontWeight(.semibold)
+                            .font(.system(size: 35))
+                        Text("\(Int(totalTime / 60)):\(String(totalTime - Int(totalTime / 60)*60).count == 1 ? "0" : "")\(totalTime - Int(totalTime / 60)*60)")
+                            .fontWeight(.heavy)
+                            .font(.system(size: 40))
+                        Text("on")
+                            .fontWeight(.semibold)
+                            .font(.system(size: 35))
+                        Text("\(Date.now.formatted(date: .abbreviated, time: .omitted))")
+                            .fontWeight(.heavy)
+                            .font(.system(size: 40))
+                        Button{
+                            start = [false, ""]
+                        } label: {
+                            ZStack{
+                                RoundedRectangle(cornerRadius: 25.0)
+                                    .frame(width: 200,height: 100)
+                                Text("Continue")
+                                    .fontWeight(.semibold)
+                                    .font(.system(size: 35))
+                            }
                         }
                     }
-                    .onAppear{
-                        UserDefaults.standard.setValue("", forKey: "prevWorkout")
-                    }
-                    .offset(y: -200)
+                    .offset(y: -300)
                 }
             }
-            else{
-                VStack{
-                    Text("You worked out for")
-                        .fontWeight(.semibold)
-                        .font(.system(size: 35))
-                    Text("\(Int(totalTime / 60)):\(String(totalTime - Int(totalTime / 60)*60).count == 1 ? "0" : "")\(totalTime - Int(totalTime / 60)*60)")
-                        .fontWeight(.heavy)
-                        .font(.system(size: 50))
-                    Text("on")
-                        .fontWeight(.semibold)
-                        .font(.system(size: 35))
-                    Text("\(Date.now.formatted(date: .abbreviated, time: .omitted))")
-                        .fontWeight(.heavy)
-                        .font(.system(size: 50))
-                    
-                    HStack(spacing: 20){
-                        //ERRORR
-                        
-                        //                        ForEach(0..<exerciseSet.count - 1, id: \.self){ i in
-                        //                            Image("\((exerciseSet[i + 1] ?? [""])[0])")
-                        //                                .resizable()
-                        //                                .frame(width: 70,height: 70)
-                        //                            Text("hi")
-                        //                                .onAppear{
-                        //                                    print((exerciseSet[i + 1] ?? [""])[0])
-                        //                                    print(exerciseSet)
-                        //                                }
-                        //                        }
-                    }
-                }
-                .offset(y: -200)
-                .onAppear{
-
-                  
+            .onReceive(timer){ _ in
+                if(!done){
+                    totalTime += 1
                 }
             }
         }
         else{
-            NavigationView{
+            //STARTING PAGE
+            NavigationStack{
                 List{
-                    ForEach(exercises.indices, id: \.self){ indx in
-                        Button("\(exercises[indx])"){
-                            start = [true, exercises[indx]]
-                            selectedTab = 2
+                    ForEach(exercises.indices, id:\.self){ exercise in
+                        Button(exercises[exercise]){
+                            withAnimation{
+                                start = [true,exercises[exercise]]
+                                exercises.remove(at: exercise)
+                                exerciseNum = 0
+                            }
                         }
+                        .foregroundStyle(.black)
+                        .bold()
                     }
                 }
-                .navigationTitle("WORKOUT")
+                .navigationTitle("Exercises")
             }
         }
     }
 }
 
 #Preview {
-    Workout(selectedTab: .constant(2), info: .constant(data(Age: 0, Gender: false, prev: ["B","","","","",""], targ: ["A","","","","",""], schedule: [], NAPHA_Date: Date.now, Goals: [])))
+    Workout(info: .constant(data(Age: 0, Gender: false, prev: ["B","","","","",""], targ: ["A","","","","",""], schedule: [], NAPHA_Date: Date.now, Goals: [])))
 }
 
