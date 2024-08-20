@@ -63,7 +63,6 @@ struct ContentView: View {
     @State var AgeSheetCV = false
     @State var SchedSheetCV = false
     @State var selectedTab: Tab = .house
-<<<<<<< HEAD
     @State var Startingpage = false
     var body: some View {
         
@@ -131,10 +130,6 @@ struct ContentView: View {
 
         } /* .fullScreenCover(isPresented: $Startingpage){ "eg for full screen thing
             StartingPage(info: $info, TabViewSheet: false, showNewView: false, nextAction: {}) */
-        }
-            
-        }
-        
         .onAppear{
             if let storedFirst = UserDefaults.standard.object(forKey: "fT") as? Bool {
                 firstTime = storedFirst
@@ -159,8 +154,13 @@ struct ContentView: View {
             }
             //print((UserDefaults.standard.object(forKey: "DOWNlOADEDDATE") as? Date)!.formatted(date: .abbreviated, time: .standard))
         }
-    }
-}
+        }
+    
+    
+            
+        }
+        
+        
 
 #Preview {
     ContentView()
