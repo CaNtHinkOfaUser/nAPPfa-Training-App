@@ -18,6 +18,7 @@ struct StartingTabView: View {
     @Binding var goalSheet: Bool
     @Binding var selectedDays: [Int]
     @Binding var selectedTimes: [Date]
+    @Binding var schedSheet: Bool
     var body: some View {
         NavigationStack {
             TabView(selection: $selection) {
@@ -26,7 +27,7 @@ struct StartingTabView: View {
                     .tag(0)
                 Goal_Page(info: $info, Sex: $Sex, Age: $Age, GoalSheet: $goalSheet)
                     .tag(1)
-                Scheduling_(info: $info, selectedDays: $selectedDays, selectedTimes: $selectedTimes)
+                Scheduling_(info: $info, selectedDays: $selectedDays, selectedTimes: $selectedTimes, schedSheet: $schedSheet)
                     .tag(2)
             }
             .tabViewStyle((.page(indexDisplayMode: .always)))
@@ -46,5 +47,5 @@ struct StartingTabView: View {
 } */
 }
 #Preview {
-    StartingTabView(info: .constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), ageFirstTime: .constant(false), ageSheet: .constant(false), Sex: .constant(false), Age: .constant(0), goalSheet: .constant(false), selectedDays: .constant([0]), selectedTimes: .constant([]))
+    StartingTabView(info: .constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), ageFirstTime: .constant(false), ageSheet: .constant(false), Sex: .constant(false), Age: .constant(0), goalSheet: .constant(false), selectedDays: .constant([0]), selectedTimes: .constant([]), schedSheet: .constant(false))
 }

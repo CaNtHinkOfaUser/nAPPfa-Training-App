@@ -72,8 +72,16 @@ struct ContentView: View {
                     Label("Home", systemImage: "house")
                 }
                 .fullScreenCover(isPresented: $firstTime){
-                    StartingPage(info: $info,ageFirstTime: $firstTime,ageSheet: $AgeSheetCV,Sex: $Sex,Age: $age,goalSheet: $GoalSheetCV,selectedDays: $selectedDaysCV,selectedTimes: $selectedTimesCV)
+                    StartingPage(info: $info,ageFirstTime: $firstTime,ageSheet: $AgeSheetCV,Sex: $Sex,Age: $age,goalSheet: $GoalSheetCV,schedSheet: $SchedSheetCV, selectedDays: $selectedDaysCV,selectedTimes: $selectedTimesCV)
                 }
+                .onChange(of: SchedSheetCV){
+                    if GoalSheetCV == false{
+                        firstTime = false
+                        UserDefaults.standard.setValue(false, forKey: "fT")
+                        
+                        print("firstTime is now false")
+                    }
+                 }
                
                 
                 /*.fullScreenCover(isPresented: $AgeSheetCV){
