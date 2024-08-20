@@ -22,10 +22,9 @@ struct Goal_Page: View {
     let filterOptions: [String] = ["Sit-ups"]
     
     func calculateSitUpsGrade(age: Int, sex: Bool, sitUps: Int) -> String {
-<<<<<<< HEAD
+
        
-=======
->>>>>>> main
+
         let maleGrades: [Int: [String: ClosedRange<Int>]] = [
             12: ["A": 42...100, "B": 36...41, "C": 32...35, "D": 27...31, "E": 22...26, "F": 0...21],
             13: ["A": 43...100, "B": 38...42, "C": 34...37, "D": 29...33, "E": 25...28, "F": 0...24],
@@ -121,6 +120,9 @@ struct Goal_Page: View {
                         
                         Text(String(format: "%.0f", sitUps))
                             .offset(y: -200)
+                            .position(x: 150)
+                        Text("Your grade is: \(calculateSitUpsGrade(age: info.Age, sex: info.Gender, sitUps: Int(sitUps)))")
+                            .offset(y: -140)
                             .position(x: 150)
                         Text("Your grade is: \(calculateSitUpsGrade(age: info.Age, sex: info.Gender, sitUps: Int(sitUps)))")
                             .offset(y: -140)

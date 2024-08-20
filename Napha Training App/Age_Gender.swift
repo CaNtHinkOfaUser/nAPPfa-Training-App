@@ -21,11 +21,11 @@ struct Age_Gender: View {
                .font(.title)
                .bold()
                .padding(.bottom)
-<<<<<<< HEAD
+
                .offset(x: 20)
-=======
+
                .offset(x:10)
->>>>>>> main
+
             
             Form {
                 Section(header: Text("Personal Info")) {
