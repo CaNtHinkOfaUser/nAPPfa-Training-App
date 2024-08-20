@@ -62,6 +62,7 @@ struct ContentView: View {
     @State var GoalSheetCV = false
     @State var AgeSheetCV = false
     @State var SchedSheetCV = false
+    @State var showLogin = false
     @State var selectedTab: Tab = .house
     @State var Startingpage = false
     var body: some View {
@@ -71,18 +72,15 @@ struct ContentView: View {
                 .tabItem {
                     Label("Home", systemImage: "house")
                 }
-                .fullScreenCover(isPresented: $firstTime){
+                .fullScreenCover(isPresented: $showLogin){
                     StartingPage(info: $info,ageFirstTime: $firstTime,ageSheet: $AgeSheetCV,Sex: $Sex,Age: $age,goalSheet: $GoalSheetCV,schedSheet: $SchedSheetCV, selectedDays: $selectedDaysCV,selectedTimes: $selectedTimesCV)
                 }
-                .onChange(of: SchedSheetCV){
-                    if GoalSheetCV == false{
+                .onChange(of: showLogin){
+                    if showLogin == false {
                         firstTime = false
                         UserDefaults.standard.setValue(false, forKey: "fT")
-                        
-                        print("firstTime is now false")
                     }
-                 }
-               
+                }
                 
                 /*.fullScreenCover(isPresented: $AgeSheetCV){
                     Age_Gender(info: $info, ageFirstTime: $firstTime, ageSheet: $AgeSheetCV)
@@ -144,10 +142,10 @@ struct ContentView: View {
         .onAppear{
             if let storedFirst = UserDefaults.standard.object(forKey: "fT") as? Bool {
                 firstTime = storedFirst
-                
+                print("firstTime = \(firstTime)")
             }
             if firstTime == true {
-                AgeSheetCV = true
+                showLogin = true
             }
             
             
