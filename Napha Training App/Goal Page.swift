@@ -102,10 +102,9 @@ struct Goal_Page: View {
                                            .padding(.horizontal)
                                            .background(.blue)
                                            .cornerRadius(10)
-                                           .shadow(color: Color.blue.opacity(0.3), radius: 10, x: 0, y: 10)
                                            .scaleEffect(0.7)
                                            
-                                       } .offset(y: -160)
+                                       } .offset(y: -170)
                                          
                                  
                     
@@ -118,12 +117,10 @@ struct Goal_Page: View {
                                 
                             }
                         
-                        Text(String(format: "%.0f", sitUps))
+                        Text(String(format: "%.0f reps", sitUps))
                             .offset(y: -200)
-                            .position(x: 150)
-                        Text("Your grade is: \(calculateSitUpsGrade(age: info.Age, sex: info.Gender, sitUps: Int(sitUps)))")
-                            .offset(y: -140)
-                            .position(x: 150)
+                            .position(x: 190)
+                      
                         Text("Your grade is: \(calculateSitUpsGrade(age: info.Age, sex: info.Gender, sitUps: Int(sitUps)))")
                             .offset(y: -140)
                            
@@ -242,6 +239,7 @@ struct Goal_Page: View {
                             .padding(.horizontal, 30)
                             .padding(.vertical, -30)
                         }
+                   
                         .padding(.vertical)
                         .offset(y: -140)
                         
@@ -257,7 +255,7 @@ clear = true
                     } label: {
                         Text("Clear all goals")
                     }
-                    .offset(y: -100)
+                    .offset(y: -90)
                     .alert(isPresented: $clear){
                         Alert(
                             title: Text("Clear goals"),
