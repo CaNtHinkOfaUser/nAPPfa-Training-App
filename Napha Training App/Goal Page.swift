@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct Goal_Page: View {
-    
+    @State var clear = false
     @Environment(\.dismiss) private var dismiss
     
     @State private var exercises = ["Sit Ups", "Standing Broad Jump", "Sit & Reach", "Inclined Pull Ups", "Shuttle Run", "2.4km Run"]
@@ -10,6 +10,8 @@ struct Goal_Page: View {
     @State private var autoCalc: Int = 0
     @Binding var info: data
     @Binding var Sex: Bool
+    @Binding var Age: Int
+    @Binding var GoalSheet: Bool
     @State private var prev = ["", "", "", "", "", ""]
     @State private var targ = ["", "", "", "", "", ""]
     @State private var Nil = [false, false,  false, false, false, false]
@@ -21,7 +23,6 @@ struct Goal_Page: View {
     
     
     func calculateSitUpsGrade(age: Int, sex: Bool, sitUps: Int) -> String {
-        // Define the grading criteria for male and female
         let maleGrades: [Int: [String: ClosedRange<Int>]] = [
             12: ["A": 42...100, "B": 36...41, "C": 32...35, "D": 27...31, "E": 22...26, "F": 0...21],
             13: ["A": 43...100, "B": 38...42, "C": 34...37, "D": 29...33, "E": 25...28, "F": 0...24],
@@ -82,7 +83,7 @@ struct Goal_Page: View {
                             .offset(y: -130)
                             .position(x: 150)
                             .onChange(of: sitUps){
-                                endCalc = "\(calculateSitUpsGrade(age: info.Age, sex: Sex, sitUps: autoCalc))"
+                                endCalc = "\(calculateSitUpsGrade(age: info.Age, sex: info.Gender, sitUps: autoCalc))"
                                 UserDefaults.standard.setValue(sitUps, forKey: "storedSit")
 
                             }
@@ -90,7 +91,7 @@ struct Goal_Page: View {
                         Text(String(format: "%.0f", sitUps))
                             .offset(y: -200)
                             .position(x: 150)
-                        Text("Your grade is: \(calculateSitUpsGrade(age: info.Age, sex: Sex, sitUps: Int(sitUps)))")
+                        Text("Your grade is: \(calculateSitUpsGrade(age: info.Age, sex: info.Gender, sitUps: Int(sitUps)))")
                             .offset(y: -140)
                             .position(x: 150)
                     }
@@ -213,7 +214,26 @@ struct Goal_Page: View {
                         .offset(y: -140)
                     }
                     Button{
-                        info.Gender = Sex
+clear = true                   
+                    } label: {
+                        Text("Clear all goals")
+                    }
+                    .offset(y: -100)
+                    .alert(isPresented: $clear){
+                        Alert(
+                            title: Text("Clear goals"),
+                            message: Text("Are you would like to clear goals?"),
+                            primaryButton: .destructive(Text("Yes")){
+                                Goals = []
+                            },
+                            secondaryButton: .cancel(Text("No"))
+                        )
+                    }
+                    .onChange(of: Goals){
+                        UserDefaults.standard.setValue(Goals, forKey: "sGoals")
+
+                    }
+                    Button{
                         info.targ = targ
                         info.prev = prev
                         info.Goals = Goals
@@ -224,7 +244,7 @@ struct Goal_Page: View {
                         ZStack{
                             RoundedRectangle(cornerRadius: 20)
                                 .fill(Color(.green))
-                                .frame(width: 70, height: 50)
+                                .frame(width: 10, height: 20)
                             Text("Save")
                                 .foregroundStyle(.white)
                         }
@@ -232,7 +252,6 @@ struct Goal_Page: View {
                     .alert(isPresented: $showAlert, content: {
                         Alert(title: Text("Changing the results will alter workout programme."),
                               primaryButton: .destructive(Text("Save"), action:  {
-                            info.Gender = Sex
                             info.targ = targ
                             info.prev = prev
                             info.Goals = Goals
@@ -255,6 +274,13 @@ struct Goal_Page: View {
             
         }
         .onAppear{
+            if let storedSex = UserDefaults.standard.object(forKey: "sex") as? Bool {
+                info.Gender = storedSex
+                
+            }
+            if let storedAge = UserDefaults.standard.object(forKey: "age") as? Int{
+                info.Age = storedAge
+            }
             if let storedSitUps = UserDefaults.standard.object(forKey: "storedSit") as? Float{
                 sitUps = storedSitUps
             }
@@ -280,62 +306,11 @@ struct Goal_Page: View {
             }
             UserDefaults.standard.setValue(Goals, forKey: "sGoals")
         }
-        .onAppear{
-            if let storedSitUps = UserDefaults.standard.object(forKey: "storedSit") as? Float{
-                sitUps = storedSitUps
-            }
-            UserDefaults.standard.setValue(sitUps, forKey: "storedSit")
-            
-            if let storedPrev = UserDefaults.standard.object(forKey: "prev") as? [String] {
-                prev = storedPrev
-            }
-            UserDefaults.standard.setValue(prev, forKey: "prev")
-            
-            if let storedTarg = UserDefaults.standard.object(forKey: "targ") as? [String] {
-                targ = storedTarg
-            }
-            UserDefaults.standard.setValue(targ, forKey: "targ")
-            
-            if let Lin = UserDefaults.standard.object(forKey: "Lin") as? [Bool] {
-                Nil = Lin
-            }
-            UserDefaults.standard.setValue(Nil, forKey: "Lin")
-            
-            if let storedGoals = UserDefaults.standard.object(forKey: "sGoals") as? [[String]] {
-                Goals = storedGoals
-            }
-            UserDefaults.standard.setValue(Goals, forKey: "sGoals")
-        }
-        .onAppear{
-            if let storedSitUps = UserDefaults.standard.object(forKey: "storedSit") as? Float{
-                sitUps = storedSitUps
-            }
-            UserDefaults.standard.setValue(sitUps, forKey: "storedSit")
-            
-            if let storedPrev = UserDefaults.standard.object(forKey: "prev") as? [String] {
-                prev = storedPrev
-            }
-            UserDefaults.standard.setValue(prev, forKey: "prev")
-            
-            if let storedTarg = UserDefaults.standard.object(forKey: "targ") as? [String] {
-                targ = storedTarg
-            }
-            UserDefaults.standard.setValue(targ, forKey: "targ")
-            
-            if let Lin = UserDefaults.standard.object(forKey: "Lin") as? [Bool] {
-                Nil = Lin
-            }
-            UserDefaults.standard.setValue(Nil, forKey: "Lin")
-            
-            if let storedGoals = UserDefaults.standard.object(forKey: "sGoals") as? [[String]] {
-                Goals = storedGoals
-            }
-            UserDefaults.standard.setValue(Goals, forKey: "sGoals")
-        }
+        
     }
 }
 #Preview {
-    Goal_Page(info: .constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), Sex: .constant(true), showAlert: false)
+    Goal_Page(info: .constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), Sex: .constant(true), Age: .constant(0), GoalSheet: .constant(false), showAlert: false)
 }
 
 

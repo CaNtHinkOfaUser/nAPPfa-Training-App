@@ -9,8 +9,7 @@ import SwiftUI
 
 struct Workout: View {
     
-    @Binding var selectedTab: Int
-    @State var prevWorkout = UserDefaults.standard.string(forKey: "prevWorkout") ?? ""
+    @Binding var prevWorkout: String
     @Binding var info: data
     @State private var exercises = ["Sit Ups", "Standing Broad Jump", "Sit & Reach", "Inclined Pull Ups", "Shuttle Run", "2.4km Run"]
     @State var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
@@ -219,34 +218,43 @@ struct Workout: View {
                         print(exerciseSet)
                     }
                 }
-                else{
-                    VStack{
-                        Text("You worked out for")
-                            .fontWeight(.semibold)
-                            .font(.system(size: 35))
-                        Text("\(Int(totalTime / 60)):\(String(totalTime - Int(totalTime / 60)*60).count == 1 ? "0" : "")\(totalTime - Int(totalTime / 60)*60)")
-                            .fontWeight(.heavy)
-                            .font(.system(size: 50))
-                        Text("on")
-                            .fontWeight(.semibold)
-                            .font(.system(size: 35))
-                        Text("\(Date.now.formatted(date: .abbreviated, time: .omitted))")
-                            .fontWeight(.heavy)
-                            .font(.system(size: 50))
-                        
-                        HStack(spacing: 20){
-                            //ERRORR
-                            
-                            //                        ForEach(0..<exerciseSet.count - 1, id: \.self){ i in
-                            //                            Image("\((exerciseSet[i + 1] ?? [""])[0])")
-                            //                                .resizable()
-                            //                                .frame(width: 70,height: 70)
-                            //                            Text("hi")
-                            //                                .onAppear{
-                            //                                    print((exerciseSet[i + 1] ?? [""])[0])
-                            //                                    print(exerciseSet)
-                            //                                }
-                            //                        }
+                .onAppear{
+                    if let wekdownload = UserDefaults.standard.object(forKey: "DOWNlOADEDDATE") as? Date{
+                        weeksSinceDownload = 0 - Int((wekdownload).timeIntervalSinceNow / 604800) + 1
+                    } else {
+                        weeksSinceDownload = 0
+                    }
+    
+                    
+                    //    diff 5: 1-12
+                    //    diff 4: 1-12
+                    //    diff 3: Below E: 1-9, D: 5-12
+                    //    diff 2: Below E: 1-9, D: 5-12
+                    //    diff 1: Below E: 1-5, D-C: 5-9, Above: 9-12
+                    
+                    SitupsP = info.prev[0] == "A" ? 5:(info.prev[0] == "B" ? 4:(info.prev[0] == "C" ? 3:(info.prev[0] == "D" ? 2:(info.prev[0] == "E" ? 1:0))))
+                    SitupsT = info.targ[0] == "A" ? 5:(info.targ[0] == "B" ? 4:(info.targ[0] == "C" ? 3:(info.targ[0] == "D" ? 2:(info.targ[0] == "E" ? 1:0))))
+                    
+                    if ((SitupsT - SitupsP) >= 4){
+                        weeksRange = [1,12]
+                    }
+                    else if ((SitupsT - SitupsP) >= 2){
+                        if(SitupsP < 2){
+                            weeksRange = [1,9]
+                        }
+                        else{
+                            weeksRange = [5,12]
+                        }
+                    }
+                    else if ((SitupsT - SitupsP) <= 1){
+                        if (SitupsP <= 1){
+                            weeksRange = [1,5]
+                        }
+                        else if (SitupsP <= 3){
+                            weeksRange = [5,9]
+                        }
+                        else{
+                            weeksRange = [9,12]
                         }
                     }
                     .onAppear{
@@ -255,9 +263,40 @@ struct Workout: View {
                     .offset(y: -200)
                 }
             }
-            .onReceive(timer){ _ in
-                if(!done){
-                    totalTime += 1
+            else{
+                VStack{
+                    Text("You worked out for")
+                        .fontWeight(.semibold)
+                        .font(.system(size: 35))
+                    Text("\(Int(totalTime / 60)):\(String(totalTime - Int(totalTime / 60)*60).count == 1 ? "0" : "")\(totalTime - Int(totalTime / 60)*60)")
+                        .fontWeight(.heavy)
+                        .font(.system(size: 50))
+                    Text("on")
+                        .fontWeight(.semibold)
+                        .font(.system(size: 35))
+                    Text("\(Date.now.formatted(date: .abbreviated, time: .omitted))")
+                        .fontWeight(.heavy)
+                        .font(.system(size: 50))
+                    
+                    HStack(spacing: 20){
+                        //ERRORR
+                        
+                        //                        ForEach(0..<exerciseSet.count - 1, id: \.self){ i in
+                        //                            Image("\((exerciseSet[i + 1] ?? [""])[0])")
+                        //                                .resizable()
+                        //                                .frame(width: 70,height: 70)
+                        //                            Text("hi")
+                        //                                .onAppear{
+                        //                                    print((exerciseSet[i + 1] ?? [""])[0])
+                        //                                    print(exerciseSet)
+                        //                                }
+                        //                        }
+                    }
+                }
+                .offset(y: -200)
+                .onAppear{
+
+                  
                 }
             }
         }

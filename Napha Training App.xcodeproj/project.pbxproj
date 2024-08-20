@@ -22,6 +22,7 @@
 		77BA9C1C2C29673A0045BA5B /* Home.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77BA9C1B2C29673A0045BA5B /* Home.swift */; };
 		77BA9C1E2C296A960045BA5B /* Goal Page.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77BA9C1D2C296A960045BA5B /* Goal Page.swift */; };
 		77BFA61A2C36E8830072B92E /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77BFA6192C36E8830072B92E /* Settings.swift */; };
+		A9793E6A2C734063008BF2BC /* CustomTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9793E692C734063008BF2BC /* CustomTabBar.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,6 +62,7 @@
 		77BA9C1B2C29673A0045BA5B /* Home.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Home.swift; sourceTree = "<group>"; };
 		77BA9C1D2C296A960045BA5B /* Goal Page.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Goal Page.swift"; sourceTree = "<group>"; };
 		77BFA6192C36E8830072B92E /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
+		A9793E692C734063008BF2BC /* CustomTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabBar.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -115,6 +117,7 @@
 				31B526902C64EDAA007D413C /* Napha-Training-App-Info.plist */,
 				7705B7332C00621500111DBE /* Napha_Training_AppApp.swift */,
 				7705B7352C00621500111DBE /* ContentView.swift */,
+				A9793E692C734063008BF2BC /* CustomTabBar.swift */,
 				77BA9C1B2C29673A0045BA5B /* Home.swift */,
 				77B0B38A2C60C15E002102AA /* Workout.swift */,
 				3134209A2C5C838200AEF150 /* Scheduling .swift */,
@@ -291,6 +294,7 @@
 				77BFA61A2C36E8830072B92E /* Settings.swift in Sources */,
 				77BA9C1E2C296A960045BA5B /* Goal Page.swift in Sources */,
 				77B0B38B2C60C15E002102AA /* Workout.swift in Sources */,
+				A9793E6A2C734063008BF2BC /* CustomTabBar.swift in Sources */,
 				3134209B2C5C838200AEF150 /* Scheduling .swift in Sources */,
 				77BA9C1A2C29670B0045BA5B /* Login.swift in Sources */,
 				31B526922C65C54C007D413C /* SplashScreen.swift in Sources */,

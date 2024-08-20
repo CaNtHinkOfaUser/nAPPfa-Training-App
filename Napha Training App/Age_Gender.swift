@@ -11,6 +11,9 @@ struct Age_Gender: View {
     @Binding var info: data
     @State var Sex = true
     @State var age = 12
+    @Binding var ageFirstTime: Bool
+    @Binding var ageSheet: Bool
+    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         VStack(alignment:.leading) {
@@ -18,6 +21,7 @@ struct Age_Gender: View {
                .font(.title)
                .bold()
                .padding(.bottom)
+               .offset(x:10)
             
             Form {
                 Section(header: Text("Personal Info")) {
@@ -37,8 +41,23 @@ struct Age_Gender: View {
                        UserDefaults.standard.setValue(Sex, forKey: "sex")
                    }
                 }
+                Button{
+                    
+                    dismiss()
+                    
+                    
+                } label: {
+                    ZStack{
+                        RoundedRectangle(cornerRadius: 20)
+                            .fill(Color(.green))
+                            .frame(width: 100, height: 50)
+                        Text("Save")
+                            .foregroundStyle(.white)
+                    }
+                }
             }
            .padding(.horizontal)
+            
         }
         .onAppear{
             if let storedSex = UserDefaults.standard.object(forKey: "sex") as? Bool {
@@ -50,12 +69,13 @@ struct Age_Gender: View {
             }
             UserDefaults.standard.setValue(age, forKey: "age")
             UserDefaults.standard.setValue(Sex ,forKey: "sex")
+            print("Age_gender\(age)\(Sex)")
         }
     }
 }
 
 struct Age_Gender_Previews: PreviewProvider {
     static var previews: some View {
-        Age_Gender(info:.constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])))
+        Age_Gender(info:.constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), ageFirstTime: .constant(false), ageSheet: .constant(false))
     }
 }

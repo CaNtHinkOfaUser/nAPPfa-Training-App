@@ -35,6 +35,8 @@ struct data{
         self.schedule = schedule
         self.NAPHA_Date = NAPHA_Date
         self.Goals = Goals
+        
+        UITabBar.appearance().isHidden = true
     }
 }
 
@@ -46,15 +48,49 @@ struct ContentView: View {
     @State var Sex: Bool = true
     @State var age: Int = 12
     @State var prevWorkout = ""
-    @State var selectedTab = 0
-    
+    @State var firstTime = true
+    @State var GoalSheetCV = false
+    @State var AgeSheetCV = false
+    @State var SchedSheetCV = false
+    @State var selectedTab: Tab = .house
     var body: some View {
-        TabView(selection: $selectedTab){
-            Home(info: $info, homeSelectedTimed: $selectedTimesCV, homeSelectedDays: $selectedDaysCV)
+        if selectedTab == .house {
+            Home(info: $info, prevWorkout: $prevWorkout, homeSelectedTimed: $selectedTimesCV, homeSelectedDays: $selectedDaysCV)
                 .tabItem {
                     Label("Home", systemImage: "house")
-                }.tag(1)
-            Workout(selectedTab: $selectedTab, info: $info)
+                }
+                .fullScreenCover(isPresented: $AgeSheetCV){
+                    Age_Gender(info: $info, ageFirstTime: $firstTime, ageSheet: $AgeSheetCV)
+                }
+                .onChange(of: AgeSheetCV){
+                    if AgeSheetCV == false{
+                        SchedSheetCV = true
+                        print("schedSheet CV is true")
+                    }
+                }
+                .fullScreenCover(isPresented: $SchedSheetCV){
+                    Scheduling_(info: $info, selectedDays: $selectedDaysCV, selectedTimes: $selectedTimesCV)
+                }
+                .onChange(of: SchedSheetCV){
+                    if SchedSheetCV == false{
+                        GoalSheetCV = true
+                        print("GoalSheet CV is true")
+                    }
+                }
+                .fullScreenCover(isPresented: $GoalSheetCV){
+                    Goal_Page(info: $info, Sex: $Sex, Age: $age, GoalSheet: $GoalSheetCV)
+                }
+                .onChange(of: GoalSheetCV){
+                    if GoalSheetCV == false{
+                        firstTime = false
+                        UserDefaults.standard.setValue(false, forKey: "fT")
+                        
+                        print("firstTime is now false")
+                    }
+                }
+            
+        } else if selectedTab == .dumbbell{
+            Workout(prevWorkout: $prevWorkout, info: $info)
                 .tabItem {
                     ZStack{
                         Circle()
@@ -68,13 +104,35 @@ struct ContentView: View {
                             .font(.system(size: 13))
                             .foregroundStyle(.black)
                     }
-                }.tag(2)
-            Settings(info: $info, selectedTimedSettings: $selectedTimesCV, selectedDaysSettings: $selectedDaysCV, Sex: $Sex, age: $age)
+                }
+        } else {
+            Settings(info: $info, GoalSheet: $GoalSheetCV, AgeSheet: $AgeSheetCV, SchedSheet: $SchedSheetCV, selectedTimedSettings: $selectedTimesCV, selectedDaysSettings: $selectedDaysCV, Sex: $Sex, age: $age, ftSettings: $firstTime)
                 .tabItem {
                     Label("Settings", systemImage: "gearshape.fill")
-                }.tag(3)
+                }
         }
+        VStack{
+            CustomTabBar(selectedTab: $selectedTab)
+
+        }
+        
         .onAppear{
+            if let storedFirst = UserDefaults.standard.object(forKey: "fT") as? Bool {
+                firstTime = storedFirst
+                
+            }
+            if firstTime == true {
+                AgeSheetCV = true
+            }
+            
+            
+            if let storedSex = UserDefaults.standard.object(forKey: "sex") as? Bool {
+                info.Gender = storedSex
+                
+            }
+            if let storedAge = UserDefaults.standard.object(forKey: "age") as? Int{
+                info.Age = storedAge
+            }
             UserDefaults.standard.setValue(UserDefaults.standard.bool(forKey: "Downloaded?") ?? true, forKey: "Downloaded?")
             if(UserDefaults.standard.bool(forKey: "Downloaded?")){
                 UserDefaults.standard.setValue(Date.now, forKey: "DOWNlOADEDDATE")
