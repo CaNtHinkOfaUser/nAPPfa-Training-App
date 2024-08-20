@@ -71,6 +71,9 @@ struct ContentView: View {
                 .tabItem {
                     Label("Home", systemImage: "house")
                 }
+                .fullScreenCover(isPresented: $firstTime){
+                    StartingPage(info: $info,ageFirstTime: $firstTime,ageSheet: $AgeSheetCV,Sex: $Sex,Age: $age,goalSheet: $GoalSheetCV,selectedDays: $selectedDaysCV,selectedTimes: $selectedTimesCV)
+                }
                
                 
                 /*.fullScreenCover(isPresented: $AgeSheetCV){

@@ -8,18 +8,25 @@
 import SwiftUI
 
 struct StartingTabView: View {
-    @Binding var StartingTabViewSheet: Bool
+   // @Binding var StartingTabViewSheet: Bool
     @State private var selection: Int = 0
     @Binding var info: data
+    @Binding var ageFirstTime: Bool
+    @Binding var ageSheet: Bool
+    @Binding var Sex: Bool
+    @Binding var Age: Int
+    @Binding var goalSheet: Bool
+    @Binding var selectedDays: [Int]
+    @Binding var selectedTimes: [Date]
     var body: some View {
         NavigationStack {
             TabView(selection: $selection) {
                 
-                Age_Gender(info: .constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), ageFirstTime: .constant(false), ageSheet: .constant(false))
+                Age_Gender(info: $info, ageFirstTime: $ageFirstTime, ageSheet: $ageSheet)
                     .tag(0)
-                Goal_Page(info: .constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), Sex: .constant(false), Age: .constant(0), GoalSheet: .constant(false))
+                Goal_Page(info: $info, Sex: $Sex, Age: $Age, GoalSheet: $goalSheet)
                     .tag(1)
-                Scheduling_(info: .constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), selectedDays: .constant([0]), selectedTimes: .constant([]))
+                Scheduling_(info: $info, selectedDays: $selectedDays, selectedTimes: $selectedTimes)
                     .tag(2)
             }
             .tabViewStyle((.page(indexDisplayMode: .always)))
@@ -39,5 +46,5 @@ struct StartingTabView: View {
 } */
 }
 #Preview {
-    StartingTabView(StartingTabViewSheet: .constant(false), info: .constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])))
+    StartingTabView(info: .constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), ageFirstTime: .constant(false), ageSheet: .constant(false), Sex: .constant(false), Age: .constant(0), goalSheet: .constant(false), selectedDays: .constant([0]), selectedTimes: .constant([]))
 }
