@@ -22,9 +22,9 @@ struct Goal_Page: View {
     let filterOptions: [String] = ["Sit-ups"]
     
     func calculateSitUpsGrade(age: Int, sex: Bool, sitUps: Int) -> String {
-
-       
-
+        
+        
+        
         let maleGrades: [Int: [String: ClosedRange<Int>]] = [
             12: ["A": 42...100, "B": 36...41, "C": 32...35, "D": 27...31, "E": 22...26, "F": 0...21],
             13: ["A": 43...100, "B": 38...42, "C": 34...37, "D": 29...33, "E": 25...28, "F": 0...24],
@@ -81,33 +81,33 @@ struct Goal_Page: View {
                             .offset(y: -160)
                             .bold()
                         
-                                    Menu {
-                                           Picker("Filter", selection: $calcPicker) {
-                                               ForEach(filterOptions, id: \.self) { option in
-                                                   HStack {
-                                                       Text(option)
-                                                       Image(systemName: "heart.fill")
-                                                   }
-                                                   .tag(option)
-                                               }
-                                           }
-                                                } label: {
-                                           HStack {
-                                               Text("Exercise:")
-                                               Text(calcPicker)
-                                           }
-                                           .font(.headline)
-                                           .foregroundColor(.white)
-                                           .padding()
-                                           .padding(.horizontal)
-                                           .background(.blue)
-                                           .cornerRadius(10)
-                                           .scaleEffect(0.7)
-                                           
-                                       } .offset(y: -170)
-                                         
-                                 
-                    
+                        Menu {
+                            Picker("Filter", selection: $calcPicker) {
+                                ForEach(filterOptions, id: \.self) { option in
+                                    HStack {
+                                        Text(option)
+                                        Image(systemName: "heart.fill")
+                                    }
+                                    .tag(option)
+                                }
+                            }
+                        } label: {
+                            HStack {
+                                Text("Exercise:")
+                                Text(calcPicker)
+                            }
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .padding()
+                            .padding(.horizontal)
+                            .background(.blue)
+                            .cornerRadius(10)
+                            .scaleEffect(0.7)
+                            
+                        } .offset(y: -170)
+                        
+                        
+                        
                         Slider(value: $sitUps, in: 0...100, step: 1.0)
                             .scaleEffect(0.6)
                             .offset(y: -130)
@@ -120,11 +120,11 @@ struct Goal_Page: View {
                         Text(String(format: "%.0f reps", sitUps))
                             .offset(y: -200)
                             .position(x: 190)
-                      
+                        
                         Text("Your grade is: \(calculateSitUpsGrade(age: info.Age, sex: info.Gender, sitUps: Int(sitUps)))")
                             .offset(y: -140)
-                           
-                            
+                        
+                        
                     }
                     
                     Text("RESULTS:")
@@ -199,7 +199,7 @@ struct Goal_Page: View {
                                     .offset(x: 20)
                                     .onChange(of: targ[index]){
                                         UserDefaults.standard.setValue(targ, forKey: "targ")
-                                            
+                                        
                                     }
                                     
                                     .gridCellAnchor(.trailing)
@@ -239,7 +239,7 @@ struct Goal_Page: View {
                             .padding(.horizontal, 30)
                             .padding(.vertical, -30)
                         }
-                   
+                        
                         .padding(.vertical)
                         .offset(y: -140)
                         
@@ -251,7 +251,7 @@ struct Goal_Page: View {
                         .offset(y: -140)
                     }
                     Button{
-clear = true                   
+                        clear = true
                     } label: {
                         Text("Clear all goals")
                     }
@@ -268,7 +268,7 @@ clear = true
                     }
                     .onChange(of: Goals){
                         UserDefaults.standard.setValue(Goals, forKey: "sGoals")
-
+                        
                     }
                     Button{
                         info.targ = targ
