@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct Age_Gender: View {
+    @Binding var start: Bool
     @Binding var info: data
     @State var Sex = true
     @State var age = 12
@@ -18,14 +19,14 @@ struct Age_Gender: View {
     var body: some View {
         VStack(alignment:.leading) {
             Text("About Me")
-               .font(.title)
-               .bold()
-               .padding(.bottom)
-
-               .offset(x: 20)
-
-               .offset(x:10)
-
+                .font(.title)
+                .bold()
+                .padding(.bottom)
+            
+                .offset(x: 20)
+            
+                .offset(x:10)
+            
             
             Form {
                 Section(header: Text("Personal Info")) {
@@ -40,27 +41,23 @@ struct Age_Gender: View {
                         Text("Male").tag(true)
                         Text("Female").tag(false)
                     }
-                   .labelsHidden()
-                   .onChange(of: Sex){
-                       UserDefaults.standard.setValue(Sex, forKey: "sex")
-                   }
+                    .labelsHidden()
+                    .tint(.black)
+                    .onChange(of: Sex){
+                        UserDefaults.standard.setValue(Sex, forKey: "sex")
+                    }
+                    .offset(x: -10)
                 }
-                Button{
-                    
-                    dismiss()
-                    
-                    
-                } label: {
-                    ZStack{
-                        RoundedRectangle(cornerRadius: 20)
-                            .fill(Color(.green))
-                            .frame(width: 100, height: 50)
+                if(!start){
+                    Button{
+                        dismiss()
+                    } label: {
                         Text("Save")
-                            .foregroundStyle(.white)
+                            .foregroundStyle(.blue)
                     }
                 }
             }
-           .padding(.horizontal)
+            .padding(.horizontal)
             
         }
         .onAppear{
@@ -80,6 +77,6 @@ struct Age_Gender: View {
 
 struct Age_Gender_Previews: PreviewProvider {
     static var previews: some View {
-        Age_Gender(info:.constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), ageFirstTime: .constant(false), ageSheet: .constant(false))
+        Age_Gender(start: .constant(false), info:.constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), ageFirstTime: .constant(false), ageSheet: .constant(false))
     }
 }
