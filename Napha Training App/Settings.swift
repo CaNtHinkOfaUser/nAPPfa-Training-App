@@ -74,7 +74,7 @@ struct Settings: View {
                 }
                 
                 Button(action: {
-                    SchedSheetSettings.toggle()
+                    SchedSheet.toggle()
                 }) {
                     HStack {
                         Image(systemName: "clock")
@@ -87,8 +87,8 @@ struct Settings: View {
                     .background(Color.white)
                     .cornerRadius(10)
                 }
-                .fullScreenCover(isPresented: $SchedSheetSettings){
-                    Scheduling_(info: $info, selectedDays: $selectedDaysSettings, selectedTimes: $selectedTimedSettings)
+                .fullScreenCover(isPresented: $SchedSheet){
+                    Scheduling_(info: $info, selectedDays: $selectedDaysSettings, selectedTimes: $selectedTimedSettings, schedSheet: $SchedSheet)
                 }
             }
             .padding(.horizontal)

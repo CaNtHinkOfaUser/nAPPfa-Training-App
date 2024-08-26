@@ -95,7 +95,6 @@
 		7705B7272C00621500111DBE = {
 			isa = PBXGroup;
 			children = (
-				314BCB0E2C73369200F43C37 /* StartingTabView.swift */,
 				31B526912C65C54C007D413C /* SplashScreen.swift */,
 				7705B7322C00621500111DBE /* Napha Training App */,
 				7705B7432C00621700111DBE /* Napha Training AppTests */,
@@ -118,6 +117,7 @@
 			isa = PBXGroup;
 			children = (
 				31B526902C64EDAA007D413C /* Napha-Training-App-Info.plist */,
+				314BCB0E2C73369200F43C37 /* StartingTabView.swift */,
 				7705B7332C00621500111DBE /* Napha_Training_AppApp.swift */,
 				7705B7352C00621500111DBE /* ContentView.swift */,
 				A9793E692C734063008BF2BC /* CustomTabBar.swift */,
