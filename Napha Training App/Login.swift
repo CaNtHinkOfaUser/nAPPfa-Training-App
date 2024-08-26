@@ -5,7 +5,15 @@ struct StartingPage: View {
     @Binding var info: data
     @State var TabViewSheet = false
     @State var showNewView = false
-    var nextAction: () -> Void
+    @Binding var ageFirstTime: Bool
+    @Binding var ageSheet: Bool
+    @Binding var Sex: Bool
+    @Binding var Age: Int
+    @Binding var goalSheet: Bool
+    @Binding var schedSheet: Bool
+    @Binding var selectedDays: [Int]
+    @Binding var selectedTimes: [Date]
+    //var nextAction: () -> Void
     var body: some View {
         NavigationView {
             VStack(spacing: 20) {
@@ -39,7 +47,7 @@ struct StartingPage: View {
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 40)
                     
-                    NavigationLink(destination: StartingTabView(StartingTabViewSheet: .constant(false), info: $info)) {
+                    NavigationLink(destination: StartingTabView(info: $info,ageFirstTime: $ageFirstTime,ageSheet: $ageSheet,Sex: $Sex,Age: $Age,goalSheet: $goalSheet,selectedDays: $selectedDays,selectedTimes: $selectedTimes, schedSheet: $schedSheet)) {
                         VStack {
                             Text("Get Started")
                                 .font(.title)
@@ -66,6 +74,6 @@ struct StartingPage: View {
 }
 struct StartingPage_Previews: PreviewProvider {
     static var previews: some View {
-        StartingPage(info:.constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), nextAction: {} )
+        StartingPage(info:.constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), ageFirstTime: .constant(false), ageSheet: .constant(false), Sex: .constant(false), Age: .constant(0), goalSheet: .constant(false), schedSheet: .constant(false), selectedDays: .constant([0]), selectedTimes: .constant([]) )
     }
 }   

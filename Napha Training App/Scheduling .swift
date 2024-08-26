@@ -16,6 +16,7 @@ struct Scheduling_: View {
     @State private var toThrow: String = ""
     @State private var times : [Date] =  Array(repeating: Date(), count: 7)
     @Binding var selectedTimes : [Date]
+    @Binding var schedSheet: Bool
     @State private var numberArray = [1,2,3,4,5,6,7]
     @State private var selectedTime = Date()
     @State private var selectedTimeInt: Int = 0
@@ -81,7 +82,8 @@ struct Scheduling_: View {
                             .frame(width: 50, alignment: .leading)
                         DatePicker("", selection: $times[selectedDay], displayedComponents: .hourAndMinute)
                             .labelsHidden()
-                            .onChange(of: times[selectedDay]){ if selectedDays.contains(selectedDay){
+                            .onChange(of: times[selectedDay]){
+                                if selectedDays.contains(selectedDay){
                                 selectedTimes.remove(at: selectedDays.firstIndex(of: selectedDay)!)
                                 selectedDays.removeAll {$0 == selectedDay}
                                 selectedDays.append(selectedDay)
@@ -134,5 +136,5 @@ struct Scheduling_: View {
     }
 }
 #Preview {
-    Scheduling_(info: .constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), selectedDays: .constant([]), selectedTimes: .constant([]))
+    Scheduling_(info: .constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), selectedDays: .constant([]), selectedTimes: .constant([]), schedSheet: .constant(false))
 }
