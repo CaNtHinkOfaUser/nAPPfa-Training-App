@@ -11,6 +11,7 @@ enum Tab: String, CaseIterable{
     case house
     case dumbbell
     case gearshape
+    case chartBar = "chart.bar"
 }
 
 struct CustomTabBar: View {
@@ -26,8 +27,11 @@ struct CustomTabBar: View {
             return .red
         case .gearshape:
             return .gray
+        case .chartBar:
+            return .green
         }
-    }
+        }
+    
     var body: some View {
         VStack{
             HStack{

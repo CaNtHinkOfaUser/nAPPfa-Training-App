@@ -72,7 +72,13 @@ struct Home: View {
                  }*/
                 
                 
-                
+
+
+
+
+
+
+
                 Text("NAPFA EXAMINATION IN")
                     .font(.system(size: 20))
                     .bold()

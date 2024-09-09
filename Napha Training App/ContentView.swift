@@ -103,7 +103,7 @@ struct ContentView: View {
                  } */
             
         } else if selectedTab == .dumbbell{
-            Workout(info: $info)
+            Workout(info: .constant(data(Age: 12, Gender: false, prev: ["","","","","",""], targ: ["","","","","",""], schedule: [], NAPHA_Date: Date.now, Goals: [])))
                 .tabItem {
                     ZStack{
                         Circle()
@@ -118,10 +118,15 @@ struct ContentView: View {
                             .foregroundStyle(.black)
                     }
                 }
-        } else {
+        } else if selectedTab == .gearshape{
             Settings(info: $info, GoalSheet: $GoalSheetCV, AgeSheet: $AgeSheetCV, SchedSheet: $SchedSheetCV, selectedTimedSettings: $selectedTimesCV, selectedDaysSettings: $selectedDaysCV, Sex: $Sex, age: $age, ftSettings: $firstTime)
                 .tabItem {
                     Label("Settings", systemImage: "gearshape.fill")
+                }
+        } else {
+            Statistics()
+                .tabItem{
+                    Label("Statistics", systemImage: "chart.bar.fill")
                 }
         }
         VStack{
