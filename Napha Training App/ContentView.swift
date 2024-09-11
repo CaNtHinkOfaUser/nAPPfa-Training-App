@@ -70,37 +70,7 @@ struct ContentView: View {
                         firstTime = false
                         UserDefaults.standard.setValue(false, forKey: "fT")
                     }
-                }
-            
-            /*.fullScreenCover(isPresented: $AgeSheetCV){
-             Age_Gender(info: $info, ageFirstTime: $firstTime, ageSheet: $AgeSheetCV)
-             }
-             .onChange(of: AgeSheetCV){
-             if AgeSheetCV == false{
-             SchedSheetCV = true
-             print("schedSheet CV is true")
-             }
-             }
-             .fullScreenCover(isPresented: $SchedSheetCV){
-             Scheduling_(info: $info, selectedDays: $selectedDaysCV, selectedTimes: $selectedTimesCV)
-             }
-             .onChange(of: SchedSheetCV){
-             if SchedSheetCV == false{
-             GoalSheetCV = true
-             print("GoalSheet CV is true")
-             }
-             }
-             .fullScreenCover(isPresented: $GoalSheetCV){
-             Goal_Page(info: $info, Sex: $Sex, Age: $age, GoalSheet: $GoalSheetCV)
-             }
-             .onChange(of: GoalSheetCV){
-             if GoalSheetCV == false{
-             firstTime = false
-             UserDefaults.standard.setValue(false, forKey: "fT")
-             
-             print("firstTime is now false")
-             }
-             } */
+                 }
             
         } else if selectedTab == .dumbbell{
             Workout(info: $info)
@@ -126,7 +96,7 @@ struct ContentView: View {
         }
         VStack{
             CustomTabBar(selectedTab: $selectedTab)
-            
+
         } /* .fullScreenCover(isPresented: $Startingpage){ "eg for full screen thing
            StartingPage(info: $info, TabViewSheet: false, showNewView: false, nextAction: {}) */
         .onAppear{
