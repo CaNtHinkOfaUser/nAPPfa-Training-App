@@ -377,7 +377,7 @@ struct Goal_Page: View {
     }
 }
 #Preview {
-    Goal_Page(start: .constant(false), info: .constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), Sex: .constant(true), Age: .constant(0), GoalSheet: .constant(false), showAlert: false)
+    Goal_Page(start: .constant(false), info: .constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPFA_Date: Date.now, Goals: [])), Sex: .constant(true), Age: .constant(0), GoalSheet: .constant(false), showAlert: false)
 }
 
 

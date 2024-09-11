@@ -76,11 +76,11 @@ struct Home: View {
                 Text("NAPFA EXAMINATION IN")
                     .font(.system(size: 20))
                     .bold()
-                Text("\(info.NAPHA_Date.formatted(date: .long, time: .omitted))")
+                Text("\(info.NAPFA_Date.formatted(date: .long, time: .omitted))")
                     .font(.system(size: 45))
                     .bold()
                     .contextMenu{
-                        Text("\(Calendar.current.dateComponents([.month,.day], from: Date.now, to: info.NAPHA_Date).month ?? 0) months : \(Calendar.current.dateComponents([.month,.day], from: Date.now, to: info.NAPHA_Date).day ?? 0) days")
+                        Text("\(Calendar.current.dateComponents([.month,.day], from: Date.now, to: info.NAPFA_Date).month ?? 0) months : \(Calendar.current.dateComponents([.month,.day], from: Date.now, to: info.NAPFA_Date).day ?? 0) days")
                     }
                 Text("Note: This is an MVP")
                 Grid{
@@ -258,5 +258,5 @@ struct Home: View {
 
 
 #Preview {
-    Home(info: .constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), homeSelectedTimed: .constant([]), homeSelectedDays: .constant([]))
+    Home(info: .constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPFA_Date: Date.now, Goals: [])), homeSelectedTimed: .constant([]), homeSelectedDays: .constant([]))
 }

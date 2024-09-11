@@ -61,5 +61,5 @@ struct StartingTabView: View {
 } */
 }
 #Preview {
-    StartingTabView(info: .constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), ageFirstTime: .constant(false), ageSheet: .constant(false), Sex: .constant(false), Age: .constant(0), goalSheet: .constant(false), selectedDays: .constant([0]), selectedTimes: .constant([]), schedSheet: .constant(false), showLogin: .constant(true))
+    StartingTabView(info: .constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPFA_Date: Date.now, Goals: [])), ageFirstTime: .constant(false), ageSheet: .constant(false), Sex: .constant(false), Age: .constant(0), goalSheet: .constant(false), selectedDays: .constant([0]), selectedTimes: .constant([]), schedSheet: .constant(false), showLogin: .constant(true))
 }

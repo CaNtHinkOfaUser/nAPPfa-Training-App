@@ -99,6 +99,6 @@ struct Settings: View {
 
 struct Settings_Previews: PreviewProvider {
     static var previews: some View {
-        Settings(info:.constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), GoalSheet:.constant(false), AgeSheet:.constant(false), SchedSheet:.constant(false), selectedTimedSettings:.constant([]), selectedDaysSettings: .constant([]), Sex: .constant(true), age: .constant(0), ftSettings: .constant(true))
+        Settings(info:.constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPFA_Date: Date.now, Goals: [])), GoalSheet:.constant(false), AgeSheet:.constant(false), SchedSheet:.constant(false), selectedTimedSettings:.constant([]), selectedDaysSettings: .constant([]), Sex: .constant(true), age: .constant(0), ftSettings: .constant(true))
     }
 }

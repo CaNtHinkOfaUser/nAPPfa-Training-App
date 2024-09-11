@@ -77,6 +77,6 @@ struct Age_Gender: View {
 
 struct Age_Gender_Previews: PreviewProvider {
     static var previews: some View {
-        Age_Gender(start: .constant(false), info:.constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), ageFirstTime: .constant(false), ageSheet: .constant(false))
+        Age_Gender(start: .constant(false), info:.constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPFA_Date: Date.now, Goals: [])), ageFirstTime: .constant(false), ageSheet: .constant(false))
     }
 }
