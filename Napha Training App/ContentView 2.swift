@@ -24,16 +24,16 @@ struct data{
     var prev: [String]
     var targ: [String]
     var schedule: [String]
-    var NAPFA_Date: Date
+    var NAPHA_Date: Date
     var Goals: [[String]]
     
-    init(Age: Int, Gender: Bool, prev: [String], targ: [String], schedule: [String], NAPFA_Date: Date, Goals: [[String]]) {
+    init(Age: Int, Gender: Bool, prev: [String], targ: [String], schedule: [String], NAPHA_Date: Date, Goals: [[String]]) {
         self.Age = Age
         self.Gender = Gender
         self.prev = prev
         self.targ = targ
         self.schedule = schedule
-        self.NAPFA_Date = NAPFA_Date
+        self.NAPHA_Date = NAPHA_Date
         self.Goals = Goals
         
         UITabBar.appearance().isHidden = true
@@ -42,7 +42,7 @@ struct data{
 
 struct ContentView: View {
     
-    @State var info = data(Age: 12, Gender: false, prev: ["","","","","",""], targ: ["","","","","",""], schedule: [], NAPFA_Date: Date.now, Goals: [])
+    @State var info = data(Age: 12, Gender: false, prev: ["","","","","",""], targ: ["","","","","",""], schedule: [], NAPHA_Date: Date.now, Goals: [])
     @State var selectedTimesCV: [Date] = []
     @State var selectedDaysCV: [Int] = []
     @State var Sex: Bool = true
@@ -103,7 +103,7 @@ struct ContentView: View {
             CustomTabBar(selectedTab: $selectedTab)
 
         } /* .fullScreenCover(isPresented: $Startingpage){ "eg for full screen thing
-            StartingPage(info: $info, TabViewSheet: false, showNewView: false, nextAction: {}) */
+           StartingPage(info: $info, TabViewSheet: false, showNewView: false, nextAction: {}) */
         .onAppear{
             if let storedFirst = UserDefaults.standard.object(forKey: "fT") as? Bool {
                 firstTime = storedFirst
@@ -111,8 +111,9 @@ struct ContentView: View {
             }
             if firstTime == true {
                 showLogin = true
+                
                 UserDefaults.standard.set(Date.now, forKey: "DOWNLOADDATE")
-                print("first time")
+                print("hihi")
             }
             
             
@@ -123,8 +124,14 @@ struct ContentView: View {
             if let storedAge = UserDefaults.standard.object(forKey: "age") as? Int{
                 info.Age = storedAge
             }
-            if let storedNAPFA_Date = UserDefaults.standard.object(forKey: "NAPFA_Date") as? Date{
-                info.NAPFA_Date = storedNAPFA_Date
+            
+            if firstTime == true{
+                showLogin = true
+            }
+            UserDefaults.standard.setValue(UserDefaults.standard.bool(forKey: "Downloaded?") ?? true, forKey: "Downloaded?")
+            if(UserDefaults.standard.bool(forKey: "Downloaded?")){
+                UserDefaults.standard.setValue(Date.now, forKey: "DOWNlOADEDDATE")
+                UserDefaults.standard.setValue(false, forKey: "Downloaded?")
             }
             //print((UserDefaults.standard.object(forKey: "DOWNlOADEDDATE") as? Date)!.formatted(date: .abbreviated, time: .standard))
         }
