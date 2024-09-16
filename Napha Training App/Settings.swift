@@ -1,9 +1,7 @@
-//
 //  Settings.swift
 //  Napha Training App
 //
 //  Created by Kui Jun on 4/7/24.
-//
 
 import SwiftUI
 
@@ -11,8 +9,8 @@ struct Settings: View {
     
     @Binding var info: data
     @Binding var GoalSheet : Bool
-    @Binding var AgeSheet   :Bool
-    @Binding var SchedSheet : Bool
+    @Binding var AgeSheet:Bool
+    @Binding var SchedSheet: Bool
     @Binding var selectedTimedSettings: [Date]
     @Binding var selectedDaysSettings: [Int]
     @Binding var Sex: Bool
@@ -21,7 +19,7 @@ struct Settings: View {
     @State var GoalSheetSettings: Bool = false
     @State var AgeSheetSettings: Bool = false
     @State var SchedSheetSettings: Bool = false
-
+    @State var autoCalcSettings: Bool = false
     
     var body: some View {
         NavigationView {
@@ -55,6 +53,24 @@ struct Settings: View {
                 .fullScreenCover(isPresented: $GoalSheetSettings) {
                     Goal_Page(start: .constant(false), info: $info, Sex: $Sex, Age: $age, GoalSheet: $GoalSheet)
                 }
+                Button(action: {
+                    autoCalcSettings.toggle()
+                }) {
+                    HStack {
+                        Image(systemName: "candybarphone")
+                            .imageScale(.large)
+                            .foregroundColor(.blue)
+                        Text("Auto Calculation")
+                            .foregroundColor(.primary)
+                    }
+                    .padding()
+                    .background(Color.white)
+                    .cornerRadius(10)
+                }
+                .fullScreenCover(isPresented: $autoCalcSettings){
+                    AutoCalcView(info: $info)
+                }
+    
                 Button(action: {
                     AgeSheetSettings.toggle()
                 })  {
@@ -99,6 +115,6 @@ struct Settings: View {
 
 struct Settings_Previews: PreviewProvider {
     static var previews: some View {
-        Settings(info:.constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), GoalSheet:.constant(false), AgeSheet:.constant(false), SchedSheet:.constant(false), selectedTimedSettings:.constant([]), selectedDaysSettings: .constant([]), Sex: .constant(true), age: .constant(0), ftSettings: .constant(true))
+        Settings(info:.constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPFA_Date: Date.now, Goals: [])), GoalSheet:.constant(false), AgeSheet:.constant(false), SchedSheet:.constant(false), selectedTimedSettings:.constant([]), selectedDaysSettings: .constant([]), Sex: .constant(true), age: .constant(0), ftSettings: .constant(true))
     }
 }

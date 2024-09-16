@@ -1,55 +1,103 @@
-//
-//  Age_Gender.swift
-//  Napha Training App
-//
-//  Created by Ishaan on 1/8/24.
-//
-
 import SwiftUI
 
 struct Age_Gender: View {
     @Binding var start: Bool
     @Binding var info: data
-    @State var Sex = true
-    @State var age = 12
+    @State var Sex = true // Default to Male
+    @State var birthdate = Date() // Default to today's date
     @Binding var ageFirstTime: Bool
     @Binding var ageSheet: Bool
+    @State var GenderSheet = false
+    @State private var selectedDate = Date()
+    
+    let baseStartYear = 2005
+    let baseEndYear = 2012
+    let calendar = Calendar.current
     @Environment(\.dismiss) private var dismiss
+    func calculatedStartDate() -> Date {
+        let currentYear = calendar.component(.year, from: Date())
+        let shift = currentYear - 2024 // Calculate the difference between current year and 2024 (base year)
+        
+        // Start date: January 1st, 2005 + shift (if current year is 2024, shift is -1, so 2005 stays unchanged)
+        return calendar.date(from: DateComponents(year: baseStartYear + shift, month: 1, day: 1)) ?? Date()
+    }
+    
+    // Calculate the dynamic end date: December 31, 2012 shifted by the same year difference
+    func calculatedEndDate() -> Date {
+        let currentYear = calendar.component(.year, from: Date())
+        let shift = currentYear - 2024 // Calculate the difference between current year and 2024
+        
+        // End date: December 31st, 2012 + shift
+        return calendar.date(from: DateComponents(year: baseEndYear + shift, month: 12, day: 31)) ?? Date()
+    }
+    
+    
+    var dateFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .medium
+        return dateFormatter
+    }()
+    
+    var age: Int {
+        let calendar = Calendar.current
+        let now = Date()
+        let ageComponents = calendar.dateComponents([.year], from: birthdate, to: now)
+        return ageComponents.year ?? 0
+    }
     
     var body: some View {
+        VStack {
+            DatePicker(
+                "Select a date",
+                selection: $selectedDate,
+                in: calculatedStartDate()...calculatedEndDate(),
+                displayedComponents: .date
+            )
+            .datePickerStyle(GraphicalDatePickerStyle())
+        }
+        .onAppear {
+            // Initialize the selected date within the range
+            selectedDate = calculatedStartDate()
+        }
+        
         VStack(alignment:.leading) {
             Text("About Me")
                 .font(.title)
                 .bold()
                 .padding(.bottom)
-            
                 .offset(x: 20)
-            
-                .offset(x:10)
-            
+                .offset(x: 10)
             
             Form {
-                Section(header: Text("Personal Info")) {
-                    Stepper(value: $age, in: 12...19, step: 1) {
-                        Text("Age: \(age)")
+                DatePicker("Birthdate", selection: $birthdate, in: calculatedStartDate()...calculatedEndDate(), displayedComponents: .date)
+                    .onChange(of: birthdate) { _ in
+                        let calculatedAge = age
+                        UserDefaults.standard.setValue(birthdate, forKey: "birthdate")
+                        UserDefaults.standard.setValue(calculatedAge, forKey: "age")
                     }
-                    
-                    .onChange(of: age){
-                        UserDefaults.standard.setValue(age, forKey: "age")
+                    .onAppear() { selectedDate = calculatedStartDate()}
+                
+                HStack() {
+                    Text("Sex:")
+                    Spacer()
+                    Button(action: {
+                        GenderSheet.toggle()
+                    }) {
+                        Text(info.Gender ? "female" : "male") // Display saved sex
+                            .foregroundColor(.black)
                     }
-                    Picker("Sex", selection: $Sex) {
-                        Text("Male").tag(true)
-                        Text("Female").tag(false)
+                    .sheet(isPresented: $GenderSheet) {
+                        GenderSelectionView(info: $info)
+                            .presentationDetents([.fraction(0.45)])
+                            .presentationDragIndicator(.visible)
                     }
                     .labelsHidden()
                     .tint(.black)
-                    .onChange(of: Sex){
-                        UserDefaults.standard.setValue(Sex, forKey: "sex")
-                    }
                     .offset(x: -10)
                 }
-                if(!start){
-                    Button{
+                
+                if (!start) {
+                    Button {
                         dismiss()
                     } label: {
                         Text("Save")
@@ -57,26 +105,125 @@ struct Age_Gender: View {
                     }
                 }
             }
-            .padding(.horizontal)
-            
-        }
-        .onAppear{
-            if let storedSex = UserDefaults.standard.object(forKey: "sex") as? Bool {
-                Sex = storedSex
+            .onAppear {
+                // Load stored data if it exists
+                if let storedSex = UserDefaults.standard.object(forKey: "sex") as? Bool {
+                    Sex = storedSex
+                }
+                if let storedBirthdate = UserDefaults.standard.object(forKey: "birthdate") as? Date {
+                    birthdate = storedBirthdate
+                }
+                // Store birthdate and sex on appear
+                UserDefaults.standard.setValue(birthdate, forKey: "birthdate")
+                UserDefaults.standard.setValue(Sex, forKey: "sex")
                 
+                let calculatedAge = age
+                UserDefaults.standard.setValue(calculatedAge, forKey: "age")
+                print("Age: \(calculatedAge), Sex: \(Sex)")
             }
-            if let storedAge = UserDefaults.standard.object(forKey: "age") as? Int{
-                age = storedAge
+        }
+    }
+    
+    struct GenderSelectionView: View {
+        @Binding var info: data
+        @Environment(\.presentationMode) var presentationMode
+        @State private var selectedGender: String? = "Male"
+        
+        var body: some View {
+            VStack {
+                Text("Your sex")
+                    .font(.headline)
+                Divider()
+                
+                HStack {
+                    GenderButton(gender: "Female", selectedGender: $selectedGender)
+                    GenderButton(gender: "Male", selectedGender: $selectedGender)
+                }
+                .padding(.vertical)
+                
+                Button{
+                    if selectedGender == "Male" {
+                        info.Gender = true
+                    } else if selectedGender == "Female" {
+                        info.Gender = false
+                    }
+                    print(info.Gender)
+                    
+                } label: {
+                    Text("dhi")
+                }
+                Button{
+                    
+                    presentationMode.wrappedValue.dismiss()
+                    print(info.Gender)
+                    
+                } label: {
+                    ZStack{
+                        Text("Save")
+                            .foregroundStyle(.white)
+                            .font(.headline)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.blue)
+                            .foregroundColor(.white)
+                            .cornerRadius(20)
+                            .padding(.horizontal)
+                            .padding(.bottom)
+                            .background(Color.white)
+                            .cornerRadius(20)
+                            .padding(.horizontal)
+                            .contentShape(Rectangle())
+                        
+                    }
+                }
             }
-            UserDefaults.standard.setValue(age, forKey: "age")
-            UserDefaults.standard.setValue(Sex ,forKey: "sex")
-            print("Age_gender\(age)\(Sex)")
+        }
+        
+    }
+}
+
+
+struct GenderButton: View {
+    var gender: String
+    @Binding var selectedGender: String?
+    
+    var isSelected: Bool {
+        selectedGender == gender
+    }
+    
+    var body: some View {
+        Button(action: {
+            withAnimation {
+                selectedGender = gender
+            }
+        }) {
+            VStack {
+                Image(systemName: isSelected ? "person.fill" : "person")
+                    .font(.system(size: 40))
+                    .foregroundColor(isSelected ? .white : .blue)
+                
+                Text(gender)
+                    .font(.headline)
+                    .foregroundColor(isSelected ? .white : .blue)
+            }
+            .padding()
+            .frame(width: 155, height: 100)
+            .background(isSelected ? Color.blue : Color.white)
+            .cornerRadius(10)
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(Color.blue, lineWidth: 2)
+            )
         }
     }
 }
 
 struct Age_Gender_Previews: PreviewProvider {
     static var previews: some View {
-        Age_Gender(start: .constant(false), info:.constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), ageFirstTime: .constant(false), ageSheet: .constant(false))
+
+
+        Age_Gender(start: .constant(false), info:.constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPFA_Date: Date.now, Goals: [])), ageFirstTime: .constant(false), ageSheet: .constant(false))
+
     }
 }
+

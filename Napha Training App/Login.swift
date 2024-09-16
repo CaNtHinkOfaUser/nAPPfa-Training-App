@@ -41,7 +41,7 @@ struct StartingPage: View {
                         .font(.title)
                         .scaleEffect(1.2)
                         .fontWeight(.bold)
-                    Text("Achieve your goals and become more fitter with nAPPfa.")
+                    Text("Achieve your goals and become fitter with nAPPfa.")
                         .font(.body)
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
@@ -74,6 +74,6 @@ struct StartingPage: View {
 }
 struct StartingPage_Previews: PreviewProvider {
     static var previews: some View {
-        StartingPage(info:.constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), ageFirstTime: .constant(false), ageSheet: .constant(false), Sex: .constant(false), Age: .constant(0), goalSheet: .constant(false), schedSheet: .constant(false), selectedDays: .constant([0]), selectedTimes: .constant([]), showLogin: .constant(false) )
+        StartingPage(info:.constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPFA_Date: Date.now, Goals: [])), ageFirstTime: .constant(false), ageSheet: .constant(false), Sex: .constant(false), Age: .constant(0), goalSheet: .constant(false), schedSheet: .constant(false), selectedDays: .constant([0]), selectedTimes: .constant([]), showLogin: .constant(false) )
     }
 }   

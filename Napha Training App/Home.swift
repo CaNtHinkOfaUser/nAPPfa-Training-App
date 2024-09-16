@@ -19,7 +19,7 @@ struct Home: View {
     @Binding var homeSelectedTimed: [Date]
     @State var DayIndex = Calendar.current.component(.weekday, from: Date())
     @Binding var homeSelectedDays: [Int]
-    @State var timeUntilNextWorkout: DateComponents = Calendar.current.dateComponents([.hour], from: Date())
+    @State var timeUntilNextWorkout: DateComponents = Calendar.current.dateComponents([.day, .hour, .minute], from: Date())
     @State var daySelected: Bool = false
     @State var selectedDayComponent = Date()
     @State var datesButToday: [Date] = []
@@ -70,25 +70,21 @@ struct Home: View {
                  Text((String(i+1)))
                  
                  }*/
-                
-                
-
-
-
-
-
-
-
                 Text("NAPFA EXAMINATION IN")
                     .font(.system(size: 20))
                     .bold()
-                Text("\(info.NAPHA_Date.formatted(date: .long, time: .omitted))")
+
+                    .offset(y: 100)
+                
+                Text("\(info.NAPFA_Date.formatted(date: .long, time: .omitted))")
                     .font(.system(size: 45))
                     .bold()
+                    .offset(y: 100)
                     .contextMenu{
-                        Text("\(Calendar.current.dateComponents([.month,.day], from: Date.now, to: info.NAPHA_Date).month ?? 0) months : \(Calendar.current.dateComponents([.month,.day], from: Date.now, to: info.NAPHA_Date).day ?? 0) days")
+                        Text("\(Calendar.current.dateComponents([.month,.day], from: Date.now, to: info.NAPFA_Date).month ?? 0) months : \(Calendar.current.dateComponents([.month,.day], from: Date.now, to: info.NAPFA_Date).day ?? 0) days")
                     }
                 Text("Note: This is an MVP")
+                    .offset(y:100)
                 Grid{
                     GridRow{
                         ZStack{
@@ -104,21 +100,55 @@ struct Home: View {
                             }
                         }
                         .gridColumnAlignment(.trailing)
-                        .offset(x: 60)
+                        .offset(x: 270, y: -200)
                         
                         ZStack{
                             Image("Calendar")
                                 .scaledToFit()
-                                .scaleEffect(0.55)
-                            Text(/*timeUntilNextWorkout.hour! >= 24 ?
-                                  String(Int(ceil(Double(timeUntilNextWorkout.hour!/24)))+1) :*/ timeUntilNextWorkout.hour! > 0 ? String(timeUntilNextWorkout.hour!+1) : String(0))
-                            .font(.system(size: 60))
-                            .bold()
-                            .contextMenu(ContextMenu(menuItems: {
-                                Text(dateFormatter.string(from: combined))
-                            }))
+                                .scaleEffect(0.25)
+                        
+                            if let day = timeUntilNextWorkout.day, day > 0 {
+                                Text(String(day) + " \ndays")
+                                    .font(.system(size: 30))
+                                    .bold()
+                                    .contextMenu(ContextMenu(menuItems: {
+                                        Text(dateFormatter.string(from: combined))
+                                    }))
+                            } else if let hours = timeUntilNextWorkout.hour, hours > 1 {
+                                Text(String(hours) + " \nhours")
+                                    .font(.system(size: 30))
+                                    .bold()
+                                    .contextMenu(ContextMenu(menuItems: {
+                                        Text(dateFormatter.string(from: combined))
+                                    }))
+                            } else if let single_HOUR = timeUntilNextWorkout.hour, single_HOUR == 1 {
+                                Text(String(single_HOUR) + " \nhour")
+                                    .font(.system(size: 30))
+                                    .bold()
+                                    .contextMenu(ContextMenu(menuItems: {
+                                        Text(dateFormatter.string(from: combined))
+                                    }))
+                            } else if let minute = timeUntilNextWorkout.minute {
+                                Text(String(minute) + " \nminutes")
+                                    .font(.system(size: 30))
+                                    .bold()
+                                    .contextMenu(ContextMenu(menuItems: {
+                                        Text(dateFormatter.string(from: combined))
+                                    }))
+                            } else {
+                                // Handle the case where all values are nil
+                                Text("Your \nworkout is \nnow!")
+                                    .offset(y: 10)
+                                    .font(.system(size: 30))
+                                    .bold()
+                                    .multilineTextAlignment(.center)
+                                    .contextMenu(ContextMenu(menuItems: {
+                                        Text(dateFormatter.string(from: combined))
+                                    }))
+                            }
                         }
                         .gridColumnAlignment(.leading)
+                        .offset(y: -100)
                     }
                 }
                 
@@ -135,18 +165,20 @@ struct Home: View {
                     ZStack{
                         RoundedRectangle(cornerRadius: 40)
                             .fill(.blue)
-                            .padding(.horizontal, 30)
+                         
+                            .frame(width: 350, height: 120)
                             .offset(y: 56)
-                        
+                            
                         Text(info.Goals == [] ? "You dont have any goals yet.\nGo to Settings > Goal Page\nto set some!" :"I will get\n\(info.Goals[Goalindx][0])\nfor \(info.Goals[Goalindx][1])")
                             .font(.system(size: info.Goals == [] ? 20 : 20))
                             .foregroundStyle(.white)
                             .offset(y: 50)
                     }
                 }
-                .offset(y: -150)
+                .offset(y: -450)
                 
             }
+            .offset(y: 100)
         }
         .onAppear{
             if let storedDate = UserDefaults.standard.object(forKey: "nextWorkout") as? Date {
@@ -239,23 +271,36 @@ struct Home: View {
                 UserDefaults.standard.setValue(nextWorkout, forKey: "nextWorkout")
             
             UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
-                    if granted {
-                        let content = UNMutableNotificationContent()
-                        content.title = "Time for your workout"
-                        content.subtitle = "Exercise now!"
-                        content.sound = UNNotificationSound.default
-                        
-                        let trigger = UNCalendarNotificationTrigger(dateMatching: nextWorkoutComponents, repeats: true)
-                        
-                        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
-                        
-
-                            UNUserNotificationCenter.current().add(request)
-                            
-                        print("notification sent")
-                    } else {
-                        print("Notification authorization denied")
-                    }
+                if granted {
+                       let content = UNMutableNotificationContent()
+                       content.title = "Time for your workout"
+                       content.subtitle = "Exercise now!"
+                       content.sound = UNNotificationSound.default
+                       
+                       // 1 hour before
+                       var oneHourBeforeComponents = nextWorkoutComponents
+                        oneHourBeforeComponents.hour! -= 1
+                       let oneHourBeforeTrigger = UNCalendarNotificationTrigger(dateMatching: oneHourBeforeComponents, repeats: true)
+                       let oneHourBeforeRequest = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: oneHourBeforeTrigger)
+                       
+                       // 10 minutes before
+                       var tenMinutesBeforeComponents = nextWorkoutComponents
+                        tenMinutesBeforeComponents.minute! -= 10
+                       let tenMinutesBeforeTrigger = UNCalendarNotificationTrigger(dateMatching: tenMinutesBeforeComponents, repeats: true)
+                       let tenMinutesBeforeRequest = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: tenMinutesBeforeTrigger)
+                       
+                       // 0 minutes before
+                       let zeroMinutesBeforeTrigger = UNCalendarNotificationTrigger(dateMatching: nextWorkoutComponents, repeats: true)
+                       let zeroMinutesBeforeRequest = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: zeroMinutesBeforeTrigger)
+                       
+                       UNUserNotificationCenter.current().add(oneHourBeforeRequest)
+                       UNUserNotificationCenter.current().add(tenMinutesBeforeRequest)
+                       UNUserNotificationCenter.current().add(zeroMinutesBeforeRequest)
+                       
+                       print("notifications sent")
+                   } else {
+                       print("Notification authorization denied")
+                   }
                 }
             }
         }
@@ -264,5 +309,5 @@ struct Home: View {
 
 
 #Preview {
-    Home(info: .constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), homeSelectedTimed: .constant([]), homeSelectedDays: .constant([]))
+    Home(info: .constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPFA_Date: Date.now, Goals: [])), homeSelectedTimed: .constant([]), homeSelectedDays: .constant([]))
 }

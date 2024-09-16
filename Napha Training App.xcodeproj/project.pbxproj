@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		311B2D652C983CCA0054CB58 /* AutoCalc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 311B2D642C983CCA0054CB58 /* AutoCalc.swift */; };
 		313420972C5B9E7800AEF150 /* Age_Gender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 313420962C5B9E7800AEF150 /* Age_Gender.swift */; };
 		3134209B2C5C838200AEF150 /* Scheduling .swift in Sources */ = {isa = PBXBuildFile; fileRef = 3134209A2C5C838200AEF150 /* Scheduling .swift */; };
 		314BCB0F2C73369200F43C37 /* StartingTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 314BCB0E2C73369200F43C37 /* StartingTabView.swift */; };
@@ -45,6 +46,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		311B2D642C983CCA0054CB58 /* AutoCalc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoCalc.swift; sourceTree = "<group>"; };
 		313420962C5B9E7800AEF150 /* Age_Gender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Age_Gender.swift; sourceTree = "<group>"; };
 		3134209A2C5C838200AEF150 /* Scheduling .swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Scheduling .swift"; sourceTree = "<group>"; };
 		314BCB0E2C73369200F43C37 /* StartingTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartingTabView.swift; sourceTree = "<group>"; };
@@ -130,6 +132,7 @@
 				77BA9C1D2C296A960045BA5B /* Goal Page.swift */,
 				77BFA6192C36E8830072B92E /* Settings.swift */,
 				313420962C5B9E7800AEF150 /* Age_Gender.swift */,
+				311B2D642C983CCA0054CB58 /* AutoCalc.swift */,
 				77BA9C192C29670B0045BA5B /* Login.swift */,
 				7705B7372C00621700111DBE /* Assets.xcassets */,
 				7705B7392C00621700111DBE /* Preview Content */,
@@ -308,6 +311,7 @@
 				31B526922C65C54C007D413C /* SplashScreen.swift in Sources */,
 				313420972C5B9E7800AEF150 /* Age_Gender.swift in Sources */,
 				7705B7362C00621500111DBE /* ContentView.swift in Sources */,
+				311B2D652C983CCA0054CB58 /* AutoCalc.swift in Sources */,
 				77BA9C1C2C29673A0045BA5B /* Home.swift in Sources */,
 				7705B7342C00621500111DBE /* Napha_Training_AppApp.swift in Sources */,
 			);
