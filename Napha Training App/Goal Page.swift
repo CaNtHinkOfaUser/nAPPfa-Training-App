@@ -2,7 +2,7 @@ import SwiftUI
 struct Goal_Page: View {
     @State var clear = false
     @Environment(\.dismiss) private var dismiss
-    
+    @Binding var start: Bool
     @State private var exercises = ["Sit Ups", "Standing Broad Jump", "Sit & Reach", "Inclined Pull Ups", "Shuttle Run", "2.4km Run"]
     @State private var sitUps: Float = 0.0
     @State private var endCalc: String = ""
@@ -75,6 +75,10 @@ struct Goal_Page: View {
                             .offset(y: 70)
                             .position(x: 180)
                         
+                        Link("Napfa Standerds: Male", destination: URL(string: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhpo5erUUSr2VDuBhYj_7rU-CH1IXq8kM3VHRpt9CrdKDSy9-AUBk6xIjO0XU_F7Pzy7VvZlbKMhJMwXKeshhxmefpUpcbYwqG4dIJ9ZBXX5KyOJHbkKTVeX5wMYMqAVOWGirlwe5Ez8dc/s1600/napfa+sec_0001.jpg")!)
+                            .offset(y: -200)
+                        Link("Napfa Standerds: Female", destination: URL(string: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhpo5erUUSr2VDuBhYj_7rU-CH1IXq8kM3VHRpt9CrdKDSy9-AUBk6xIjO0XU_F7Pzy7VvZlbKMhJMwXKeshhxmefpUpcbYwqG4dIJ9ZBXX5KyOJHbkKTVeX5wMYMqAVOWGirlwe5Ez8dc/s1600/napfa+sec_0001.jpg")!)
+                            .offset(y: -200)
                         Text("AUTO CALCULATION")
                             .font(.system(size: 20))
                             .foregroundStyle(.gray)
@@ -211,143 +215,169 @@ struct Goal_Page: View {
                     }
                     .offset(y: -150)
                     
-                    
-                    
-                    
                     Grid{
-                        ForEach(Goals.indices, id: \.self){ index in
-                            GridRow{
-                                TextField(text: $Goals[index][0]){
-                                    Text("input goal for exercise...")
-                                }
-                                .onChange(of: Goals[index][0]){
-                                    UserDefaults.standard.setValue(Goals, forKey: "sGoals")
-                                }
-                                .textFieldStyle(.roundedBorder)
-                                .offset(x: 30)
-                                Picker("exercise", selection: $Goals[index][1]){
-                                    ForEach(exercises, id: \.self){ exercise in
-                                        Text(exercise).tag(exercise)
+                        Section{
+                            ForEach(Goals.indices, id: \.self){ index in
+                                HStack{
+                                    TextField(text: $Goals[index][0]){
+                                        Text("input goal for exercise...")
                                     }
-                                    .onChange(of: Goals[index][1]){
+                                    .onChange(of: Goals[index][0]){
                                         UserDefaults.standard.setValue(Goals, forKey: "sGoals")
-                                        
+                                    }
+                                    .textFieldStyle(.roundedBorder)
+                                    .offset(x: 30)
+                                    
+                                    Picker("exercise", selection: $Goals[index][1]){
+                                        ForEach(exercises, id: \.self){ exercise in
+                                            Text(exercise).tag(exercise)
+                                        }
+                                        .onChange(of: Goals[index][1]){
+                                            UserDefaults.standard.setValue(Goals, forKey: "sGoals")
+                                            
+                                        }
                                     }
                                 }
-                                .offset(x: -30)
+                                .padding(.horizontal, 30)
+                                .padding(.vertical, -30)
                             }
-                            .padding(.horizontal, 30)
-                            .padding(.vertical, -30)
+                            
+                            .padding(.vertical)
+                            .offset(y: -140)
+                            
+                            Button{
+                                Goals.append(["", "Sit Ups"])
+                            } label: {
+                                ZStack{
+                                    RoundedRectangle(cornerRadius: 10.0)
+                                        .frame(width: 150,height: 50)
+                                    Text("Create New Goal")
+                                        .foregroundColor(.white)
+                                }
+                            }
+                            .offset(y: -130)
+                            
+                            
+                            Button{
+                                clear = true
+                            } label: {
+                                ZStack{
+                                    RoundedRectangle(cornerRadius: 10.0)
+                                        .frame(width: 150,height: 50)
+                                    Text("Clear all goals")
+                                        .foregroundColor(.white)
+                                }
+                            }
+                            .offset(y: -130)
+                            .alert(isPresented: $clear){
+                                Alert(
+                                    title: Text("Clear goals"),
+                                    message: Text("Are you would like to clear goals?"),
+                                    primaryButton: .destructive(Text("Yes")){
+                                        Goals = []
+                                    },
+                                    secondaryButton: .cancel(Text("No"))
+                                )
+                            }
+                            .onChange(of: Goals){
+                                UserDefaults.standard.setValue(Goals, forKey: "sGoals")
+                                
+                            }
                         }
-                        
-                        .padding(.vertical)
-                        .offset(y: -140)
-                        
+                    }
+                    if(!start){
                         Button{
-                            Goals.append(["", ""])
-                        } label: {
-                            Text("Create New Goal")
-                        }
-                        .offset(y: -140)
-                    }
-                    Button{
-                        clear = true
-                    } label: {
-                        Text("Clear all goals")
-                    }
-                    .offset(y: -90)
-                    .alert(isPresented: $clear){
-                        Alert(
-                            title: Text("Clear goals"),
-                            message: Text("Are you would like to clear goals?"),
-                            primaryButton: .destructive(Text("Yes")){
-                                Goals = []
-                            },
-                            secondaryButton: .cancel(Text("No"))
-                        )
-                    }
-                    .onChange(of: Goals){
-                        UserDefaults.standard.setValue(Goals, forKey: "sGoals")
-                        
-                    }
-                    Button{
-                        info.targ = targ
-                        info.prev = prev
-                        info.Goals = Goals
-                        dismiss()
-                        
-                        
-                    } label: {
-                        ZStack{
-                            RoundedRectangle(cornerRadius: 20)
-                                .fill(Color(.green))
-                                .frame(width: 10, height: 20)
-                            Text("Save")
-                                .foregroundStyle(.white)
-                        }
-                    }
-                    .alert(isPresented: $showAlert, content: {
-                        Alert(title: Text("Changing the results will alter workout programme."),
-                              primaryButton: .destructive(Text("Save"), action:  {
                             info.targ = targ
                             info.prev = prev
                             info.Goals = Goals
                             dismiss()
                             
-                        }),
-                              secondaryButton: .cancel())
-                    })
-                    .offset(y: 0)// Add padding to the top
-                    .padding()
-                    .ignoresSafeArea(.all, edges: .top)
-                    .background(Color.green)
-                    .cornerRadius(20)
-                    .foregroundColor(.white)
-                    .font(.headline)
-                    
-                    // Ignore safe area at the top
+                            
+                        } label: {
+                            ZStack{
+                                RoundedRectangle(cornerRadius: 20)
+                                    .fill(Color(.green))
+                                    .frame(width: 10, height: 20)
+                                Text("Save")
+                                    .foregroundStyle(.white)
+                            }
+                        }
+                        .offset(y: 0)// Add padding to the top
+                        .padding()
+                        .ignoresSafeArea(.all, edges: .top)
+                        .background(Color.green)
+                        .cornerRadius(20)
+                        .foregroundColor(.white)
+                        .font(.headline)
+                        
+                        // Ignore safe area at the top
+                    }
+                    else{
+                        VStack{
+                        }
+                        .onChange(of: targ) {
+                            info.targ = targ
+                        }
+                        .onChange(of: prev) {
+                            info.prev = prev
+                        }
+                        .onChange(of: Goals) {
+                            info.Goals = Goals
+                        }
+                    }
                 }
             }
             
-        }
-        .onAppear{
-            if let storedSex = UserDefaults.standard.object(forKey: "sex") as? Bool {
-                info.Gender = storedSex
+            .alert(isPresented: $showAlert, content: {
+                Alert(title: Text("Changing the results will alter workout programme."),
+                      primaryButton: .destructive(Text("Save"), action:  {
+                    info.targ = targ
+                    info.prev = prev
+                    info.Goals = Goals
+                    dismiss()
+                    
+                }),
+                      secondaryButton: .cancel())
+            })
+            .onAppear{
+                if let storedSex = UserDefaults.standard.object(forKey: "sex") as? Bool {
+                    info.Gender = storedSex
+                    
+                }
+                if let storedAge = UserDefaults.standard.object(forKey: "age") as? Int{
+                    info.Age = storedAge
+                }
+                if let storedSitUps = UserDefaults.standard.object(forKey: "storedSit") as? Float{
+                    sitUps = storedSitUps
+                }
+                UserDefaults.standard.setValue(sitUps, forKey: "storedSit")
                 
+                if let storedPrev = UserDefaults.standard.object(forKey: "prev") as? [String] {
+                    prev = storedPrev
+                }
+                UserDefaults.standard.setValue(prev, forKey: "prev")
+                
+                if let storedTarg = UserDefaults.standard.object(forKey: "targ") as? [String] {
+                    targ = storedTarg
+                }
+                UserDefaults.standard.setValue(targ, forKey: "targ")
+                
+                if let Lin = UserDefaults.standard.object(forKey: "Lin") as? [Bool] {
+                    Nil = Lin
+                }
+                UserDefaults.standard.setValue(Nil, forKey: "Lin")
+                
+                if let storedGoals = UserDefaults.standard.object(forKey: "sGoals") as? [[String]] {
+                    Goals = storedGoals
+                }
+                UserDefaults.standard.setValue(Goals, forKey: "sGoals")
             }
-            if let storedAge = UserDefaults.standard.object(forKey: "age") as? Int{
-                info.Age = storedAge
-            }
-            if let storedSitUps = UserDefaults.standard.object(forKey: "storedSit") as? Float{
-                sitUps = storedSitUps
-            }
-            UserDefaults.standard.setValue(sitUps, forKey: "storedSit")
             
-            if let storedPrev = UserDefaults.standard.object(forKey: "prev") as? [String] {
-                prev = storedPrev
-            }
-            UserDefaults.standard.setValue(prev, forKey: "prev")
-            
-            if let storedTarg = UserDefaults.standard.object(forKey: "targ") as? [String] {
-                targ = storedTarg
-            }
-            UserDefaults.standard.setValue(targ, forKey: "targ")
-            
-            if let Lin = UserDefaults.standard.object(forKey: "Lin") as? [Bool] {
-                Nil = Lin
-            }
-            UserDefaults.standard.setValue(Nil, forKey: "Lin")
-            
-            if let storedGoals = UserDefaults.standard.object(forKey: "sGoals") as? [[String]] {
-                Goals = storedGoals
-            }
-            UserDefaults.standard.setValue(Goals, forKey: "sGoals")
         }
-        
     }
 }
 #Preview {
-    Goal_Page(info: .constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), Sex: .constant(true), Age: .constant(0), GoalSheet: .constant(false), showAlert: false)
+    Goal_Page(start: .constant(false), info: .constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), Sex: .constant(true), Age: .constant(0), GoalSheet: .constant(false), showAlert: false)
 }
 
 

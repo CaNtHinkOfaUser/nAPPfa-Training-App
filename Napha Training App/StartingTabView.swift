@@ -9,6 +9,7 @@ import SwiftUI
 
 struct StartingTabView: View {
    // @Binding var StartingTabViewSheet: Bool
+    @Environment(\.dismiss) private var dismiss
     @State private var selection: Int = 0
     @Binding var info: data
     @Binding var ageFirstTime: Bool
@@ -19,16 +20,29 @@ struct StartingTabView: View {
     @Binding var selectedDays: [Int]
     @Binding var selectedTimes: [Date]
     @Binding var schedSheet: Bool
+    @Binding var showLogin: Bool
     var body: some View {
         NavigationStack {
             TabView(selection: $selection) {
-                
-                Age_Gender(info: $info, ageFirstTime: $ageFirstTime, ageSheet: $ageSheet)
+                Age_Gender(start:.constant(true), info: $info, ageFirstTime: $ageFirstTime, ageSheet: $ageSheet)
                     .tag(0)
-                Goal_Page(info: $info, Sex: $Sex, Age: $Age, GoalSheet: $goalSheet)
+                Goal_Page(start: .constant(true), info: $info, Sex: $Sex, Age: $Age, GoalSheet: $goalSheet)
                     .tag(1)
-                Scheduling_(info: $info, selectedDays: $selectedDays, selectedTimes: $selectedTimes, schedSheet: $schedSheet)
+                Scheduling_(start: .constant(true), info: $info, selectedDays: $selectedDays, selectedTimes: $selectedTimes, schedSheet: $schedSheet)
                     .tag(2)
+                VStack{
+                    Button{
+                        showLogin = false                   
+                    } label: {
+                        ZStack{
+                            RoundedRectangle(cornerRadius: 25.0)
+                                .frame(width: 100,height: 100)
+                            Text("Save")
+                                .foregroundStyle(.white)
+                                .font(.system(size: 30))
+                        }
+                    }
+                }.tag(3)
             }
             .tabViewStyle((.page(indexDisplayMode: .always)))
             .indexViewStyle(.page(backgroundDisplayMode: .always))
@@ -47,5 +61,5 @@ struct StartingTabView: View {
 } */
 }
 #Preview {
-    StartingTabView(info: .constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), ageFirstTime: .constant(false), ageSheet: .constant(false), Sex: .constant(false), Age: .constant(0), goalSheet: .constant(false), selectedDays: .constant([0]), selectedTimes: .constant([]), schedSheet: .constant(false))
+    StartingTabView(info: .constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), ageFirstTime: .constant(false), ageSheet: .constant(false), Sex: .constant(false), Age: .constant(0), goalSheet: .constant(false), selectedDays: .constant([0]), selectedTimes: .constant([]), schedSheet: .constant(false), showLogin: .constant(true))
 }

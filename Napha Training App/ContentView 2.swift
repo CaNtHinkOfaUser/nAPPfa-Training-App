@@ -63,44 +63,14 @@ struct ContentView: View {
                     Label("Home", systemImage: "house")
                 }
                 .fullScreenCover(isPresented: $showLogin){
-                    StartingPage(info: $info,ageFirstTime: $firstTime,ageSheet: $AgeSheetCV,Sex: $Sex,Age: $age,goalSheet: $GoalSheetCV,schedSheet: $SchedSheetCV, selectedDays: $selectedDaysCV,selectedTimes: $selectedTimesCV)
+                    StartingPage(info: $info,ageFirstTime: $firstTime,ageSheet: $AgeSheetCV,Sex: $Sex,Age: $age,goalSheet: $GoalSheetCV,schedSheet: $SchedSheetCV, selectedDays: $selectedDaysCV,selectedTimes: $selectedTimesCV, showLogin: $showLogin)
                 }
                 .onChange(of: showLogin){
                     if showLogin == false {
                         firstTime = false
                         UserDefaults.standard.setValue(false, forKey: "fT")
                     }
-                }
-                
-                /*.fullScreenCover(isPresented: $AgeSheetCV){
-                    Age_Gender(info: $info, ageFirstTime: $firstTime, ageSheet: $AgeSheetCV)
-                }
-                .onChange(of: AgeSheetCV){
-                    if AgeSheetCV == false{
-                        SchedSheetCV = true
-                        print("schedSheet CV is true")
-                    }
-                }
-                .fullScreenCover(isPresented: $SchedSheetCV){
-                    Scheduling_(info: $info, selectedDays: $selectedDaysCV, selectedTimes: $selectedTimesCV)
-                }
-                .onChange(of: SchedSheetCV){
-                    if SchedSheetCV == false{
-                        GoalSheetCV = true
-                        print("GoalSheet CV is true")
-                    }
-                }
-                .fullScreenCover(isPresented: $GoalSheetCV){
-                    Goal_Page(info: $info, Sex: $Sex, Age: $age, GoalSheet: $GoalSheetCV)
-                }
-                .onChange(of: GoalSheetCV){
-                    if GoalSheetCV == false{
-                        firstTime = false
-                        UserDefaults.standard.setValue(false, forKey: "fT")
-                        
-                        print("firstTime is now false")
-                    }
-                 } */
+                 }
             
         } else if selectedTab == .dumbbell{
             Workout(info: .constant(data(Age: 12, Gender: false, prev: ["","","","","",""], targ: ["","","","","",""], schedule: [], NAPHA_Date: Date.now, Goals: [])))
@@ -133,14 +103,14 @@ struct ContentView: View {
             CustomTabBar(selectedTab: $selectedTab)
 
         } /* .fullScreenCover(isPresented: $Startingpage){ "eg for full screen thing
-            StartingPage(info: $info, TabViewSheet: false, showNewView: false, nextAction: {}) */
+           StartingPage(info: $info, TabViewSheet: false, showNewView: false, nextAction: {}) */
         .onAppear{
             if let storedFirst = UserDefaults.standard.object(forKey: "fT") as? Bool {
                 firstTime = storedFirst
                 
             }
             if firstTime == true {
-                AgeSheetCV = true
+                showLogin = true
                 
                 UserDefaults.standard.set(Date.now, forKey: "DOWNLOADDATE")
                 print("hihi")
@@ -154,6 +124,10 @@ struct ContentView: View {
             if let storedAge = UserDefaults.standard.object(forKey: "age") as? Int{
                 info.Age = storedAge
             }
+            
+            if firstTime == true{
+                showLogin = true
+            }
             UserDefaults.standard.setValue(UserDefaults.standard.bool(forKey: "Downloaded?") ?? true, forKey: "Downloaded?")
             if(UserDefaults.standard.bool(forKey: "Downloaded?")){
                 UserDefaults.standard.setValue(Date.now, forKey: "DOWNlOADEDDATE")
@@ -161,13 +135,10 @@ struct ContentView: View {
             }
             //print((UserDefaults.standard.object(forKey: "DOWNlOADEDDATE") as? Date)!.formatted(date: .abbreviated, time: .standard))
         }
-        }
-    
-    
-            
-        }
-        
-        
+    }
+}
+
+
 
 #Preview {
     ContentView()

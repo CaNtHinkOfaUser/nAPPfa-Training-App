@@ -53,7 +53,7 @@ struct Settings: View {
                     .cornerRadius(10)
                 }
                 .fullScreenCover(isPresented: $GoalSheetSettings) {
-                    Goal_Page(info: $info, Sex: $Sex, Age: $age, GoalSheet: $GoalSheet)
+                    Goal_Page(start: .constant(false), info: $info, Sex: $Sex, Age: $age, GoalSheet: $GoalSheet)
                 }
                 Button(action: {
                     AgeSheetSettings.toggle()
@@ -70,7 +70,7 @@ struct Settings: View {
                     .cornerRadius(10)
                 }
                 .fullScreenCover(isPresented: $AgeSheetSettings){
-                    Age_Gender(info: $info, ageFirstTime: $ftSettings, ageSheet: $AgeSheet)
+                    Age_Gender(start: .constant(false), info: $info, ageFirstTime: $ftSettings, ageSheet: $AgeSheet)
                 }
                 
                 Button(action: {
@@ -88,7 +88,7 @@ struct Settings: View {
                     .cornerRadius(10)
                 }
                 .fullScreenCover(isPresented: $SchedSheet){
-                    Scheduling_(info: $info, selectedDays: $selectedDaysSettings, selectedTimes: $selectedTimedSettings, schedSheet: $SchedSheet)
+                    Scheduling_(start: .constant(false), info: $info, selectedDays: $selectedDaysSettings, selectedTimes: $selectedTimedSettings, schedSheet: $SchedSheet)
                 }
             }
             .padding(.horizontal)

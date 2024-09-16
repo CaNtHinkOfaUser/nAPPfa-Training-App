@@ -9,7 +9,7 @@ import SwiftUI
 
 struct Scheduling_: View {
     @Environment(\.dismiss) private var dismiss
-
+    @Binding var start: Bool
     @Binding var info: data
     @State private var Days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
     @Binding var selectedDays: [Int]
@@ -34,8 +34,9 @@ struct Scheduling_: View {
             Text("SCHEDULE")
                 .font(.system(size: 20))
                 .foregroundStyle(.gray)
-            DatePicker("Select your Napha Date", selection: $info.NAPHA_Date, displayedComponents: .date)
+            DatePicker("Select your Napha Date", selection: $info.NAPHA_Date, in: Date.now..., displayedComponents: .date)
                 .padding(.horizontal, 50)
+            
             
             HStack(spacing: 15){
                 ForEach(Days.indices, id: \.self){day in  Text(String(Days[day]).prefix(1))
@@ -84,43 +85,43 @@ struct Scheduling_: View {
                             .labelsHidden()
                             .onChange(of: times[selectedDay]){
                                 if selectedDays.contains(selectedDay){
-                                selectedTimes.remove(at: selectedDays.firstIndex(of: selectedDay)!)
-                                selectedDays.removeAll {$0 == selectedDay}
-                                selectedDays.append(selectedDay)
-                                selectedTimes.append(times[selectedDay])
-                                UserDefaults.standard.setValue(selectedDays, forKey: "SD")
-                                UserDefaults.standard.setValue(selectedTimes, forKey: "ST")
-                                UserDefaults.standard.setValue(times, forKey: "times")
-                                
-                            } else{
-                                UserDefaults.standard.setValue(selectedDays, forKey: "SD")
-                                UserDefaults.standard.setValue(selectedTimes, forKey: "ST")
-                                UserDefaults.standard.setValue(times, forKey: "times")
-                                
-                            }
+                                    selectedTimes.remove(at: selectedDays.firstIndex(of: selectedDay)!)
+                                    selectedDays.removeAll {$0 == selectedDay}
+                                    selectedDays.append(selectedDay)
+                                    selectedTimes.append(times[selectedDay])
+                                    UserDefaults.standard.setValue(selectedDays, forKey: "SD")
+                                    UserDefaults.standard.setValue(selectedTimes, forKey: "ST")
+                                    UserDefaults.standard.setValue(times, forKey: "times")
+                                    
+                                } else{
+                                    UserDefaults.standard.setValue(selectedDays, forKey: "SD")
+                                    UserDefaults.standard.setValue(selectedTimes, forKey: "ST")
+                                    UserDefaults.standard.setValue(times, forKey: "times")
+                                    
+                                }
                             }
                     }
                 }
             }
             Text("Please choose at least three days")
-            .foregroundStyle(selectedDays.count<3 ? .red : .black)}
-        Button{
-            
-            dismiss()
-            
-            
-        } label: {
-            ZStack{
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(Color(.green))
-                    .frame(width: 100, height: 50)
-                Text("Save")
-                    .foregroundStyle(.white)
+                .foregroundStyle(selectedDays.count<3 ? .red : .black)
+            if(!start){
+                Button{
+                    dismiss()
+                } label: {
+                    ZStack{
+                        RoundedRectangle(cornerRadius: 20)
+                            .fill(Color(.green))
+                            .frame(width: 100, height: 50)
+                        Text("Save")
+                            .foregroundStyle(.white)
+                    }
+                }
             }
         }
         .onAppear{
             
-          if let storedST = UserDefaults.standard.object(forKey: "ST") as? [Date]{
+            if let storedST = UserDefaults.standard.object(forKey: "ST") as? [Date]{
                 selectedTimes = storedST
             }
             UserDefaults.standard.setValue(selectedTimes, forKey: "ST")
@@ -136,5 +137,5 @@ struct Scheduling_: View {
     }
 }
 #Preview {
-    Scheduling_(info: .constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), selectedDays: .constant([]), selectedTimes: .constant([]), schedSheet: .constant(false))
+    Scheduling_(start: .constant(false), info: .constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPHA_Date: Date.now, Goals: [])), selectedDays: .constant([]), selectedTimes: .constant([]), schedSheet: .constant(false))
 }
