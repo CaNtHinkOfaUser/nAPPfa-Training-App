@@ -30,7 +30,6 @@ struct StartingPage: View {
                     .offset(y: 100)
                 
                 
-                // Hero Section
                 
                 Image("hero-image")
                     .resizable()
