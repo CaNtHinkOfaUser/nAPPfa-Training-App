@@ -100,7 +100,7 @@ struct Home: View {
                             }
                         }
                         .gridColumnAlignment(.trailing)
-                        .offset(x: 270, y: -200)
+                        .offset(x: 270, y: -100)
                         
                         ZStack{
                             Image("Calendar")

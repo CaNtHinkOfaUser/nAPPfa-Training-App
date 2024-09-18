@@ -284,6 +284,16 @@ struct Goal_Page: View {
                 
             }
         }
+        .alert(isPresented: $clear){
+            Alert(
+                title: Text("Clear goals"),
+                message: Text("Are you would like to clear goals?"),
+                primaryButton: .destructive(Text("Yes")){
+                    Goals = []
+                },
+                secondaryButton: .cancel(Text("No"))
+            )
+        }
     }
 }
 
