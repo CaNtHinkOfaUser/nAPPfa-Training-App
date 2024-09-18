@@ -47,6 +47,31 @@ struct Age_Gender: View {
     
     var body: some View {
         VStack {
+            if start {
+                GeometryReader { geometry in
+                    
+                    // Full capsule background
+                    HStack {
+                        Text("Step 1 of 3")
+                        ZStack(alignment: .leading) {
+                            
+                            Capsule()
+                                .fill(Color.gray.opacity(0.2))
+                                .frame(width: 240,height: 10)
+                            Capsule()
+                                .fill(Color.green)
+                                .frame(width: 240, height: 10)
+                            
+                            
+                        } .offset(x: 10)
+                    } .offset(x: 30)
+                    // 1/3 Capsule
+                    
+                    
+                    // 3/3 Capsule
+               
+                }
+            }
             DatePicker(
                 "Select a date",
                 selection: $selectedDate,
@@ -104,6 +129,7 @@ struct Age_Gender: View {
                             .foregroundStyle(.blue)
                     }
                 }
+               
             }
             .onAppear {
                 // Load stored data if it exists

@@ -23,6 +23,31 @@ struct Goal_Page: View {
         NavigationStack{
             ScrollView {
                 VStack {
+                    if start {
+                        GeometryReader { geometry in
+                            
+                            // Full capsule background
+                            HStack {
+                                Text("Step 2 of 3")
+                                ZStack(alignment: .leading) {
+                                    
+                                    Capsule()
+                                        .fill(Color.gray.opacity(0.2))
+                                        .frame(width: 240,height: 10)
+                                    Capsule()
+                                        .fill(Color.green)
+                                        .frame(width: 160, height: 10)
+                                    
+                                    
+                                } .offset(x: 10)
+                            } .offset(x: 30)
+                            // 1/3 Capsule
+                            
+                            
+                            // 3/3 Capsule
+                            
+                        }
+                    }
                     VStack {
                         Text("GOALS")
                             .font(.system(size: 60))
@@ -34,12 +59,23 @@ struct Goal_Page: View {
                             .offset(y: 70)
                             .position(x: 180)
                         
-                        Link("Napfa Standerds: Male", destination: URL(string: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhpo5erUUSr2VDuBhYj_7rU-CH1IXq8kM3VHRpt9CrdKDSy9-AUBk6xIjO0XU_F7Pzy7VvZlbKMhJMwXKeshhxmefpUpcbYwqG4dIJ9ZBXX5KyOJHbkKTVeX5wMYMqAVOWGirlwe5Ez8dc/s1600/napfa+sec_0001.jpg")!)
+                        Link("Napfa Standards: Male", destination: URL(string: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhpo5erUUSr2VDuBhYj_7rU-CH1IXq8kM3VHRpt9CrdKDSy9-AUBk6xIjO0XU_F7Pzy7VvZlbKMhJMwXKeshhxmefpUpcbYwqG4dIJ9ZBXX5KyOJHbkKTVeX5wMYMqAVOWGirlwe5Ez8dc/s1600/napfa+sec_0001.jpg")!)
                             .offset(y: -200)
-                        Link("Napfa Standerds: Female", destination: URL(string: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhpo5erUUSr2VDuBhYj_7rU-CH1IXq8kM3VHRpt9CrdKDSy9-AUBk6xIjO0XU_F7Pzy7VvZlbKMhJMwXKeshhxmefpUpcbYwqG4dIJ9ZBXX5KyOJHbkKTVeX5wMYMqAVOWGirlwe5Ez8dc/s1600/napfa+sec_0001.jpg")!)
+                        Link("Napfa Standards: Female", destination: URL(string: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiZlF2X2fKqbhaLL3Y49sbaRuk8Thxa1mAtQ0ZSqrVn6w1yAyN2LXgWXvFP9EohhreOH-FpXI9b_XB8PUQgEpZkmBIz_LDLZGzD35gq4_Vc_oWTDNwBrS3-TBFRgwlAfRBUBlRK5Sbypns/s1600/napfa+sec_0002.jpg")!)
                             .offset(y: -200)
                         
-                        
+                        NavigationLink(destination: AutoCalcView(info: $info), label: {
+                           
+                                Text(Image(systemName: "info.circle"))
+                                             
+                                               .baselineOffset(1)
+                                           +
+                                           Text(" Do you want to calculate your grade?")
+                                               .bold()
+                            
+                           
+                        })
+                        .offset(y: -200)
                         Text("RESULTS:")
                             .font(.system(size: 20))
                             .foregroundStyle(.gray)
@@ -222,6 +258,9 @@ struct Goal_Page: View {
                             // Ignore safe area at the top
                         }
                         else{
+                           
+                          
+                        
                             VStack{
                             }
                             .onChange(of: targ) {

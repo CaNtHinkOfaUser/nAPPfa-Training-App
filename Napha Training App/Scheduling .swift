@@ -35,6 +35,32 @@ struct Scheduling_: View {
     }()
     var body: some View {
         VStack {
+            if start {
+                GeometryReader { geometry in
+                    
+                    // Full capsule background
+                    HStack {
+                        Text("Step 3 of 3")
+                        ZStack(alignment: .leading) {
+                            
+                            Capsule()
+                                .fill(Color.gray.opacity(0.2))
+                                .frame(width: 240,height: 10)
+                            Capsule()
+                                .fill(Color.green)
+                                .frame(width: 240, height: 10)
+                            
+                            
+                        } .offset(x: 10)
+                    } .offset(x: 30)
+                        
+                    // 1/3 Capsule
+                    
+                    
+                    // 3/3 Capsule
+               
+                }
+            }
             Text("SCHEDULE")
                 .font(.system(size: 20))
                 .foregroundStyle(.gray)
@@ -123,9 +149,16 @@ struct Scheduling_: View {
                             .frame(width: 100, height: 50)
                         Text("Save")
                             .foregroundStyle(.white)
+                   
+
+                       
                     }
                 }
-            }
+               }
+                
+          
+                
+            
         }
         .onAppear{
             if let storedNAPFA_Date = UserDefaults.standard.object(forKey: "NAPFA_Date") as? Date{
