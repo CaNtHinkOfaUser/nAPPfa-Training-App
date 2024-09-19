@@ -50,7 +50,7 @@ struct Home: View {
     @State var dayNum: Int = (Calendar.current.component(.weekday, from: Date())+5) % 7 + 1
     let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateStyle = .medium // Choose a date style (e.g., .short, .medium, .long)
+        formatter.dateStyle = .medium
         formatter.timeStyle = .short // Choose a time style (e.g., .none, .short, .medium, .long)
         return formatter
     }()
@@ -100,7 +100,7 @@ struct Home: View {
                             }
                         }
                         .gridColumnAlignment(.trailing)
-                        .offset(x: 270, y: -200)
+                        .offset(x: 270, y: -100)
                         
                         ZStack{
                             Image("Calendar")
@@ -108,35 +108,68 @@ struct Home: View {
                                 .scaleEffect(0.25)
                         
                             if let day = timeUntilNextWorkout.day, day > 0 {
-                                Text(String(day) + " \ndays")
-                                    .font(.system(size: 30))
-                                    .bold()
+                                if day > 1 {
+                                    HStack {
+                                        Spacer()
+                                        Text(String(day) + " days")
+                                            .font(.system(size: 30))
+                                            .bold()
+                                        Spacer()
+                                    }
                                     .contextMenu(ContextMenu(menuItems: {
                                         Text(dateFormatter.string(from: combined))
                                     }))
-                            } else if let hours = timeUntilNextWorkout.hour, hours > 1 {
-                                Text(String(hours) + " \nhours")
-                                    .font(.system(size: 30))
-                                    .bold()
+                                } else {
+                                    HStack {
+                                        Spacer()
+                                        Text(String(day) + " day")
+                                            .font(.system(size: 30))
+                                            .bold()
+                                        Spacer()
+                                    }
                                     .contextMenu(ContextMenu(menuItems: {
                                         Text(dateFormatter.string(from: combined))
                                     }))
-                            } else if let single_HOUR = timeUntilNextWorkout.hour, single_HOUR == 1 {
-                                Text(String(single_HOUR) + " \nhour")
-                                    .font(.system(size: 30))
-                                    .bold()
-                                    .contextMenu(ContextMenu(menuItems: {
-                                        Text(dateFormatter.string(from: combined))
-                                    }))
-                            } else if let minute = timeUntilNextWorkout.minute {
-                                Text(String(minute) + " \nminutes")
-                                    .font(.system(size: 30))
-                                    .bold()
+                                }
+                            } else if let hours = timeUntilNextWorkout.hour, hours > 0 {
+                                if hours > 1 {
+                                    HStack {
+                                        Spacer()
+                                        
+                                        Text(String(hours) + " hours")
+                                            .font(.system(size: 30))
+                                            .bold()
+                                        Spacer()
+                                    }
+                                            .contextMenu(ContextMenu(menuItems: {
+                                                Text(dateFormatter.string(from: combined))
+                                            }))
+                                    
+                                } else {
+                                    HStack {
+                                        Spacer()
+                                        
+                                        Text(String(hours) + " hour")
+                                            .font(.system(size: 30))
+                                            .bold()
+                                        Spacer()
+                                    }
+                                            .contextMenu(ContextMenu(menuItems: {
+                                                Text(dateFormatter.string(from: combined))
+                                            }))
+                                }
+                            } else if let minute = timeUntilNextWorkout.minute, minute > 0 {
+                                HStack {
+                                    Spacer()
+                                    Text(String(minute) + " minutes")
+                                        .font(.system(size: 30))
+                                        .bold()
+                                    Spacer()
+                                }
                                     .contextMenu(ContextMenu(menuItems: {
                                         Text(dateFormatter.string(from: combined))
                                     }))
                             } else {
-                                // Handle the case where all values are nil
                                 Text("Your \nworkout is \nnow!")
                                     .offset(y: 10)
                                     .font(.system(size: 30))
@@ -151,7 +184,83 @@ struct Home: View {
                         .offset(y: -100)
                     }
                 }
-                
+                // Logic to check minutes first (more errors)
+//                if let minute = timeUntilNextWorkout.minute, minute > 0 {
+//                    HStack {
+//                        Spacer()
+//                        Text(String(minute) + " minutes")
+//                            .font(.system(size: 30))
+//                            .bold()
+//                        Spacer()
+//                    }
+//                    .contextMenu(ContextMenu(menuItems: {
+//                        Text(dateFormatter.string(from: combined))
+//                    }))
+//                }  else if let hours = timeUntilNextWorkout.hour, hours > 0 {
+//                    if hours > 1 {
+//                        HStack {
+//                            Spacer()
+//                            
+//                            Text(String(hours) + " hours")
+//                                .font(.system(size: 30))
+//                                .bold()
+//                            Spacer()
+//                        }
+//                        .contextMenu(ContextMenu(menuItems: {
+//                            Text(dateFormatter.string(from: combined))
+//                        }))
+//                        
+//                    } else {
+//                        HStack {
+//                            Spacer()
+//                            
+//                            Text(String(hours) + " hour")
+//                                .font(.system(size: 30))
+//                                .bold()
+//                            Spacer()
+//                        }
+//                        .contextMenu(ContextMenu(menuItems: {
+//                            Text(dateFormatter.string(from: combined))
+//                        }))
+//                    }
+//                } else if let day = timeUntilNextWorkout.day, day > 0 {
+//                        if day > 1 {
+//                            HStack {
+//                                Spacer()
+//                                Text(String(day) + " days")
+//                                    .font(.system(size: 30))
+//                                    .bold()
+//                                Spacer()
+//                            }
+//                            .contextMenu(ContextMenu(menuItems: {
+//                                Text(dateFormatter.string(from: combined))
+//                            }))
+//                        } else {
+//                            HStack {
+//                                Spacer()
+//                                Text(String(day) + " day")
+//                                    .font(.system(size: 30))
+//                                    .bold()
+//                                Spacer()
+//                            }
+//                            .contextMenu(ContextMenu(menuItems: {
+//                                Text(dateFormatter.string(from: combined))
+//                            }))
+//                            
+//                        }
+//                    } else {
+//                        Text("Your \nworkout is \nnow!")
+//                            .offset(y: 10)
+//                            .font(.system(size: 30))
+//                            .bold()
+//                            .multilineTextAlignment(.center)
+//                            .contextMenu(ContextMenu(menuItems: {
+//                                Text(dateFormatter.string(from: combined))
+//                            }))
+//                    }
+//            } .gridColumnAlignment(.leading)
+//                    .offset(y: -100)
+
                 Button{
                     if info.Goals != []{
                         if (Goalindx == info.Goals.count - 1){
@@ -266,7 +375,7 @@ struct Home: View {
                 
                 print("selected Days: \(homeSelectedDays)")
             }
-            timeUntilNextWorkout = Calendar.current.dateComponents([.hour], from: Date(), to: nextWorkout)
+            timeUntilNextWorkout = Calendar.current.dateComponents([.day, .hour, .minute], from: Date(), to: nextWorkout)
             print("nextWorkout \(nextWorkout)")
                 UserDefaults.standard.setValue(nextWorkout, forKey: "nextWorkout")
             

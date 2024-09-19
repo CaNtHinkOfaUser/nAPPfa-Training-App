@@ -46,46 +46,9 @@ struct Age_Gender: View {
     }
     
     var body: some View {
-        VStack {
-            if start {
-                GeometryReader { geometry in
-                    
-                    // Full capsule background
-                    HStack {
-                        Text("Step 1 of 3")
-                        ZStack(alignment: .leading) {
-                            
-                            Capsule()
-                                .fill(Color.gray.opacity(0.2))
-                                .frame(width: 240,height: 10)
-                            Capsule()
-                                .fill(Color.green)
-                                .frame(width: 240, height: 10)
-                            
-                            
-                        } .offset(x: 10)
-                    } .offset(x: 30)
-                    // 1/3 Capsule
-                    
-                    
-                    // 3/3 Capsule
-               
-                }
-            }
-            DatePicker(
-                "Select a date",
-                selection: $selectedDate,
-                in: calculatedStartDate()...calculatedEndDate(),
-                displayedComponents: .date
-            )
-            .datePickerStyle(GraphicalDatePickerStyle())
-        }
-        .onAppear {
-            // Initialize the selected date within the range
-            selectedDate = calculatedStartDate()
-        }
-        
+          
         VStack(alignment:.leading) {
+           
             Text("About Me")
                 .font(.title)
                 .bold()
@@ -95,7 +58,7 @@ struct Age_Gender: View {
             
             Form {
                 DatePicker("Birthdate", selection: $birthdate, in: calculatedStartDate()...calculatedEndDate(), displayedComponents: .date)
-                    .onChange(of: birthdate) { _ in
+                    .onChange(of: birthdate) {
                         let calculatedAge = age
                         UserDefaults.standard.setValue(birthdate, forKey: "birthdate")
                         UserDefaults.standard.setValue(calculatedAge, forKey: "age")
@@ -108,11 +71,11 @@ struct Age_Gender: View {
                     Button(action: {
                         GenderSheet.toggle()
                     }) {
-                        Text(info.Gender ? "female" : "male") // Display saved sex
+                        Text(info.Gender ? "Male" : "Female") // Display saved sex
                             .foregroundColor(.black)
                     }
                     .sheet(isPresented: $GenderSheet) {
-                        GenderSelectionView(info: $info)
+                        GenderSelectionView(info: $info, sex: $Sex)
                             .presentationDetents([.fraction(0.45)])
                             .presentationDragIndicator(.visible)
                     }
@@ -154,6 +117,7 @@ struct Age_Gender: View {
         @Binding var info: data
         @Environment(\.presentationMode) var presentationMode
         @State private var selectedGender: String? = "Male"
+        @Binding var sex: Bool
         
         var body: some View {
             VStack {
@@ -163,20 +127,46 @@ struct Age_Gender: View {
                 
                 HStack {
                     GenderButton(gender: "Female", selectedGender: $selectedGender)
+                        .onChange(of: selectedGender){
+                            print(selectedGender ?? "none provided")
+                            if selectedGender == "Female"{
+                                sex = false
+                                info.Gender = false
+                                print("now female")
+                            } else {
+                                sex = true
+                                info.Gender = true
+                                print("now male")
+                            }
+                        }
+                
                     GenderButton(gender: "Male", selectedGender: $selectedGender)
+                        .onChange(of: selectedGender){
+                            print(selectedGender ?? "none provided")
+                            if selectedGender == "Female"{
+                                sex = false
+                                info.Gender = false
+                                print("now female")
+                            } else {
+                                sex = true
+                                info.Gender = true
+                                print("now male")
+                            }
+                        }
                 }
                 .padding(.vertical)
                 
                 Button{
                     if selectedGender == "Male" {
                         info.Gender = true
+                        sex = true
                     } else if selectedGender == "Female" {
                         info.Gender = false
+                        sex = false
                     }
                     print(info.Gender)
                     
                 } label: {
-                    Text("dhi")
                 }
                 Button{
                     
@@ -252,4 +242,3 @@ struct Age_Gender_Previews: PreviewProvider {
 
     }
 }
-

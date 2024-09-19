@@ -122,11 +122,11 @@ struct AutoCalcView: View {
                 .scaleEffect(0.6)
 
             let currentValue = calcPicker == "Sit-Ups" ? Int(sitUps) : Int(sitReach)
-            let grade = gradingSystems[calcPicker]?(info.Age, info.Gender, currentValue) ?? "N/A"
+            let Grade = gradingSystems[calcPicker]?(info.Age, info.Gender, currentValue) ?? "N/A"
 
             Text(calcPicker == "Sit-Ups" ? String(format: "%.0f reps", sitUps) : String(format: "%.0f cm", sitReach))
 
-            Text("Your grade is: \(grade)")
+            Text("Your grade is: \(Grade)")
 
             Button {
                 dismiss()
