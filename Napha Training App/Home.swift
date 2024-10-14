@@ -51,7 +51,7 @@ struct Home: View {
     let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
-        formatter.timeStyle = .short // Choose a time style (e.g., .none, .short, .medium, .long)
+        formatter.timeStyle = .short
         return formatter
     }()
     @State var zippedTimeDay: [(Int,Date)] = []
@@ -89,7 +89,7 @@ struct Home: View {
                     GridRow{
                         ZStack{
                             RoundedRectangle(cornerRadius: 25.0)
-                                .frame(width: 150,height: 200)
+                                .frame(width: 170,height: 200)
                                 .foregroundColor(.yellow)
                             if(prevWorkout == ""){
                                 Text("\(prevWorkout == "" ? "You havent worked out yet" : prevWorkout)")
