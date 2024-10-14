@@ -114,7 +114,12 @@ struct ContentView: View {
                 UserDefaults.standard.set(Date.now, forKey: "DOWNLOADDATE")
                 print("first time")
             }
-            
+            if let storedST = UserDefaults.standard.object(forKey: "ST") as? [Date]{
+                selectedTimesCV = storedST
+            }
+            if let storedSD = UserDefaults.standard.object(forKey: "SD") as? [Int]{
+                selectedDaysCV = storedSD
+            }
             
             if let storedSex = UserDefaults.standard.object(forKey: "sex") as? Bool {
                 info.Gender = storedSex

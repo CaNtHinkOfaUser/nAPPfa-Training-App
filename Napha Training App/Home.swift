@@ -51,7 +51,7 @@ struct Home: View {
     let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
-        formatter.timeStyle = .short // Choose a time style (e.g., .none, .short, .medium, .long)
+        formatter.timeStyle = .short
         return formatter
     }()
     @State var zippedTimeDay: [(Int,Date)] = []
@@ -89,7 +89,7 @@ struct Home: View {
                     GridRow{
                         ZStack{
                             RoundedRectangle(cornerRadius: 25.0)
-                                .frame(width: 150,height: 200)
+                                .frame(width: 170,height: 200)
                                 .foregroundColor(.yellow)
                             if(prevWorkout == ""){
                                 Text("\(prevWorkout == "" ? "You havent worked out yet" : prevWorkout)")
@@ -310,19 +310,29 @@ struct Home: View {
              }*/
             
             zippedTimeDay = zip(homeSelectedDays,homeSelectedTimed).sorted{ $0.0 < $1.0}
+            print("homeSelectedDays:",homeSelectedDays,"homeSelectedTimed:",homeSelectedTimed)
             sortedDays = zippedTimeDay.map { $0.0 }
             sortedTimes = zippedTimeDay.map { $0.1 }
-            dayNum = (Calendar.current.component(.weekday, from: Date())+5) % 7 + 1
+            dayNum = (Calendar.current.component(.weekday, from: Date())+5) % 7
+            print("the day number is:",dayNum)
             print("zipeed: \(zippedTimeDay)")
+            print("current date",Date())
             if sortedTimes.isEmpty == false {
                 if sortedDays.contains(dayNum) {
-                    
-                    
-                
+                    print("Next workout is today")
+                    //Checking if workout has already occured today
+                    print()
                     if sortedTimes[sortedDays.firstIndex(of: dayNum)!] > Date() {
+                        print("time of next workout",sortedTimes[sortedDays.firstIndex(of: dayNum)!])
+                        print("next workout has occured already")
+
                         resultFromFunction = sortedDays.firstIndex(of: dayNum)!
                     } else {
-                        resultFromFunction = sortedDays.firstIndex(of: dayNum)!
+                        print("next workout not yet")
+                        resultFromFunction = sortedDays.firstIndex(of: dayNum)!+1
+                        print("time of next workout",sortedTimes[sortedDays.firstIndex(of: dayNum)!])
+                        
+                        //Error here I think
                     }
                     
                 } else {
@@ -337,8 +347,10 @@ struct Home: View {
                     }
                 }
             }
+            print("sortedTimes HAHA",sortedTimes)
             if sortedTimes.isEmpty == false {
                 nextWorkout = sortedTimes[resultFromFunction]
+                //Note: result from function denotes the position of the time for nextWorkout
                  nextWorkoutComponents = Calendar.current.dateComponents([.hour, .minute], from: nextWorkout)
                 
                 let todayComponents = Calendar.current.dateComponents([.year, .month, .day], from: Date())
@@ -348,7 +360,7 @@ struct Home: View {
                 combinedComponents.hour = nextWorkoutComponents.hour
                 combinedComponents.minute = nextWorkoutComponents.minute
                 combinedComponents.day = todayComponents.day
-                let dayOffset = sortedDays[resultFromFunction] + 1 - dayNum
+                let dayOffset = sortedDays[resultFromFunction] - dayNum
                 combinedComponents.day = todayComponents.day! + dayOffset
                 combinedComponents.day! = todayComponents.day! + dayOffset
                 
@@ -357,14 +369,14 @@ struct Home: View {
                 combined = Calendar.current.date(from: combinedComponents)!
                 
                 if (Date()>combined){
+                    print("going route 1")
                     nextWorkoutComponents.year = todayComponents.year
                     nextWorkoutComponents.month = todayComponents.month
-                    nextWorkoutComponents.day = todayComponents.day! + sortedDays[resultFromFunction]+8 - dayNum
-                    combinedComponents.day = todayComponents.day! + sortedDays[resultFromFunction]+8 - dayNum
+                    combinedComponents.day = todayComponents.day! + sortedDays[resultFromFunction]+7 - dayNum
                     combined = Calendar.current.date(from: combinedComponents)!
                     nextWorkout = Calendar.current.date(from: nextWorkoutComponents)!
                 } else {
-                    
+                    print("going route 2")
                     
                     nextWorkoutComponents.year = todayComponents.year
                     nextWorkoutComponents.month = todayComponents.month

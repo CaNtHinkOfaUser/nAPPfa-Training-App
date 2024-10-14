@@ -31,11 +31,11 @@ struct StartingPage: View {
                 
                 
                 
-                Image("hero-image")
+               /* Image("hero-image")
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: UIScreen.main.bounds.width, height: 250)
-                    .clipped()
+                    .clipped()*/
                 VStack() {
                     Text("nAPPfa")
                         .font(.title)
