@@ -22,60 +22,104 @@ struct StartingTabView: View {
     @Binding var showLogin: Bool
     
     var body: some View {
-      
-        NavigationStack {
-            ZStack {
-                GeometryReader { geometry in
-                    
-                    // Progress indicator with animated capsule
-                    HStack {
-                        Text("Step \(selection + 1) of 4")
-                        
-                        ZStack(alignment: .leading) {
-                            Capsule()
-                                .fill(Color.gray.opacity(0.2))
-                                .frame(width: 200, height: 10)
-                            
-                            Capsule()
-                                .fill(Color.green)
-                                .frame(width: CGFloat(selection + 1) * 50, height: 10) // Adjust width dynamically based on selection
-                                .animation(.easeInOut(duration: 0.3), value: selection) // Smooth animation
-                        }
-                        .offset(x: 10)
-                    }
-                    .offset(x: 80, y: 66)
-                }.padding(.vertical, -100)
-            
-                TabView(selection: $selection) {
-                    Age_Gender(start: .constant(true), info: $info, ageFirstTime: $ageFirstTime, ageSheet: $ageSheet)
-                        .tag(0)
-                    
-                    Goal_Page(start: .constant(true), info: $info, Sex: $Sex, Age: $Age, GoalSheet: $goalSheet)
-                        .tag(1)
-                    
-                    Scheduling_(start: .constant(true), info: $info, selectedDays: $selectedDays, selectedTimes: $selectedTimes, schedSheet: $schedSheet)
-                        .tag(2)
-                    
-                    VStack {
-                        Button {
-                            showLogin = false
-                        } label: {
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 10.0)
-                                    .frame(width: 100, height: 50)
-                                Text("Save")
-                                    .foregroundColor(.white)
-                                    .font(.system(size: 30))
-                            }
-                        }
-                    }
+        VStack(spacing: 0) {
+            progressHeader
+
+            TabView(selection: $selection) {
+                Age_Gender(start: .constant(true), info: $info, ageFirstTime: $ageFirstTime, ageSheet: $ageSheet)
+                    .tag(0)
+
+                Goal_Page(start: .constant(true), info: $info, Sex: $Sex, Age: $Age, GoalSheet: $goalSheet)
+                    .tag(1)
+
+                Scheduling_(start: .constant(true), info: $info, selectedDays: $selectedDays, selectedTimes: $selectedTimes, schedSheet: $schedSheet)
+                    .tag(2)
+
+                completionPage
                     .tag(3)
-                    .offset(y: -40)
-                }
             }
-            .tabViewStyle(.page(indexDisplayMode: .always))
-            .indexViewStyle(.page(backgroundDisplayMode: .always))
         }
+        .tabViewStyle(.page(indexDisplayMode: .always))
+        .indexViewStyle(.page(backgroundDisplayMode: .always))
+        .background(Color(.systemGroupedBackground))
+    }
+
+    private var progressHeader: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Text("Step \(selection + 1) of 4")
+                    .font(.subheadline.weight(.bold))
+                Spacer()
+                Text(stepTitle)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+
+            ProgressView(value: Double(selection + 1), total: 4)
+                .tint(.green)
+        }
+        .padding(.horizontal, 18)
+        .padding(.top, 14)
+        .padding(.bottom, 12)
+        .background(.regularMaterial)
+    }
+
+    private var stepTitle: String {
+        switch selection {
+        case 0: return "Profile"
+        case 1: return "Goals"
+        case 2: return "Schedule"
+        default: return "Ready"
+        }
+    }
+
+    private var completionPage: some View {
+        ScrollView {
+            VStack(spacing: 22) {
+                Spacer(minLength: 24)
+
+                Image(systemName: "checkmark.seal.fill")
+                    .font(.system(size: 76))
+                    .foregroundStyle(.green)
+                    .accessibilityHidden(true)
+
+                Text("You're set")
+                    .font(.largeTitle.weight(.bold))
+
+                Text("Your profile, goals, and schedule are saved. You can change them anytime from Home or Settings.")
+                    .font(.body)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 8)
+
+                Button {
+                    finishOnboarding()
+                } label: {
+                    Label("Start Training", systemImage: "arrow.right.circle.fill")
+                        .font(.title3.weight(.semibold))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
+                .padding(.top, 8)
+
+                Spacer(minLength: 56)
+            }
+            .padding(.horizontal, 28)
+        }
+        .scrollIndicators(.hidden)
+    }
+
+    private func finishOnboarding() {
+        let defaults = UserDefaults.standard
+        defaults.set(false, forKey: AppKeys.firstTime)
+        defaults.set(selectedDays, forKey: AppKeys.selectedDays)
+        defaults.set(selectedTimes, forKey: AppKeys.selectedTimes)
+        defaults.set(info.NAPFA_Date, forKey: AppKeys.napfaDate)
+        NotificationCoordinator.scheduleWorkoutNotifications(selectedDays: selectedDays, selectedTimes: selectedTimes)
+        AppState.persistWidgetSummary(selectedDays: selectedDays, selectedTimes: selectedTimes)
+        showLogin = false
     }
 }
 

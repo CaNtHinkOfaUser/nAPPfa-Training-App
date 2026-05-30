@@ -8,46 +8,102 @@
 import WidgetKit
 import SwiftUI
 
-struct Provider: AppIntentTimelineProvider {
+struct Provider: TimelineProvider {
     func placeholder(in context: Context) -> SimpleEntry {
-        SimpleEntry(date: Date(), configuration: ConfigurationAppIntent())
+        SimpleEntry(date: Date(), nextWorkout: Date().addingTimeInterval(86400), streak: 3, goal: "45 sit-ups")
     }
 
-    func snapshot(for configuration: ConfigurationAppIntent, in context: Context) async -> SimpleEntry {
-        SimpleEntry(date: Date(), configuration: configuration)
+    func getSnapshot(in context: Context, completion: @escaping (SimpleEntry) -> Void) {
+        completion(makeEntry())
     }
-    
-    func timeline(for configuration: ConfigurationAppIntent, in context: Context) async -> Timeline<SimpleEntry> {
-        var entries: [SimpleEntry] = []
 
-        // Generate a timeline consisting of five entries an hour apart, starting from the current date.
-        let currentDate = Date()
-        for hourOffset in 0 ..< 5 {
-            let entryDate = Calendar.current.date(byAdding: .hour, value: hourOffset, to: currentDate)!
-            let entry = SimpleEntry(date: entryDate, configuration: configuration)
-            entries.append(entry)
-        }
+    func getTimeline(in context: Context, completion: @escaping (Timeline<SimpleEntry>) -> Void) {
+        let entry = makeEntry()
+        let nextReload = Calendar.current.date(byAdding: .minute, value: 30, to: Date()) ?? Date().addingTimeInterval(1800)
+        completion(Timeline(entries: [entry], policy: .after(nextReload)))
+    }
 
-        return Timeline(entries: entries, policy: .atEnd)
+    private func makeEntry() -> SimpleEntry {
+        let store = UserDefaults(suiteName: "group.k.Napha-Training-App") ?? .standard
+        return SimpleEntry(
+            date: Date(),
+            nextWorkout: store.object(forKey: "widgetNextWorkout") as? Date,
+            streak: store.integer(forKey: "widgetStreak"),
+            goal: store.string(forKey: "widgetGoal") ?? "Set a NAPFA goal"
+        )
     }
 }
 
 struct SimpleEntry: TimelineEntry {
     let date: Date
-    let configuration: ConfigurationAppIntent
+    let nextWorkout: Date?
+    let streak: Int
+    let goal: String
 }
 
-struct nAPPfa_widgetEntryView : View {
+struct nAPPfa_widgetEntryView: View {
     var entry: Provider.Entry
 
     var body: some View {
-        VStack {
-            Text("Time:")
-            Text(entry.date, style: .time)
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Image(systemName: "figure.run.circle.fill")
+                    .font(.title2)
+                    .foregroundStyle(.blue)
+                Text("nAPPfa")
+                    .font(.headline.weight(.black))
+                Spacer()
+            }
 
-            Text("Favorite Emoji:")
-            Text(entry.configuration.favoriteEmoji)
+            HStack(alignment: .firstTextBaseline) {
+                Text("\(entry.streak)")
+                    .font(.system(size: 34, weight: .black, design: .rounded))
+                Text(entry.streak == 1 ? "day" : "days")
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(.secondary)
+            }
+
+            Text(nextWorkoutText)
+                .font(.caption.weight(.semibold))
+                .lineLimit(2)
+
+            Text(entry.goal)
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+                .lineLimit(2)
+
+            Spacer(minLength: 0)
         }
+        .containerBackground(.background, for: .widget)
+    }
+
+    private var nextWorkoutText: String {
+        guard let nextWorkout = entry.nextWorkout else {
+            return "Schedule a workout"
+        }
+
+        let relative = relativeDayText(for: nextWorkout)
+        if relative == "Today" || relative == "Now" {
+            return "Workout today, \(nextWorkout.formatted(date: .omitted, time: .shortened))"
+        }
+        if relative == "Tomorrow" {
+            return "Workout tomorrow, \(nextWorkout.formatted(date: .omitted, time: .shortened))"
+        }
+        return "Workout in \(relative)"
+    }
+
+    private func relativeDayText(for date: Date) -> String {
+        let calendar = Calendar.current
+        let start = calendar.startOfDay(for: Date())
+        let end = calendar.startOfDay(for: date)
+        let dayCount = calendar.dateComponents([.day], from: start, to: end).day ?? 0
+
+        if dayCount <= 0 {
+            return date <= Date() ? "Now" : "Today"
+        } else if dayCount == 1 {
+            return "Tomorrow"
+        }
+        return "\(dayCount) days"
     }
 }
 
@@ -55,30 +111,17 @@ struct nAPPfa_widget: Widget {
     let kind: String = "nAPPfa_widget"
 
     var body: some WidgetConfiguration {
-        AppIntentConfiguration(kind: kind, intent: ConfigurationAppIntent.self, provider: Provider()) { entry in
+        StaticConfiguration(kind: kind, provider: Provider()) { entry in
             nAPPfa_widgetEntryView(entry: entry)
-                .containerBackground(.fill.tertiary, for: .widget)
         }
-    }
-}
-
-extension ConfigurationAppIntent {
-    fileprivate static var smiley: ConfigurationAppIntent {
-        let intent = ConfigurationAppIntent()
-        intent.favoriteEmoji = "😀"
-        return intent
-    }
-    
-    fileprivate static var starEyes: ConfigurationAppIntent {
-        let intent = ConfigurationAppIntent()
-        intent.favoriteEmoji = "🤩"
-        return intent
+        .configurationDisplayName("nAPPfa")
+        .description("Shows your streak, next workout, and first saved goal.")
+        .supportedFamilies([.systemSmall, .systemMedium])
     }
 }
 
 #Preview(as: .systemSmall) {
     nAPPfa_widget()
 } timeline: {
-    SimpleEntry(date: .now, configuration: .smiley)
-    SimpleEntry(date: .now, configuration: .starEyes)
+    SimpleEntry(date: .now, nextWorkout: .now.addingTimeInterval(3600), streak: 4, goal: "45 sit-ups")
 }

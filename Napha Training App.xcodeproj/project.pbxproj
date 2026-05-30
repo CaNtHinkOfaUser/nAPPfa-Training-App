@@ -30,6 +30,7 @@
 		7705B74F2C00621700111DBE /* Napha_Training_AppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7705B74E2C00621700111DBE /* Napha_Training_AppUITests.swift */; };
 		7705B7512C00621700111DBE /* Napha_Training_AppUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7705B7502C00621700111DBE /* Napha_Training_AppUITestsLaunchTests.swift */; };
 		77B0B38B2C60C15E002102AA /* Workout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77B0B38A2C60C15E002102AA /* Workout.swift */; };
+		B1C2D3E42F10000100000001 /* WorkoutPlanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E42F10000100000002 /* WorkoutPlanner.swift */; };
 		77BA9C1A2C29670B0045BA5B /* Login.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77BA9C192C29670B0045BA5B /* Login.swift */; };
 		77BA9C1C2C29673A0045BA5B /* Home.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77BA9C1B2C29673A0045BA5B /* Home.swift */; };
 		77BA9C1E2C296A960045BA5B /* Goal Page.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77BA9C1D2C296A960045BA5B /* Goal Page.swift */; };
@@ -105,6 +106,7 @@
 		7705B74E2C00621700111DBE /* Napha_Training_AppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Napha_Training_AppUITests.swift; sourceTree = "<group>"; };
 		7705B7502C00621700111DBE /* Napha_Training_AppUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Napha_Training_AppUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		77B0B38A2C60C15E002102AA /* Workout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Workout.swift; sourceTree = "<group>"; };
+		B1C2D3E42F10000100000002 /* WorkoutPlanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutPlanner.swift; sourceTree = "<group>"; };
 		77BA9C192C29670B0045BA5B /* Login.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Login.swift; sourceTree = "<group>"; };
 		77BA9C1B2C29673A0045BA5B /* Home.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Home.swift; sourceTree = "<group>"; };
 		77BA9C1D2C296A960045BA5B /* Goal Page.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Goal Page.swift"; sourceTree = "<group>"; };
@@ -206,6 +208,7 @@
 				A9793E692C734063008BF2BC /* CustomTabBar.swift */,
 				77BA9C1B2C29673A0045BA5B /* Home.swift */,
 				77B0B38A2C60C15E002102AA /* Workout.swift */,
+				B1C2D3E42F10000100000002 /* WorkoutPlanner.swift */,
 				3134209A2C5C838200AEF150 /* Scheduling .swift */,
 				77BA9C1D2C296A960045BA5B /* Goal Page.swift */,
 				77BFA6192C36E8830072B92E /* Settings.swift */,
@@ -356,7 +359,6 @@
 			);
 			mainGroup = 7705B7272C00621500111DBE;
 			packageReferences = (
-				77DA52852C296F370021EC9A /* XCRemoteSwiftPackageReference "SwiftPersistence" */,
 			);
 			productRefGroup = 7705B7312C00621500111DBE /* Products */;
 			projectDirPath = "";
@@ -426,6 +428,7 @@
 				314BCB0F2C73369200F43C37 /* StartingTabView.swift in Sources */,
 				77BA9C1E2C296A960045BA5B /* Goal Page.swift in Sources */,
 				77B0B38B2C60C15E002102AA /* Workout.swift in Sources */,
+				B1C2D3E42F10000100000001 /* WorkoutPlanner.swift in Sources */,
 				A9793E6A2C734063008BF2BC /* CustomTabBar.swift in Sources */,
 				A9E411142C8EE6E50014AF7A /* Statistics.swift in Sources */,
 				3134209B2C5C838200AEF150 /* Scheduling .swift in Sources */,
@@ -482,6 +485,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = "nAPPfa widget/nAPPfa widget.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = Q5X3YFN7M4;
@@ -509,6 +513,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = "nAPPfa widget/nAPPfa widget.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = Q5X3YFN7M4;
@@ -656,6 +661,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Napha Training App/Napha Training App.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Napha Training App/Preview Content\"";
@@ -687,6 +693,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Napha Training App/Napha Training App.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Napha Training App/Preview Content\"";
@@ -834,16 +841,6 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		77DA52852C296F370021EC9A /* XCRemoteSwiftPackageReference "SwiftPersistence" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/cheesetan/SwiftPersistence";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.1.2;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
 	};
 	rootObject = 7705B7282C00621500111DBE /* Project object */;
 }

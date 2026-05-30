@@ -3,242 +3,148 @@ import SwiftUI
 struct Age_Gender: View {
     @Binding var start: Bool
     @Binding var info: data
-    @State var Sex = true // Default to Male
-    @State var birthdate = Date() // Default to today's date
     @Binding var ageFirstTime: Bool
     @Binding var ageSheet: Bool
-    @State var GenderSheet = false
-    @State private var selectedDate = Date()
-    
-    let baseStartYear = 2005
-    let baseEndYear = 2012
-    let calendar = Calendar.current
+
+    @State private var sex = true
+    @State private var birthdate = Date()
     @Environment(\.dismiss) private var dismiss
-    func calculatedStartDate() -> Date {
+
+    private let baseStartYear = 2005
+    private let baseEndYear = 2012
+    private let calendar = Calendar.current
+
+    private var age: Int {
+        calendar.dateComponents([.year], from: birthdate, to: Date()).year ?? 0
+    }
+
+    var body: some View {
+        Group {
+            if start {
+                OnboardingStepContainer(subtitle: "Profile") {
+                    profileForm
+                }
+            } else {
+                NavigationStack {
+                    Form {
+                        Section {
+                            AppLogoHeader(subtitle: "Profile")
+                        }
+                        .listRowBackground(Color.clear)
+
+                        Section {
+                            profileFields
+                        }
+                    }
+                    .scrollContentBackground(.hidden)
+                    .background(Color(.systemGroupedBackground))
+                    .navigationTitle("Profile")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Button("Done") {
+                                saveProfile()
+                                dismiss()
+                            }
+                            .fontWeight(.semibold)
+                        }
+                    }
+                }
+            }
+        }
+        .background(Color(.systemGroupedBackground))
+        .onAppear(perform: loadProfile)
+    }
+
+    private var profileForm: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            profileFields
+        }
+    }
+
+    @ViewBuilder
+    private var profileFields: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text("About Me")
+                .font(.title3.weight(.bold))
+
+            DatePicker(
+                "Birthdate",
+                selection: $birthdate,
+                in: calculatedStartDate()...calculatedEndDate(),
+                displayedComponents: .date
+            )
+            .onChange(of: birthdate) {
+                saveProfile()
+            }
+
+            Picker("Sex", selection: sexBinding) {
+                Text("Female").tag(false)
+                Text("Male").tag(true)
+            }
+            .pickerStyle(.segmented)
+
+            HStack {
+                Text("Age")
+                Spacer()
+                Text("\(age)")
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .padding(18)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(.background, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+    }
+
+    private var sexBinding: Binding<Bool> {
+        Binding {
+            sex
+        } set: { newValue in
+            sex = newValue
+            info.Gender = newValue
+            UserDefaults.standard.set(newValue, forKey: AppKeys.sex)
+        }
+    }
+
+    private func calculatedStartDate() -> Date {
         let currentYear = calendar.component(.year, from: Date())
-        let shift = currentYear - 2024 // Calculate the difference between current year and 2024 (base year)
-        
-        // Start date: January 1st, 2005 + shift (if current year is 2024, shift is -1, so 2005 stays unchanged)
+        let shift = currentYear - 2024
         return calendar.date(from: DateComponents(year: baseStartYear + shift, month: 1, day: 1)) ?? Date()
     }
-    
-    // Calculate the dynamic end date: December 31, 2012 shifted by the same year difference
-    func calculatedEndDate() -> Date {
+
+    private func calculatedEndDate() -> Date {
         let currentYear = calendar.component(.year, from: Date())
-        let shift = currentYear - 2024 // Calculate the difference between current year and 2024
-        
-        // End date: December 31st, 2012 + shift
+        let shift = currentYear - 2024
         return calendar.date(from: DateComponents(year: baseEndYear + shift, month: 12, day: 31)) ?? Date()
     }
-    
-    
-    var dateFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .medium
-        return dateFormatter
-    }()
-    
-    var age: Int {
-        let calendar = Calendar.current
-        let now = Date()
-        let ageComponents = calendar.dateComponents([.year], from: birthdate, to: now)
-        return ageComponents.year ?? 0
-    }
-    
-    var body: some View {
-          
-        VStack(alignment:.leading) {
-           
-            Text("About Me")
-                .font(.title)
-                .bold()
-                .padding(.bottom)
-                .offset(x: 20)
-                .offset(x: 10)
-            
-            Form {
-                DatePicker("Birthdate", selection: $birthdate, in: calculatedStartDate()...calculatedEndDate(), displayedComponents: .date)
-                    .onChange(of: birthdate) {
-                        let calculatedAge = age
-                        UserDefaults.standard.setValue(birthdate, forKey: "birthdate")
-                        UserDefaults.standard.setValue(calculatedAge, forKey: "age")
-                    }
-                    .onAppear() { selectedDate = calculatedStartDate()}
-                
-                HStack() {
-                    Text("Sex:")
-                    Spacer()
-                    Button(action: {
-                        GenderSheet.toggle()
-                    }) {
-                        Text(info.Gender ? "Male" : "Female") // Display saved sex
-                            .foregroundColor(.black)
-                    }
-                    .sheet(isPresented: $GenderSheet) {
-                        GenderSelectionView(info: $info, sex: $Sex)
-                            .presentationDetents([.fraction(0.45)])
-                            .presentationDragIndicator(.visible)
-                    }
-                    .labelsHidden()
-                    .tint(.black)
-                    .offset(x: -10)
-                }
-                
-                if (!start) {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Text("Save")
-                            .foregroundStyle(.blue)
-                    }
-                }
-               
-            }
-            .onAppear {
-                // Load stored data if it exists
-                if let storedSex = UserDefaults.standard.object(forKey: "sex") as? Bool {
-                    Sex = storedSex
-                }
-                if let storedBirthdate = UserDefaults.standard.object(forKey: "birthdate") as? Date {
-                    birthdate = storedBirthdate
-                }
-                // Store birthdate and sex on appear
-                UserDefaults.standard.setValue(birthdate, forKey: "birthdate")
-                UserDefaults.standard.setValue(Sex, forKey: "sex")
-                
-                let calculatedAge = age
-                UserDefaults.standard.setValue(calculatedAge, forKey: "age")
-                print("Age: \(calculatedAge), Sex: \(Sex)")
-            }
-        }
-    }
-    
-    struct GenderSelectionView: View {
-        @Binding var info: data
-        @Environment(\.presentationMode) var presentationMode
-        @State private var selectedGender: String? = "Male"
-        @Binding var sex: Bool
-        
-        var body: some View {
-            VStack {
-                Text("Your sex")
-                    .font(.headline)
-                Divider()
-                
-                HStack {
-                    GenderButton(gender: "Female", selectedGender: $selectedGender)
-                        .onChange(of: selectedGender){
-                            print(selectedGender ?? "none provided")
-                            if selectedGender == "Female"{
-                                sex = false
-                                info.Gender = false
-                                print("now female")
-                            } else {
-                                sex = true
-                                info.Gender = true
-                                print("now male")
-                            }
-                        }
-                
-                    GenderButton(gender: "Male", selectedGender: $selectedGender)
-                        .onChange(of: selectedGender){
-                            print(selectedGender ?? "none provided")
-                            if selectedGender == "Female"{
-                                sex = false
-                                info.Gender = false
-                                print("now female")
-                            } else {
-                                sex = true
-                                info.Gender = true
-                                print("now male")
-                            }
-                        }
-                }
-                .padding(.vertical)
-                
-                Button{
-                    if selectedGender == "Male" {
-                        info.Gender = true
-                        sex = true
-                    } else if selectedGender == "Female" {
-                        info.Gender = false
-                        sex = false
-                    }
-                    print(info.Gender)
-                    
-                } label: {
-                }
-                Button{
-                    
-                    presentationMode.wrappedValue.dismiss()
-                    print(info.Gender)
-                    
-                } label: {
-                    ZStack{
-                        Text("Save")
-                            .foregroundStyle(.white)
-                            .font(.headline)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.blue)
-                            .foregroundColor(.white)
-                            .cornerRadius(20)
-                            .padding(.horizontal)
-                            .padding(.bottom)
-                            .background(Color.white)
-                            .cornerRadius(20)
-                            .padding(.horizontal)
-                            .contentShape(Rectangle())
-                        
-                    }
-                }
-            }
-        }
-        
-    }
-}
 
-
-struct GenderButton: View {
-    var gender: String
-    @Binding var selectedGender: String?
-    
-    var isSelected: Bool {
-        selectedGender == gender
+    private func loadProfile() {
+        let defaults = UserDefaults.standard
+        sex = defaults.object(forKey: AppKeys.sex) as? Bool ?? info.Gender
+        let startDate = calculatedStartDate()
+        let endDate = calculatedEndDate()
+        let storedBirthdate = defaults.object(forKey: AppKeys.birthdate) as? Date ?? startDate
+        birthdate = min(max(storedBirthdate, startDate), endDate)
+        saveProfile()
     }
-    
-    var body: some View {
-        Button(action: {
-            withAnimation {
-                selectedGender = gender
-            }
-        }) {
-            VStack {
-                Image(systemName: isSelected ? "person.fill" : "person")
-                    .font(.system(size: 40))
-                    .foregroundColor(isSelected ? .white : .blue)
-                
-                Text(gender)
-                    .font(.headline)
-                    .foregroundColor(isSelected ? .white : .blue)
-            }
-            .padding()
-            .frame(width: 155, height: 100)
-            .background(isSelected ? Color.blue : Color.white)
-            .cornerRadius(10)
-            .overlay(
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(Color.blue, lineWidth: 2)
-            )
-        }
+
+    private func saveProfile() {
+        info.Gender = sex
+        info.Age = age
+        UserDefaults.standard.set(sex, forKey: AppKeys.sex)
+        UserDefaults.standard.set(birthdate, forKey: AppKeys.birthdate)
+        UserDefaults.standard.set(age, forKey: AppKeys.age)
     }
 }
 
 struct Age_Gender_Previews: PreviewProvider {
     static var previews: some View {
-
-
-        Age_Gender(start: .constant(false), info:.constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPFA_Date: Date.now, Goals: [])), ageFirstTime: .constant(false), ageSheet: .constant(false))
-
+        Age_Gender(
+            start: .constant(false),
+            info: .constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPFA_Date: Date.now, Goals: [])),
+            ageFirstTime: .constant(false),
+            ageSheet: .constant(false)
+        )
     }
 }
