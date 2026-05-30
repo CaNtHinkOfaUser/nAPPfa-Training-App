@@ -1,317 +1,453 @@
 import SwiftUI
+
 struct Goal_Page: View {
-    @State var clear = false
     @Environment(\.dismiss) private var dismiss
+
     @Binding var start: Bool
-    @State private var exercises = ["Sit Ups", "Standing Broad Jump", "Sit & Reach", "Inclined Pull Ups", "Shuttle Run", "2.4km Run"]
-    
-    @State private var endCalc: String = ""
-    @State private var autoCalc: Int = 0
     @Binding var info: data
     @Binding var Sex: Bool
     @Binding var Age: Int
     @Binding var GoalSheet: Bool
-    @State private var prev = ["", "", "", "", "", ""]
-    @State private var targ = ["", "", "", "", "", ""]
-    @State private var Nil = [false, false,  false, false, false, false]
-    @State private var Goals: [[String]] = []
-    @State private var grades = ["A", "B", "C", "D", "E", "F", "NA"]
-    @State var showAlert = false
-    @State private var sitUps: Float = 0.0
-    
+
+    @State private var previousGrades = Array(repeating: "", count: NAPFAStation.allCases.count)
+    @State private var targetGrades = Array(repeating: "", count: NAPFAStation.allCases.count)
+    @State private var enabledStations = Array(repeating: false, count: NAPFAStation.allCases.count)
+    @State private var goalDrafts: [GoalDraft] = []
+    @State private var showClearAlert = false
+    @State private var showResultHelp = false
+    @State private var showAutoCalcHelp = false
+    @State private var showDeleteHelp = false
+    @State private var showAutoCalc = false
+
+    private let gradeOptions = ["Not set", "A", "B", "C", "D", "E", "F", "NA"]
+
     var body: some View {
-        NavigationStack{
-            ScrollView {
-                VStack {
-                    Text("GOALS")
-                        .font(.system(size: 60))
-                        .bold()
-                        .offset(y: 1)
-                    Image("TargetBoard")
-                        .resizable()
-                        .scaleEffect(0.5)
-                        .offset(y: 70)
-                        .position(x: 180)
-                    
-                    Link("Napfa Standards: Male", destination: URL(string: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhpo5erUUSr2VDuBhYj_7rU-CH1IXq8kM3VHRpt9CrdKDSy9-AUBk6xIjO0XU_F7Pzy7VvZlbKMhJMwXKeshhxmefpUpcbYwqG4dIJ9ZBXX5KyOJHbkKTVeX5wMYMqAVOWGirlwe5Ez8dc/s1600/napfa+sec_0001.jpg")!)
-                        .offset(y: -200)
-                    Link("Napfa Standards: Female", destination: URL(string: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiZlF2X2fKqbhaLL3Y49sbaRuk8Thxa1mAtQ0ZSqrVn6w1yAyN2LXgWXvFP9EohhreOH-FpXI9b_XB8PUQgEpZkmBIz_LDLZGzD35gq4_Vc_oWTDNwBrS3-TBFRgwlAfRBUBlRK5Sbypns/s1600/napfa+sec_0002.jpg")!)
-                        .offset(y: -200)
-                    
-                    NavigationLink(destination: AutoCalcView(info: $info), label: {
-                        
-                        Text(Image(systemName: "info.circle"))
-                            .baselineOffset(1)
-                        +
-                        Text(" Do you want to calculate your grade?")
-                            .bold()
-                    })
-                    .offset(y: -200)
-                    Text("RESULTS:")
-                        .font(.system(size: 20))
-                        .foregroundStyle(.gray)
-                        .offset(y: -90)
-                        .position(x: 70)
-                        .bold()
-                    
-                    Grid{
-                        
-                        let offset = Nil.sorted { $0 && !$1 }[0]
-                        
-                        GridRow{
-                            Text("Previous\nGrade:")
-                                .font(.system(size: 17))
-                                .offset(x: 180)
-                                .padding()
-                                .fixedSize(horizontal: true, vertical: true)
-                                .multilineTextAlignment(.center)
-                                .gridColumnAlignment(.center)
-                                .lineLimit(2)
-                            Text("Target\nGrade:")
-                                .font(.system(size: 17))
-                                .offset(x: 180)
-                                .padding()
-                                .multilineTextAlignment(.center)
-                                .gridColumnAlignment(.leading)
-                                .lineLimit(2)
-                        }
-                        
-                        ForEach(exercises.indices, id:\.self){ index in
-                            GridRow{
-                                Button{
-                                    withAnimation{
-                                        Nil[index].toggle()
-                                        UserDefaults.standard.setValue(Nil, forKey: "Lin")
-                                    }
-                                    targ[index] = Nil[index] ? "": "false"
-                                    prev[index] = Nil[index] ? "": "false"
-                                    UserDefaults.standard.setValue(prev, forKey: "prev")
-                                    UserDefaults.standard.setValue(targ, forKey: "targ")
-                                } label: {
-                                    Label("", systemImage:
-                                            Nil[index] ? "checkmark.square.fill" : "checkmark.square")
-                                    .font(.system(size: 20))
-                                }
-                                .offset(x: offset ? -23 : -23)
-                                
-                                Text(exercises[index])
-                                    .multilineTextAlignment(.center)
-                                    .fixedSize(horizontal: false, vertical: true)
-                                    .frame(width: 100)
-                                    .offset(x: offset ? -50 : -50)
-                                
-                                if Nil[index]{
-                                    Picker("prev", selection: $prev[index]){
-                                        ForEach(grades, id: \.self){ grade in
-                                            Text(grade).tag(grade)
-                                        }
-                                    }
-                                    .offset(x: -10)
-                                    .onChange(of: prev[index]){
-                                        UserDefaults.standard.setValue(prev, forKey: "prev")
-                                    }
-                                    
-                                    Picker("targ", selection: $targ[index]){
-                                        ForEach(grades, id: \.self){ grade in
-                                            Text(grade).tag(grade)
-                                        }
-                                    }
-                                    .offset(x: 20)
-                                    .onChange(of: targ[index]){
-                                        UserDefaults.standard.setValue(targ, forKey: "targ")
-                                        
-                                    }
-                                    
-                                    .gridCellAnchor(.trailing)
-                                }
-                                Spacer()
-                            }
-                            .padding(.vertical, 10)
-                        }
+        Group {
+            if start {
+                OnboardingStepContainer(subtitle: "Goals") {
+                    goalFormList
+                }
+            } else {
+                NavigationStack {
+                    Form {
+                        standardsSection
+                        resultSection
+                        customGoalsSection
                     }
-                    .offset(y: -150)
-                    
-                    Grid{
-                        Section{
-                            ForEach(Goals.indices, id: \.self){ index in
-                                HStack{
-                                    TextField(text: $Goals[index][0]){
-                                        Text("input goal for exercise...")
-                                    }
-                                    .onChange(of: Goals[index][0]){
-                                        UserDefaults.standard.setValue(Goals, forKey: "sGoals")
-                                    }
-                                    .textFieldStyle(.roundedBorder)
-                                    .offset(x: 30)
-                                    
-                                    Picker("exercise", selection: $Goals[index][1]){
-                                        ForEach(exercises, id: \.self){ exercise in
-                                            Text(exercise).tag(exercise)
-                                        }
-                                        .onChange(of: Goals[index][1]){
-                                            UserDefaults.standard.setValue(Goals, forKey: "sGoals")
-                                            
-                                        }
-                                    }
-                                }
-                                .padding(.horizontal, 30)
-                                .padding(.vertical, -30)
-                            }
-                            
-                            .padding(.vertical)
-                            .offset(y: -140)
-                            
-                            Button{
-                                Goals.append(["", "Sit Ups"])
-                            } label: {
-                                ZStack{
-                                    RoundedRectangle(cornerRadius: 10.0)
-                                        .frame(width: 150,height: 50)
-                                    Text("Create New Goal")
-                                        .foregroundColor(.white)
-                                }
-                            }
-                            .offset(y: -130)
-                            
-                            
-                            Button{
-                                clear = true
-                            } label: {
-                                ZStack{
-                                    RoundedRectangle(cornerRadius: 10.0)
-                                        .frame(width: 150,height: 50)
-                                    Text("Clear all goals")
-                                        .foregroundColor(.white)
-                                }
-                            }
-                            .offset(y: -130)
-                            .alert(isPresented: $clear){
-                                Alert(
-                                    title: Text("Clear goals"),
-                                    message: Text("Are you would like to clear goals?"),
-                                    primaryButton: .destructive(Text("Yes")){
-                                        Goals = []
-                                    },
-                                    secondaryButton: .cancel(Text("No"))
-                                )
-                            }
-                            .onChange(of: Goals){
-                                UserDefaults.standard.setValue(Goals, forKey: "sGoals")
-                                
+                    .scrollContentBackground(.hidden)
+                    .navigationTitle("Goal Setting")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .topBarLeading) {
+                            Button("Cancel") {
+                                dismiss()
                             }
                         }
-                    }
-                    if(!start){
-                        Button{
-                            info.targ = targ
-                            info.prev = prev
-                            info.Goals = Goals
-                            dismiss()
-                            
-                            
-                        } label: {
-                            ZStack{
-                                RoundedRectangle(cornerRadius: 20)
-                                    .fill(Color(.green))
-                                    .frame(width: 10, height: 20)
-                                Text("Save")
-                                    .foregroundStyle(.white)
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Button("Save") {
+                                saveAll()
+                                dismiss()
                             }
-                        }
-                        .offset(y: 0)// Add padding to the top
-                        .padding()
-                        .ignoresSafeArea(.all, edges: .top)
-                        .background(Color.green)
-                        .cornerRadius(20)
-                        .foregroundColor(.white)
-                        .font(.headline)
-                        
-                        // Ignore safe area at the top
-                    }
-                    else{
-                        
-                        
-                        
-                        VStack{
-                        }
-                        .onChange(of: targ) {
-                            info.targ = targ
-                        }
-                        .onChange(of: prev) {
-                            info.prev = prev
-                        }
-                        .onChange(of: Goals) {
-                            info.Goals = Goals
+                            .fontWeight(.semibold)
                         }
                     }
                 }
             }
-            
-            .alert(isPresented: $showAlert, content: {
-                Alert(title: Text("Changing the results will alter workout programme."),
-                      primaryButton: .destructive(Text("Save"), action:  {
-                    info.targ = targ
-                    info.prev = prev
-                    info.Goals = Goals
-                    dismiss()
-                    
-                }),
-                      secondaryButton: .cancel())
-            })
-            .onAppear{
-                if let storedSex = UserDefaults.standard.object(forKey: "sex") as? Bool {
-                    info.Gender = storedSex
-                    
-                }
-                if let storedAge = UserDefaults.standard.object(forKey: "age") as? Int{
-                    info.Age = storedAge
-                }
-                if let storedSitUps = UserDefaults.standard.object(forKey: "storedSit") as? Float{
-                    sitUps = storedSitUps
-                }
-                UserDefaults.standard.setValue(sitUps, forKey: "storedSit")
-                
-                if let storedPrev = UserDefaults.standard.object(forKey: "prev") as? [String] {
-                    prev = storedPrev
-                }
-                UserDefaults.standard.setValue(prev, forKey: "prev")
-                
-                if let storedTarg = UserDefaults.standard.object(forKey: "targ") as? [String] {
-                    targ = storedTarg
-                }
-                UserDefaults.standard.setValue(targ, forKey: "targ")
-                
-                if let Lin = UserDefaults.standard.object(forKey: "Lin") as? [Bool] {
-                    Nil = Lin
-                }
-                UserDefaults.standard.setValue(Nil, forKey: "Lin")
-                
-                if let storedGoals = UserDefaults.standard.object(forKey: "sGoals") as? [[String]] {
-                    Goals = storedGoals
-                }
-                UserDefaults.standard.setValue(Goals, forKey: "sGoals")
+        }
+        .background(Color(.systemGroupedBackground))
+            .sheet(isPresented: $showResultHelp) {
+                HelpTipSheet(
+                    title: "Previous and target results",
+                    message: "Previous results tell the app your starting point. Target results tell it how hard to train each station. Enable a station, then pick grades from the menus."
+                )
             }
-            
+            .sheet(isPresented: $showAutoCalcHelp) {
+                HelpTipSheet(
+                    title: "Auto calculation",
+                    message: "Auto calculation converts a raw result into a grade using your saved age and sex. Use it when you know your score but not the letter grade."
+                )
+            }
+            .sheet(isPresented: $showDeleteHelp) {
+                HelpTipSheet(
+                    title: "Delete goals",
+                    message: "Swipe left on a saved goal to delete it, or use Clear All to remove every custom goal at once."
+                )
+            }
+            .alert("Clear all goals?", isPresented: $showClearAlert) {
+                Button("Clear", role: .destructive) {
+                    goalDrafts = []
+                    saveAll()
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("This removes your custom goal list.")
+            }
+            .onAppear(perform: loadData)
+            .onChange(of: previousGrades) {
+                saveAll()
+            }
+            .onChange(of: targetGrades) {
+                saveAll()
+            }
+            .onChange(of: enabledStations) {
+                saveAll()
+            }
+            .onChange(of: goalDrafts) {
+                saveAll()
+            }
+            .sheet(isPresented: $showAutoCalc) {
+                AutoCalcView(info: $info)
+            }
+    }
+
+    private var goalFormList: some View {
+        VStack(spacing: 16) {
+            standardsCardOnboarding
+            resultsCardOnboarding
+            customGoalsCardOnboarding
         }
-        
-        .alert(isPresented: $clear){
-            Alert(
-                title: Text("Clear goals"),
-                message: Text("Are you would like to clear goals?"),
-                primaryButton: .destructive(Text("Yes")){
-                    Goals = []
-                },
-                secondaryButton: .cancel(Text("No"))
-            )
+    }
+
+    private var standardsCardOnboarding: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Standards")
+                .font(.title3.weight(.bold))
+            Link(destination: URL(string: "https://www.napfatest.com/napfa-standards-2026")!) {
+                Label("Standards calculator", systemImage: "safari")
+            }
+            Link(destination: URL(string: "https://www.stgabrielssec.moe.edu.sg/files/Sports%20CCA/NAPFA%20Standards.pdf")!) {
+                Label("Standards PDF reference", systemImage: "doc.text")
+            }
+            Button {
+                showAutoCalc = true
+            } label: {
+                HStack {
+                    Label("Auto Calculation", systemImage: "function")
+                    Spacer()
+                    Button {
+                        showAutoCalcHelp = true
+                    } label: {
+                        Image(systemName: "questionmark.circle")
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .buttonStyle(.plain)
         }
+        .padding(18)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(.background, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+    }
+
+    private var resultsCardOnboarding: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("Previous and Target Results")
+                    .font(.title3.weight(.bold))
+                Spacer()
+                Button { showResultHelp = true } label: {
+                    Image(systemName: "questionmark.circle")
+                }
+                .buttonStyle(.plain)
+            }
+            ForEach(NAPFAStation.allCases.indices, id: \.self) { index in
+                stationGoalRow(index)
+            }
+        }
+        .padding(18)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(.background, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+    }
+
+    private var customGoalsCardOnboarding: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("My Goals")
+                    .font(.title3.weight(.bold))
+                Spacer()
+                Button { showDeleteHelp = true } label: {
+                    Image(systemName: "questionmark.circle")
+                }
+                .buttonStyle(.plain)
+            }
+            if goalDrafts.isEmpty {
+                Text("Add a goal below to track it on Home.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+            List {
+                ForEach($goalDrafts) { $goal in
+                    VStack(alignment: .leading, spacing: 8) {
+                        TextField("Goal", text: $goal.text, prompt: Text("Example: 45 sit-ups"))
+                        Picker("Station", selection: $goal.station) {
+                            ForEach(NAPFAStation.allCases) { station in
+                                Text(station.rawValue).tag(station.rawValue)
+                            }
+                        }
+                        .pickerStyle(.menu)
+                    }
+                }
+                .onDelete(perform: deleteGoals)
+            }
+            .listStyle(.plain)
+            .frame(minHeight: max(120, CGFloat(goalDrafts.count) * 88))
+            Button {
+                goalDrafts.append(GoalDraft())
+                saveAll()
+            } label: {
+                Label("Add Goal", systemImage: "plus.circle.fill")
+            }
+        }
+        .padding(18)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(.background, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+    }
+
+    private var standardsSection: some View {
+        Section {
+            Link(destination: URL(string: "https://www.napfatest.com/napfa-standards-2026")!) {
+                Label("Standards calculator", systemImage: "safari")
+            }
+
+            Link(destination: URL(string: "https://www.stgabrielssec.moe.edu.sg/files/Sports%20CCA/NAPFA%20Standards.pdf")!) {
+                Label("Standards PDF reference", systemImage: "doc.text")
+            }
+
+            NavigationLink {
+                AutoCalcView(info: $info)
+            } label: {
+                HStack {
+                    Label("Auto Calculation", systemImage: "function")
+                    Spacer()
+                    Button {
+                        showAutoCalcHelp = true
+                    } label: {
+                        Image(systemName: "questionmark.circle")
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Explain auto calculation")
+                }
+            }
+        } header: {
+            Text("Standards")
+        }
+    }
+
+    private var resultSection: some View {
+        Section {
+            ForEach(NAPFAStation.allCases.indices, id: \.self) { index in
+                stationGoalRow(index)
+            }
+        } header: {
+            HStack {
+                Text("Previous and Target Results")
+                Spacer()
+                Button {
+                    showResultHelp = true
+                } label: {
+                    Image(systemName: "questionmark.circle")
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Explain previous and target results")
+            }
+        }
+    }
+
+    private var customGoalsSection: some View {
+        Section {
+            if goalDrafts.isEmpty {
+                ContentUnavailableView("No custom goals", systemImage: "target")
+                    .frame(maxWidth: .infinity)
+            }
+
+            ForEach($goalDrafts) { $goal in
+                VStack(alignment: .leading, spacing: 10) {
+                    TextField("Goal", text: $goal.text, prompt: Text("Example: 45 sit-ups"))
+                        .textInputAutocapitalization(.sentences)
+
+                    Picker("Station", selection: $goal.station) {
+                        ForEach(NAPFAStation.allCases) { station in
+                            Text(station.rawValue).tag(station.rawValue)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                }
+                .padding(.vertical, 6)
+            }
+            .onDelete(perform: deleteGoals)
+
+            Button {
+                goalDrafts.append(GoalDraft())
+                saveAll()
+            } label: {
+                Label("Add Goal", systemImage: "plus.circle.fill")
+            }
+
+            if !goalDrafts.isEmpty {
+                Button(role: .destructive) {
+                    showClearAlert = true
+                } label: {
+                    Label("Clear All", systemImage: "trash")
+                }
+            }
+        } header: {
+            HStack {
+                Text("My Goals")
+                Spacer()
+                Button {
+                    showDeleteHelp = true
+                } label: {
+                    Image(systemName: "questionmark.circle")
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Explain goal deletion")
+            }
+        }
+    }
+
+    private func stationGoalRow(_ index: Int) -> some View {
+        let station = NAPFAStation.allCases[index]
+
+        return VStack(alignment: .leading, spacing: 12) {
+            Toggle(isOn: bindingForEnabled(index)) {
+                HStack(spacing: 12) {
+                    Image(systemName: station.icon)
+                        .font(.system(size: 30, weight: .semibold))
+                        .frame(width: 42, height: 42)
+                        .foregroundStyle(.blue)
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(station.rawValue)
+                            .font(.body.weight(.semibold))
+                        Text(station.shortTip)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
+
+            if enabledStations[index] {
+                HStack(spacing: 12) {
+                    Picker("Previous", selection: bindingForGrade($previousGrades, index)) {
+                        ForEach(gradeOptions, id: \.self) { grade in
+                            Text(grade).tag(grade)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    .frame(maxWidth: .infinity)
+
+                    Picker("Target", selection: bindingForGrade($targetGrades, index)) {
+                        ForEach(gradeOptions, id: \.self) { grade in
+                            Text(grade).tag(grade)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    .frame(maxWidth: .infinity)
+                }
+            }
+        }
+        .padding(.vertical, 6)
+    }
+
+    private func bindingForEnabled(_ index: Int) -> Binding<Bool> {
+        Binding {
+            enabledStations.indices.contains(index) ? enabledStations[index] : false
+        } set: { newValue in
+            guard enabledStations.indices.contains(index) else { return }
+            enabledStations[index] = newValue
+            if !newValue {
+                previousGrades[index] = ""
+                targetGrades[index] = ""
+            }
+        }
+    }
+
+    private func bindingForGrade(_ grades: Binding<[String]>, _ index: Int) -> Binding<String> {
+        Binding {
+            guard grades.wrappedValue.indices.contains(index) else { return "Not set" }
+            return displayGrade(grades.wrappedValue[index])
+        } set: { newValue in
+            guard grades.wrappedValue.indices.contains(index) else { return }
+            grades.wrappedValue[index] = storedGrade(newValue)
+        }
+    }
+
+    private func loadData() {
+        let defaults = UserDefaults.standard
+        previousGrades = normalizeGrades(defaults.object(forKey: AppKeys.previousGrades) as? [String] ?? info.prev)
+        targetGrades = normalizeGrades(defaults.object(forKey: AppKeys.targetGrades) as? [String] ?? info.targ)
+
+        let storedEnabled = defaults.object(forKey: AppKeys.enabledGrades) as? [Bool]
+        enabledStations = normalizeEnabled(storedEnabled)
+
+        for index in NAPFAStation.allCases.indices {
+            if !previousGrades[index].isEmpty || !targetGrades[index].isEmpty {
+                enabledStations[index] = true
+            }
+        }
+
+        let savedGoals = defaults.object(forKey: AppKeys.goals) as? [[String]] ?? info.Goals
+        goalDrafts = GoalDraft.fromSaved(savedGoals)
+        saveAll()
+    }
+
+    private func saveAll() {
+        previousGrades = normalizeGrades(previousGrades)
+        targetGrades = normalizeGrades(targetGrades)
+        enabledStations = normalizeEnabled(enabledStations)
+
+        let savedGoals = GoalDraft.encode(goalDrafts)
+        info.prev = previousGrades
+        info.targ = targetGrades
+        info.Goals = savedGoals
+
+        let defaults = UserDefaults.standard
+        defaults.set(previousGrades, forKey: AppKeys.previousGrades)
+        defaults.set(targetGrades, forKey: AppKeys.targetGrades)
+        defaults.set(enabledStations, forKey: AppKeys.enabledGrades)
+        defaults.set(savedGoals, forKey: AppKeys.goals)
+
+        let selectedDays = defaults.object(forKey: AppKeys.selectedDays) as? [Int] ?? []
+        let selectedTimes = defaults.object(forKey: AppKeys.selectedTimes) as? [Date] ?? []
+        AppState.persistWidgetSummary(selectedDays: selectedDays, selectedTimes: selectedTimes)
+    }
+
+    private func deleteGoals(at offsets: IndexSet) {
+        goalDrafts.remove(atOffsets: offsets)
+        saveAll()
+    }
+
+    private func normalizeGrades(_ values: [String]) -> [String] {
+        var copy = values
+        if copy.count < NAPFAStation.allCases.count {
+            copy.append(contentsOf: Array(repeating: "", count: NAPFAStation.allCases.count - copy.count))
+        }
+        return Array(copy.prefix(NAPFAStation.allCases.count)).map { storedGrade(displayGrade($0)) }
+    }
+
+    private func normalizeEnabled(_ values: [Bool]?) -> [Bool] {
+        var copy = values ?? Array(repeating: false, count: NAPFAStation.allCases.count)
+        if copy.count < NAPFAStation.allCases.count {
+            copy.append(contentsOf: Array(repeating: false, count: NAPFAStation.allCases.count - copy.count))
+        }
+        return Array(copy.prefix(NAPFAStation.allCases.count))
+    }
+
+    private func displayGrade(_ value: String) -> String {
+        gradeOptions.contains(value) ? value : "Not set"
+    }
+
+    private func storedGrade(_ value: String) -> String {
+        value == "Not set" || value == "false" ? "" : value
     }
 }
 
-
-
-
 #Preview {
-    Goal_Page(start: .constant(false), info: .constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPFA_Date: Date.now, Goals: [])), Sex: .constant(true), Age: .constant(0), GoalSheet: .constant(false), showAlert: false)
+    Goal_Page(
+        start: .constant(false),
+        info: .constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPFA_Date: Date.now, Goals: [])),
+        Sex: .constant(true),
+        Age: .constant(0),
+        GoalSheet: .constant(false)
+    )
 }
-
-

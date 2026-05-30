@@ -2,329 +2,448 @@
 //  Workout.swift
 //  Napha Training App
 //
-//  Created by Kui Jun on 1/8/24.
-//
 
 import SwiftUI
 
+final class WorkoutSessionState: ObservableObject {
+    @Published var locksTabBar = false
+}
+
 struct Workout: View {
-    
+    @EnvironmentObject private var workoutSession: WorkoutSessionState
     @Binding var info: data
-    @State var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-    @State private var exercises = ["Sit Ups", "Standing Broad Jump", "Sit & Reach", "Inclined Pull Ups", "Shuttle Run", "2.4km Run"]
-    @State var currentExercise = ["",[0],0]
-    @State var exerciseSet = [["",[0],0],["",[0],0],0]
-    @State var exerciseNum = -1
-    @State var rest = -10
-    @State var done = false
-    @State var everythingDone = false
-    @State var start = [false, ""]
-    @State var totalTime = 0
-    @State var breakAlert = false
-    @State var weeksRange = [0,0]
-    //    Crunches, Leg Lifts, Seated Knee-ups, Sit-ups, Reverse Crunches, Leg Lifts with Hip Raises, U-Crunches
-    @State var weeksSinceDownload = 0 - Int((UserDefaults.standard.object(forKey: "DOWNLOADDATE") as? Date)!.timeIntervalSinceNow / 604800) + 1
-    
-    
-    //pull combinded components
-    //days since downloaded
-    
-    @State var SitupsP = 0
-    @State var SitupsT = 0
-    @State private var Situps = [
-        1:[["Crunches", 10], ["Leg Lifts", 10], ["Seated Knee-ups", 10], ["Sit-ups", "Maximum"], 3, 90],
-        2:[["Crunches", 12], ["Reverse Crunches", 12], ["Seated Knee-ups", 12], ["Sit-ups", "Maximum"], 3, 90],
-        3:[["U-Crunches", 15], ["Leg Lifts", 15], ["Leg Lifts with Hip Raises", 15], ["Sit-ups", "Maximum"], 3, 90],
-        4:[["Crunches", 15], ["Seated Knee-ups", 15], ["Leg Lifts", 15], ["Sit-ups", "Maximum"], 3, 90],
-        5:[["Crunches", 10], ["Seated Knee-ups", 10], ["Leg Lifts", 10], ["Sit-ups", "Maximum"], 3, 60],
-        6:[["Reverse Crunches", 10], ["Reverse Crunches", 5], ["Leg Lifts with Hip Raises", 10], ["Leg Lifts with Hip Raises", 5], ["U-Crunches", 10], ["U-Crunches", 5], ["Sit-ups", "Maximum"], 7, 180],
-        7:[["Crunches", 10], ["Crunches", 10], ["Reverse Crunchs", 10], ["Reverse Crunchs", 10], ["Leg Lifts", 10], ["Leg Lifts", 10], ["Sit-ups", "Maximum"], 6, 180],
-        8:[["Seated Knee-ups", 10], ["Seated Knee-ups", 10], ["U-Crunches", 10], ["U-Crunches", 10], ["Crunches", 10], ["Crunches", 10], ["Leg Lifts", 10], ["Leg Lifts", 10], ["Sit-ups", "Maximum"], 8, 180],
-        9:[["Reverse Crunches", 15], ["Reverse Crunches", 15], ["Leg Lifts with Hip Raises", 15], ["Leg Lifts with Hip Raises", 15], ["Crunches", 15], ["Crunches", 15], ["Sit-ups", "Maximum", 1], 6, 180],
-        10:[["Seated Knee-ups", 15], ["Seated Knee-ups", 15], ["U-Crunches", 15], ["U-Crunches", 15], ["Leg Lifts", 15], ["Leg Lifts", 15], ["Crunches", 15], ["Crunches", 15], ["Sit-ups", "Maximum"], 8, 180],
-        11:[["Crunches", 20], ["Crunches", 15], ["Reverse Crunches", 20], ["Reverse Crunches", 15], ["U-Crunches", 20], ["U-Crunches", 15], ["Sit-ups", "Maximum"], 6, 180],
-        12:[["Crunches", 15], ["Crunches", 15], ["Seated Knee-ups", 15], ["Leg Lifts", 15], ["Leg Lifts", 15], ["Sit-ups", "Maximum", 1], 5, 180]
-    ]
-    
+
+    @State private var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    @State private var selectedStation: NAPFAStation?
+    @State private var sessionSteps: [WorkoutStep] = []
+    @State private var currentIndex = 0
+    @State private var isWorkingOut = false
+    @State private var isBreak = false
+    @State private var breakRemaining = 45
+    @State private var breakTotal = 45
+    @State private var breakSoundPlayed = false
+    @State private var elapsed = 0
+    @State private var sessionCompleted = false
+    @State private var completionRecorded = false
+    @State private var isExtraSet = false
+    @State private var showExtraSetPrompt = false
+    @State private var intensityLabel = ""
+
+    private var currentStep: WorkoutStep? {
+        sessionSteps.indices.contains(currentIndex) ? sessionSteps[currentIndex] : nil
+    }
+
+    private var breakProgress: Double {
+        guard breakTotal > 0 else { return 0 }
+        return Double(max(0, breakTotal - breakRemaining)) / Double(breakTotal)
+    }
+
     var body: some View {
-        if (everythingDone){
-            Text("You have completed all you workouts for today. Please come back on your next session")
-                .fontWeight(.semibold)
-                .font(.system(size: 35))
-                .onAppear{
-                    UserDefaults.standard.setValue(Calendar.current, forKey: "Workout Complete")
+        NavigationStack {
+            Group {
+                if AppState.hasWorkedOutToday(), !isExtraSet, !isWorkingOut, !sessionCompleted {
+                    alreadyDoneView
+                } else if sessionCompleted {
+                    resultsView
+                } else if isWorkingOut {
+                    sessionView
+                } else {
+                    stationPicker
                 }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(Color(.systemGroupedBackground))
+            .navigationTitle("Workout")
+            .navigationBarTitleDisplayMode(.inline)
+            .onReceive(timer) { _ in
+                guard isWorkingOut else { return }
+                elapsed += 1
+
+                if isBreak, breakRemaining > 0 {
+                    breakRemaining -= 1
+                }
+
+                if isBreak, breakRemaining == 0, !breakSoundPlayed {
+                    SoundManager.instance.playSound()
+                    breakSoundPlayed = true
+                }
+            }
+            .onChange(of: isWorkingOut) { _, working in
+                workoutSession.locksTabBar = working
+            }
+            .onDisappear {
+                if !isWorkingOut && !sessionCompleted {
+                    workoutSession.locksTabBar = false
+                }
+            }
         }
-        else{
-//            if((UserDefaults.standard.object(forKey: "Workout Complete") as? Calendar ?? Calendar.current).component(, from: .now) == Calendar.current.component(.day, from: .now)){
-//                Text("hi")
-//                    .onAppear{
-//                        print(((UserDefaults.standard.object(forKey: "Workout Complete") as? Calendar) ?? Calendar.current).component(.day, from: .now))
-//                    }
-//            }
-//            else{
-                if start[0] as! Bool{
-                    VStack{
-                        Text(done ? "RESULTS":"WORKOUT")
-                            .fontWeight(.heavy)
-                            .font(.system(size: 50))
-                            .position(CGPoint(x: 200, y: 30))
-                        if !done{
-                            VStack{
-                                if(rest == -10){
-                                    //EXERCISE PAGE
-                                    ZStack{
-                                        RoundedRectangle(cornerRadius: 50)
-                                            .foregroundStyle(.blue)
-                                            .frame(width: 300, height: 400)
-                                        Image("\(currentExercise[0])")
-                                            .resizable()
-                                            .frame(width: 300, height: 300)
-                                            .offset(y: 100)
-                                        Text("\(currentExercise[0] as! String == "Leg Lifts with Hip Raises" ? "Leg Lifts with\nHip Raises":currentExercise[0])")
-                                            .fontWeight(.semibold)
-                                            .font(.system(size: currentExercise[0] as! String == "Seated Knee-ups" ? 35: currentExercise[0] as! String == "Leg Lifts with Hip Raises" ? 30:50))
-                                            .offset(y: currentExercise[0] as! String == "Reverse Crunches" ? -120:-135)
-                                            .multilineTextAlignment(.center)
-                                        Text("Reps: \(currentExercise[1])")
-                                            .fontWeight(.semibold)
-                                            .font(.system(size: 25))
-                                            .offset(y: -50)
-                                    }
-                                    .onAppear{
-                                        if(exerciseNum <= exerciseSet[exerciseSet.endIndex - 1] as! Int){
-                                            currentExercise = (exerciseSet[exerciseNum]) as! [Any]
-                                        }
-                                        else{
-                                            done = true
-                                        }
-                                        
-                                    }
-                                    .offset(y: 70)
-                                    
-                                    HStack(spacing: 30){
-                                        Button{
-                                            rest = exerciseSet.last as! Int
-                                        } label: {
-                                            ZStack{
-                                                Image("red hexagon")
-                                                    .resizable()
-                                                    .frame(width: 190,height: 190)
-                                                Text("\(Int(exerciseSet.last as! Int / 60)):\(String(exerciseSet.last as! Int - Int(exerciseSet.last as! Int / 60)*60).count == 1 ? "0" : "")\(exerciseSet.last as! Int - Int(exerciseSet.last as! Int / 60)*60)")
-                                                    .font(.system(size: 30))
-                                                    .fontWeight(.semibold)
-                                                    .foregroundStyle(.black)
-                                            }
-                                        }
-                                        .padding(.horizontal,-10)
-                                        
-                                        Button{
-                                            breakAlert = true
-                                        } label: {
-                                            ZStack{
-                                                Circle()
-                                                    .foregroundStyle(.green)
-                                                    .frame(width: 130,height: 130)
-                                                Text("Next")
-                                                    .font(.system(size: 30))
-                                                    .fontWeight(.semibold)
-                                                    .foregroundStyle(.black)
-                                            }
-                                        }
-                                        .alert(isPresented: $breakAlert){
-                                            Alert(
-                                                title: Text("Next"),
-                                                message: Text("Are you sure you want to proceed without having a break?"),
-                                                primaryButton: .destructive(Text("Yes")){
-                                                    withAnimation{
-                                                        exerciseNum += 1
-                                                        if(exerciseNum <= exerciseSet[exerciseSet.endIndex - 2] as! Int){
-                                                            currentExercise = (exerciseSet[exerciseNum]) as! [Any]
-                                                        }
-                                                        else{
-                                                            done = true
-                                                        }
-                                                        
-                                                    }
-                                                },
-                                                secondaryButton: .cancel(Text("No"))
-                                            )
-                                        }
-                                    }
-                                    .offset(y: 50)
-                                }
-                                else{
-                                    //BREAK PAGE
-                                    Text("BREAK")
-                                        .fontWeight(.heavy)
-                                        .font(.system(size: 50))
-                                        .position(CGPoint(x: 200, y: -200))
-                                    Text("\(Int(rest / 60)):\(String(rest - Int(rest / 60)*60).count == 1 ? "0" : "")\(rest - Int(rest / 60)*60)")
-                                        .fontWeight(.bold)
-                                        .font(.system(size: 45))
-                                        .position(CGPoint(x: 200, y: -200))
-                                        .onReceive(timer){ _ in
-                                            if rest > 0{
-                                                rest -= 1
-                                            }
-                                            if rest == 0{
-                                                SoundManager.instance.playSound()
-                                            }
-                                        }
-                                    
-                                    HStack(spacing: 50){
-                                        Text("Remember to\nrehydrate\nyourself")
-                                            .font(.system(size: 25))
-                                            .offset(x: -30)
-                                            .fixedSize(horizontal: false, vertical: true)
-                                            .lineLimit(5)
-                                        Image(systemName: "waterbottle")
-                                            .scaleEffect(6)
-                                    }
-                                    .offset(y: -100)
-                                    
-                                    Button{
-                                        withAnimation{
-                                            rest = -10
-                                            exerciseNum += 1
-                                            if(exerciseNum <= exerciseSet[exerciseSet.endIndex - 2] as! Int){
-                                                currentExercise = (exerciseSet[exerciseNum]) as! [Any]
-                                            }
-                                            else{
-                                                done = true
-                                            }
-                                            
-                                        }
-                                    } label: {
-                                        ZStack{
-                                            RoundedRectangle(cornerRadius: 25)
-                                                .frame(width: 250,height: 100)
-                                            Text("End Break")
-                                                .font(.system(size: 35))
-                                                .fontWeight(.bold)
-                                                .foregroundStyle(.white)
-                                        }
-                                    }
-                                }
-                            }
-                            .onAppear{
-                                
-                                //    diff 5: 1-12
-                                //    diff 4: 1-12
-                                //    diff 3: Below E: 1-9, D: 5-12
-                                //    diff 2: Below E: 1-9, D: 5-12
-                                //    diff 1: Below E: 1-5, D-C: 5-9, Above: 9-12
-                                
-                                SitupsP = info.prev[0] == "A" ? 5:(info.prev[0] == "B" ? 4:(info.prev[0] == "C" ? 3:(info.prev[0] == "D" ? 2:(info.prev[0] == "E" ? 1:0))))
-                                SitupsT = info.targ[0] == "A" ? 5:(info.targ[0] == "B" ? 4:(info.targ[0] == "C" ? 3:(info.targ[0] == "D" ? 2:(info.targ[0] == "E" ? 1:0))))
-                                
-                                if ((SitupsT - SitupsP) >= 4){
-                                    weeksRange = [1,12]
-                                }
-                                else if ((SitupsT - SitupsP) >= 2){
-                                    if(SitupsP < 2){
-                                        weeksRange = [1,9]
-                                    }
-                                    else{
-                                        weeksRange = [5,12]
-                                    }
-                                }
-                                else if ((SitupsT - SitupsP) <= 1){
-                                    if (SitupsP <= 1){
-                                        weeksRange = [1,5]
-                                    }
-                                    else if (SitupsP <= 3){
-                                        weeksRange = [5,9]
-                                    }
-                                    else{
-                                        weeksRange = [9,12]
-                                    }
-                                }
-                                print(weeksRange)
-                                exerciseSet = (Situps[weeksRange[0] + weeksSinceDownload - 1]) ?? [[[]]]
-                            }
-                        }
-                        else{
-                            VStack{
-                                Text("You worked out on")
-                                    .fontWeight(.semibold)
-                                    .font(.system(size: 35))
-                                Text("\(start[1])")
-                                    .fontWeight(.heavy)
-                                    .font(.system(size: 40))
-                                Text("for")
-                                    .fontWeight(.semibold)
-                                    .font(.system(size: 35))
-                                Text("\(Int(totalTime / 60)):\(String(totalTime - Int(totalTime / 60)*60).count == 1 ? "0" : "")\(totalTime - Int(totalTime / 60)*60)")
-                                    .fontWeight(.heavy)
-                                    .font(.system(size: 40))
-                                Text("on")
-                                    .fontWeight(.semibold)
-                                    .font(.system(size: 35))
-                                Text("\(Date.now.formatted(date: .abbreviated, time: .omitted))")
-                                    .fontWeight(.heavy)
-                                    .font(.system(size: 40))
-                                Button{
-                                    start = [false, ""]
-                                } label: {
-                                    ZStack{
-                                        RoundedRectangle(cornerRadius: 25.0)
-                                            .frame(width: 200,height: 100)
-                                        Text("Continue")
-                                            .fontWeight(.semibold)
-                                            .font(.system(size: 35))
-                                            .foregroundStyle(.black)
-                                    }
-                                }
-                            }
-                            .offset(y: -100)
-                        }
-                    }
-                    .onReceive(timer){ _ in
-                        if(!done){
-                            totalTime += 1
-                        }
-                    }
+    }
+
+    private var stationPicker: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                Text("Choose a station")
+                    .font(.largeTitle.weight(.bold))
+                    .padding(.top, 8)
+
+                Text("Sets adapt to your previous and target grades.")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+
+                ForEach(NAPFAStation.allCases) { station in
+                    stationCard(station)
                 }
-                else{
-                    //STARTING PAGE
-                    NavigationStack{
-                        Text("What exercise do you want to start with?")
-                            .offset(x:-25)
-                        List{
-                            if(exercises.count > 0){
-                                ForEach(exercises.indices, id:\.self){ exercise in
-                                    Button(exercises[exercise]){
-                                        withAnimation{
-                                            start = [true,exercises[exercise]]
-                                            exercises.remove(at: exercise)
-                                            exerciseNum = 0
-                                        }
-                                    }
-                                    .foregroundStyle(.black)
-                                    .bold()
-                                }
-                            }
-                            else{
-                                VStack{
-                                }
-                                .onAppear{
-                                    withAnimation{
-                                        everythingDone = true
-                                        exercises = ["Sit Ups", "Standing Broad Jump", "Sit & Reach", "Inclined Pull Ups", "Shuttle Run", "2.4km Run"]
-                                    }
-                                }
-                            }
-                        }
-                        .navigationTitle("Exercises")
-                    }
-                }
-//            }
+            }
+            .padding(.horizontal, 18)
+            .padding(.bottom, workoutSession.locksTabBar ? 24 : 110)
         }
+    }
+
+    private func stationCard(_ station: NAPFAStation) -> some View {
+        let index = NAPFAStation.allCases.firstIndex(of: station) ?? 0
+        let prev = WorkoutPlanner.grade(at: index, in: info.prev)
+        let targ = WorkoutPlanner.grade(at: index, in: info.targ)
+        let level = WorkoutPlanner.intensity(previous: prev, target: targ)
+
+        return VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 12) {
+                Image(systemName: station.icon)
+                    .font(.system(size: 36, weight: .semibold))
+                    .foregroundStyle(.blue)
+                    .frame(width: 48)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(station.rawValue)
+                        .font(.headline)
+                    Text("\(level.rawValue) · \(display(prev)) → \(display(targ))")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                }
+                Spacer()
+            }
+
+            HStack(spacing: 10) {
+                Button {
+                    startWorkout(station)
+                } label: {
+                    Label("Start", systemImage: "play.fill")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+
+                Link(destination: station.videoURL) {
+                    Label("Video", systemImage: "play.rectangle")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+            }
+        }
+        .padding(16)
+        .background(.background, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+    }
+
+    private var sessionView: some View {
+        VStack(spacing: 16) {
+            if isBreak {
+                breakView
+            } else if let currentStep {
+                exerciseView(currentStep)
+            }
+        }
+        .padding(.horizontal, 18)
+    }
+
+    private func exerciseView(_ step: WorkoutStep) -> some View {
+        VStack(spacing: 14) {
+            HStack {
+                Text(intensityLabel)
+                    .font(.caption.weight(.bold))
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 4)
+                    .background(.blue.opacity(0.12), in: Capsule())
+                Spacer()
+                Text("Set \(currentIndex + 1) of \(sessionSteps.count)")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.secondary)
+            }
+
+            Text("\(currentIndex + 1)")
+                .font(.system(size: currentIndex == 0 ? 80 : 56, weight: .black, design: .rounded))
+                .contentTransition(.numericText())
+
+            Image(systemName: step.station.icon)
+                .font(.system(size: 72, weight: .semibold))
+                .foregroundStyle(.blue)
+                .symbolEffect(.pulse, options: .repeating.speed(0.35))
+
+            Text(step.name)
+                .font(.title.weight(.bold))
+                .multilineTextAlignment(.center)
+
+            Text(step.detail)
+                .font(.body.weight(.medium))
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 8)
+
+            Link(destination: step.videoURL) {
+                Label("Form video", systemImage: "play.circle.fill")
+            }
+            .font(.subheadline.weight(.semibold))
+
+            Spacer(minLength: 8)
+
+            HStack(spacing: 12) {
+                Button {
+                    startBreak()
+                } label: {
+                    Label("45s Rest", systemImage: "timer")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+                .disabled(currentIndex >= sessionSteps.count - 1)
+
+                Button {
+                    moveToNextExercise()
+                } label: {
+                    Label(currentIndex >= sessionSteps.count - 1 ? "Finish" : "Next Set", systemImage: "forward.fill")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+            }
+            .padding(.bottom, 16)
+        }
+    }
+
+    private var breakView: some View {
+        VStack(spacing: 20) {
+            Text("Rest")
+                .font(.title2.weight(.bold))
+                .foregroundStyle(.secondary)
+
+            ZStack {
+                Circle()
+                    .stroke(Color(.tertiarySystemFill), lineWidth: 14)
+                Circle()
+                    .trim(from: 0, to: breakProgress)
+                    .stroke(
+                        breakRemaining == 0 ? Color.green : Color.blue,
+                        style: StrokeStyle(lineWidth: 14, lineCap: .round)
+                    )
+                    .rotationEffect(.degrees(-90))
+                    .animation(.linear(duration: 1), value: breakRemaining)
+
+                VStack(spacing: 4) {
+                    Text(timeString(breakRemaining))
+                        .font(.system(size: 48, weight: .black, design: .rounded))
+                        .monospacedDigit()
+                        .contentTransition(.numericText())
+                    Text("seconds left")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .frame(width: 200, height: 200)
+
+            HStack(spacing: 12) {
+                Button {
+                    stopBreak()
+                } label: {
+                    Label("Skip Rest", systemImage: "forward.fill")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+
+                Button {
+                    stopBreak()
+                } label: {
+                    Label(breakRemaining == 0 ? "Next Set" : "End Rest", systemImage: "stop.fill")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+            }
+            .padding(.bottom, 16)
+        }
+    }
+
+    private var resultsView: some View {
+        VStack(spacing: 18) {
+            Spacer()
+
+            Image(systemName: "checkmark.seal.fill")
+                .font(.system(size: 82))
+                .foregroundStyle(.green)
+                .symbolEffect(.bounce, value: sessionCompleted)
+
+            Text("Workout complete")
+                .font(.largeTitle.weight(.bold))
+
+            Text(timeString(elapsed))
+                .font(.system(size: 44, weight: .black, design: .rounded))
+                .monospacedDigit()
+
+            if let selectedStation {
+                Text(selectedStation.rawValue)
+                    .font(.title3.weight(.semibold))
+                    .foregroundStyle(.secondary)
+            }
+
+            Spacer()
+
+            VStack(spacing: 12) {
+                Button {
+                    addExtraSet()
+                } label: {
+                    Label("Add extra set", systemImage: "plus.circle.fill")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+
+                Button {
+                    finishWorkout()
+                } label: {
+                    Label("Done", systemImage: "checkmark")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+            }
+            .padding(.horizontal, 18)
+            .padding(.bottom, 24)
+        }
+        .onAppear {
+            recordCompletionIfNeeded()
+            if !isExtraSet {
+                showExtraSetPrompt = true
+            }
+        }
+        .confirmationDialog(
+            "Add an extra set?",
+            isPresented: $showExtraSetPrompt,
+            titleVisibility: .visible
+        ) {
+            Button("Add extra set") { addExtraSet() }
+            Button("No thanks", role: .cancel) {}
+        } message: {
+            Text("Optional bonus set for the same station.")
+        }
+    }
+
+    private var alreadyDoneView: some View {
+        VStack(spacing: 18) {
+            Spacer()
+            Image(systemName: "checkmark.circle.fill")
+                .font(.system(size: 82))
+                .foregroundStyle(.green)
+            Text("Workout done today")
+                .font(.largeTitle.weight(.bold))
+                .multilineTextAlignment(.center)
+            Text("Come back on your next scheduled session.")
+                .font(.title3)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 24)
+            Spacer()
+        }
+        .padding(.horizontal, 18)
+    }
+
+    private func startWorkout(_ station: NAPFAStation) {
+        selectedStation = station
+        let index = NAPFAStation.allCases.firstIndex(of: station) ?? 0
+        let prev = WorkoutPlanner.grade(at: index, in: info.prev)
+        let targ = WorkoutPlanner.grade(at: index, in: info.targ)
+        intensityLabel = WorkoutPlanner.intensity(previous: prev, target: targ).rawValue
+        sessionSteps = WorkoutPlanner.plan(for: station, info: info)
+        currentIndex = 0
+        elapsed = 0
+        breakRemaining = 45
+        breakTotal = 45
+        breakSoundPlayed = false
+        completionRecorded = false
+        isExtraSet = false
+        sessionCompleted = false
+        isBreak = false
+        isWorkingOut = true
+        workoutSession.locksTabBar = true
+    }
+
+    private func startBreak() {
+        guard currentIndex < sessionSteps.count - 1 else { return }
+        breakRemaining = 45
+        breakTotal = 45
+        breakSoundPlayed = false
+        isBreak = true
+    }
+
+    private func stopBreak() {
+        isBreak = false
+        moveToNextExercise()
+    }
+
+    private func moveToNextExercise() {
+        guard currentIndex < sessionSteps.count - 1 else {
+            completeSession()
+            return
+        }
+        currentIndex += 1
+        breakRemaining = 45
+        breakTotal = 45
+        breakSoundPlayed = false
+        isBreak = false
+    }
+
+    private func completeSession() {
+        isWorkingOut = false
+        isBreak = false
+        sessionCompleted = true
+    }
+
+    private func finishWorkout() {
+        resetToPicker()
+        workoutSession.locksTabBar = false
+    }
+
+    private func recordCompletionIfNeeded() {
+        guard !completionRecorded, !isExtraSet else { return }
+        completionRecorded = true
+        AppState.recordWorkoutCompleted(station: selectedStation?.rawValue ?? "Workout")
+    }
+
+    private func addExtraSet() {
+        guard let selectedStation else { return }
+        sessionSteps = WorkoutStep.extraSet(for: selectedStation)
+        currentIndex = 0
+        breakRemaining = 45
+        breakTotal = 45
+        breakSoundPlayed = false
+        sessionCompleted = false
+        isBreak = false
+        isWorkingOut = true
+        isExtraSet = true
+        workoutSession.locksTabBar = true
+    }
+
+    private func resetToPicker() {
+        isWorkingOut = false
+        isBreak = false
+        sessionCompleted = false
+        isExtraSet = false
+        sessionSteps = []
+        selectedStation = nil
+    }
+
+    private func display(_ grade: String) -> String {
+        grade.isEmpty ? "—" : grade
+    }
+
+    private func timeString(_ seconds: Int) -> String {
+        let minutes = max(seconds, 0) / 60
+        let seconds = max(seconds, 0) % 60
+        return "\(minutes):\(String(format: "%02d", seconds))"
     }
 }
 
 #Preview {
-    Workout(info: .constant(data(Age: 0, Gender: false, prev: ["B","","","","",""], targ: ["A","","","","",""], schedule: [], NAPFA_Date: Date.now, Goals: [])))
+    Workout(info: .constant(data(Age: 0, Gender: false, prev: ["B", "", "", "", "", ""], targ: ["A", "", "", "", "", ""], schedule: [], NAPFA_Date: Date.now, Goals: [])))
+        .environmentObject(WorkoutSessionState())
 }
-

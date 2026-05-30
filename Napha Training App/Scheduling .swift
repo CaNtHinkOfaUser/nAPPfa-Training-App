@@ -9,153 +9,265 @@ import SwiftUI
 
 struct Scheduling_: View {
     @Environment(\.dismiss) private var dismiss
-    
+
     @Binding var start: Bool
     @Binding var info: data
-    @State private var Days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
-    
-    @State private var toThrow: String = ""
-    @State private var times: [Date] =  Array(repeating: Date(), count: 7)
-    @State private var NAPFA_Date: Date = Date.now
-    
     @Binding var selectedDays: [Int]
-    @Binding var selectedTimes : [Date]
+    @Binding var selectedTimes: [Date]
     @Binding var schedSheet: Bool
-    @State private var numberArray = [1,2,3,4,5,6,7]
-    @State private var selectedTime = Date()
-    @State private var selectedTimeInt: Int = 0
-    @State private var selectedTimeOptional: Int? = 0
-    
-    let dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium // Choose a date style (e.g., .short, .medium, .long)
-        formatter.timeStyle = .short // Choose a time style (e.g., .none, .short, .medium, .long)
-        return formatter
-        
-    }()
-    var body: some View {
-        VStack {
-          
-            Text("SCHEDULE")
-                .font(.system(size: 20))
-                .foregroundStyle(.gray)
-            DatePicker("Select your Napha Date", selection: $NAPFA_Date, in: Date.now..., displayedComponents: .date)
-                .padding(.horizontal, 50)
-                .onChange(of: NAPFA_Date){
-                    info.NAPFA_Date = NAPFA_Date
-                    UserDefaults.standard.setValue(NAPFA_Date, forKey: "NAPFA_Date")
-                }
-            
-            
-            HStack(spacing: 15){
-                ForEach(Days.indices, id: \.self){day in  Text(String(Days[day]).prefix(1))
-                        .font(.system(size: 20))
-                        .foregroundColor(.white)
-                        .frame(width: 35, height: 35)
-                        .background(Circle().fill(selectedDays.contains(day) ? Color.blue : Color.gray)
-                            .animation(.easeInOut(duration: 0.3), value: selectedDays))
-                        .onTapGesture {
-                            withAnimation(.easeInOut(duration: 0.3)){
-                                if selectedDays.contains(day){
-                                    selectedTimes.remove(at: selectedDays.firstIndex(of: day)!)
-                                    selectedDays.removeAll {$0 == day}
-                                    UserDefaults.standard.setValue(selectedTimes, forKey: "ST")
-                                    UserDefaults.standard.setValue(selectedDays, forKey: "SD")
-                                    
-                                    
-                                } else {
-                                    selectedDays.append(day)
-                                    selectedTimes.append(times[day])
-                                    UserDefaults.standard.setValue(selectedTimes, forKey: "ST")
-                                    UserDefaults.standard.setValue(selectedDays, forKey: "SD")
-                                }
-                            }
-                        }
-                }
-                .bold()
-            }
-            /*(ForEach(selectedTimes, id: \.self){ i in
-             Text(dateFormatter.string(from: i))
-             //used for testing, remove later
-             }
-             ForEach(selectedDays, id: \.self){i in
-             Text((String(i+1)))
-             }*/
-            Text("TIMING")
-                .font(.system(size: 20))
-                .foregroundStyle(.gray)
-            VStack(spacing: 30){
-                ForEach(selectedDays.sorted(), id: \.self){selectedDay in
-                    HStack(alignment: .center){
-                        Text(Days[selectedDay].prefix(3))
-                            .font(.system(size: 25))
-                            .frame(width: 50, alignment: .leading)
-                        DatePicker("", selection: $times[selectedDay], displayedComponents: .hourAndMinute)
-                            .labelsHidden()
-                            .onChange(of: times[selectedDay]){
-                                if selectedDays.contains(selectedDay){
-                                    selectedTimes.remove(at: selectedDays.firstIndex(of: selectedDay)!)
-                                    selectedDays.removeAll {$0 == selectedDay}
-                                    selectedDays.append(selectedDay)
-                                    selectedTimes.append(times[selectedDay])
-                                    UserDefaults.standard.setValue(selectedDays, forKey: "SD")
-                                    UserDefaults.standard.setValue(selectedTimes, forKey: "ST")
-                                    UserDefaults.standard.setValue(times, forKey: "times")
-                                    
-                                } else{
-                                    UserDefaults.standard.setValue(selectedDays, forKey: "SD")
-                                    UserDefaults.standard.setValue(selectedTimes, forKey: "ST")
-                                    UserDefaults.standard.setValue(times, forKey: "times")
-                                    
-                                }
-                            }
-                    }
-                }
-            }
-            Text("Please choose at least three days")
-                .foregroundStyle(selectedDays.count<3 ? .red : .black)
-            if(!start){
-                Button{
-                    dismiss()
-                } label: {
-                    ZStack{
-                        RoundedRectangle(cornerRadius: 20)
-                            .fill(Color(.green))
-                            .frame(width: 100, height: 50)
-                        Text("Save")
-                            .foregroundStyle(.white)
-                   
 
-                       
+    @State private var times: [Date] = Array(repeating: Date(), count: 7)
+    @State private var NAPFA_Date: Date = Date.now
+    @State private var savedStatus = "Saved"
+
+    private let columns = Array(repeating: GridItem(.flexible(), spacing: 8), count: 4)
+
+    var body: some View {
+        Group {
+            if start {
+                OnboardingStepContainer(subtitle: "Schedule") {
+                    VStack(alignment: .leading, spacing: 20) {
+                        dateSection
+                        daySection
+                        timeSection
+                        reminderSection
                     }
                 }
-               }
-                
-          
-                
-            
+            } else {
+                NavigationStack {
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 20) {
+                            dateSection
+                                .padding(.top, 8)
+                            daySection
+                            timeSection
+                            reminderSection
+                        }
+                        .padding(.horizontal, 18)
+                        .padding(.bottom, 28)
+                    }
+                    .background(Color(.systemGroupedBackground))
+                    .navigationTitle("Scheduling")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Button("Save") {
+                                persistSchedule()
+                                dismiss()
+                            }
+                            .fontWeight(.semibold)
+                            .disabled(selectedDays.count < 3)
+                        }
+                    }
+                }
+            }
         }
-        .onAppear{
-            if let storedNAPFA_Date = UserDefaults.standard.object(forKey: "NAPFA_Date") as? Date{
-                NAPFA_Date = storedNAPFA_Date
-                info.NAPFA_Date = NAPFA_Date
-            }
-            
-            if let storedST = UserDefaults.standard.object(forKey: "ST") as? [Date]{
-                selectedTimes = storedST
-            }
-            UserDefaults.standard.setValue(selectedTimes, forKey: "ST")
-            if let storedSD = UserDefaults.standard.object(forKey: "SD") as? [Int]{
-                selectedDays = storedSD
-            }
-            UserDefaults.standard.setValue(selectedDays, forKey: "SD")
-            if let storedTimes = UserDefaults.standard.object(forKey: "times") as? [Date]{
-                times = storedTimes
-            }
-            UserDefaults.standard.setValue(times, forKey: "times")
+        .background(Color(.systemGroupedBackground))
+        .onAppear(perform: loadSchedule)
+        .onChange(of: selectedDays) {
+            persistSchedule()
         }
     }
+
+    private var dateSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Label("NAPFA Date", systemImage: "calendar.badge.clock")
+                .font(.title3.weight(.bold))
+
+            DatePicker("Test date", selection: $NAPFA_Date, in: Date.now..., displayedComponents: .date)
+                .datePickerStyle(.compact)
+                .onChange(of: NAPFA_Date) {
+                    info.NAPFA_Date = NAPFA_Date
+                    UserDefaults.standard.set(NAPFA_Date, forKey: AppKeys.napfaDate)
+                    markSaved()
+                }
+
+            Label(savedStatus, systemImage: "checkmark.circle.fill")
+                .font(.footnote.weight(.semibold))
+                .foregroundStyle(.green)
+        }
+        .padding(18)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(.background, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+    }
+
+    private var daySection: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack {
+                Label("Workout Days", systemImage: "calendar")
+                    .font(.title3.weight(.bold))
+                Spacer()
+                Text("\(selectedDays.count)/3")
+                    .font(.subheadline.weight(.bold))
+                    .foregroundStyle(selectedDays.count >= 3 ? .green : .red)
+            }
+
+            LazyVGrid(columns: columns, spacing: 10) {
+                ForEach(AppState.dayNames.indices, id: \.self) { day in
+                    Button {
+                        toggleDay(day)
+                    } label: {
+                        VStack(spacing: 4) {
+                            Text(String(AppState.dayName(day).prefix(1)))
+                                .font(.title3.weight(.black))
+                            Text(AppState.shortDayName(day))
+                                .font(.caption.weight(.semibold))
+                        }
+                        .frame(maxWidth: .infinity, minHeight: 58)
+                        .foregroundStyle(selectedDays.contains(day) ? .white : .primary)
+                        .background(selectedDays.contains(day) ? Color.blue : Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(AppState.dayName(day))
+                }
+            }
+
+            if selectedDays.count < 3 {
+                Label("Choose at least three workout days", systemImage: "exclamationmark.circle.fill")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(.red)
+            }
+        }
+        .padding(18)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(.background, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+    }
+
+    private var timeSection: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Label("Workout Timing", systemImage: "clock")
+                .font(.title3.weight(.bold))
+
+            let sortedDays = selectedDays.sorted()
+            if sortedDays.isEmpty {
+                ContentUnavailableView("No days selected", systemImage: "clock.badge.questionmark")
+                    .frame(maxWidth: .infinity)
+            } else {
+                VStack(spacing: 12) {
+                    ForEach(sortedDays, id: \.self) { day in
+                        HStack {
+                            Text(AppState.dayName(day))
+                                .font(.body.weight(.semibold))
+                            Spacer()
+                            DatePicker("", selection: bindingForTime(day), displayedComponents: .hourAndMinute)
+                                .labelsHidden()
+                        }
+                        .padding(12)
+                        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    }
+                }
+            }
+        }
+        .padding(18)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(.background, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+    }
+
+    private var reminderSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Label("Reminders", systemImage: "bell.badge")
+                .font(.title3.weight(.bold))
+
+            HStack(spacing: 10) {
+                ReminderPill(text: "1h")
+                ReminderPill(text: "10m")
+                ReminderPill(text: "Now")
+            }
+
+            Text("If today's workout is already complete, reminders are skipped.")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+        }
+        .padding(18)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(.background, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+    }
+
+    private func bindingForTime(_ day: Int) -> Binding<Date> {
+        Binding {
+            times.indices.contains(day) ? times[day] : Date()
+        } set: { newValue in
+            guard times.indices.contains(day) else { return }
+            times[day] = newValue
+            persistSchedule()
+        }
+    }
+
+    private func toggleDay(_ day: Int) {
+        withAnimation(.easeInOut(duration: 0.18)) {
+            if selectedDays.contains(day) {
+                selectedDays.removeAll { $0 == day }
+            } else {
+                selectedDays.append(day)
+            }
+            persistSchedule()
+        }
+    }
+
+    private func loadSchedule() {
+        let defaults = UserDefaults.standard
+
+        if let storedNAPFA_Date = defaults.object(forKey: AppKeys.napfaDate) as? Date {
+            NAPFA_Date = storedNAPFA_Date
+            info.NAPFA_Date = storedNAPFA_Date
+        }
+
+        selectedDays = defaults.object(forKey: AppKeys.selectedDays) as? [Int] ?? selectedDays
+        selectedTimes = defaults.object(forKey: AppKeys.selectedTimes) as? [Date] ?? selectedTimes
+
+        if let storedTimes = defaults.object(forKey: AppKeys.scheduleTimes) as? [Date], storedTimes.count == 7 {
+            times = storedTimes
+        }
+
+        for (day, time) in zip(selectedDays, selectedTimes) where times.indices.contains(day) {
+            times[day] = time
+        }
+
+        persistSchedule()
+    }
+
+    private func persistSchedule() {
+        let sortedDays = selectedDays.sorted()
+        selectedDays = sortedDays
+        selectedTimes = sortedDays.compactMap { day in
+            times.indices.contains(day) ? times[day] : nil
+        }
+
+        let defaults = UserDefaults.standard
+        defaults.set(selectedDays, forKey: AppKeys.selectedDays)
+        defaults.set(selectedTimes, forKey: AppKeys.selectedTimes)
+        defaults.set(times, forKey: AppKeys.scheduleTimes)
+        defaults.set(NAPFA_Date, forKey: AppKeys.napfaDate)
+        info.NAPFA_Date = NAPFA_Date
+
+        _ = AppState.currentStreak(selectedDays: selectedDays, selectedTimes: selectedTimes)
+        NotificationCoordinator.scheduleWorkoutNotifications(selectedDays: selectedDays, selectedTimes: selectedTimes)
+        markSaved()
+    }
+
+    private func markSaved() {
+        savedStatus = "Saved \(Date().formatted(date: .omitted, time: .shortened))"
+    }
 }
+
+private struct ReminderPill: View {
+    let text: String
+
+    var body: some View {
+        Text(text)
+            .font(.subheadline.weight(.bold))
+            .frame(width: 56, height: 36)
+            .background(.blue.opacity(0.12), in: Capsule())
+            .foregroundStyle(.blue)
+    }
+}
+
 #Preview {
-    Scheduling_(start: .constant(false), info: .constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPFA_Date: Date.now, Goals: [])), selectedDays: .constant([]), selectedTimes: .constant([]), schedSheet: .constant(false))
+    Scheduling_(
+        start: .constant(false),
+        info: .constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPFA_Date: Date.now, Goals: [])),
+        selectedDays: .constant([]),
+        selectedTimes: .constant([]),
+        schedSheet: .constant(false)
+    )
 }

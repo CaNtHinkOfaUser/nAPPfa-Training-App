@@ -7,53 +7,73 @@
 
 import SwiftUI
 
-enum Tab: String, CaseIterable{
-    case house
-    case dumbbell
-    case gearshape
-    case chartBar = "chart.bar"
+enum Tab: String, CaseIterable {
+    case house = "house"
+    case dumbbell = "dumbbell"
+    case progression = "chart.line.uptrend.xyaxis"
+    case gearshape = "gearshape"
+
+    var title: String {
+        switch self {
+        case .house: return "Home"
+        case .dumbbell: return "Workout"
+        case .progression: return "Progress"
+        case .gearshape: return "Settings"
+        }
+    }
+
+    var selectedSymbol: String {
+        switch self {
+        case .house: return "house.fill"
+        case .dumbbell: return "dumbbell.fill"
+        case .progression: return "chart.line.uptrend.xyaxis"
+        case .gearshape: return "gearshape.fill"
+        }
+    }
+
+    var tint: Color {
+        switch self {
+        case .house: return .blue
+        case .dumbbell: return .red
+        case .progression: return .green
+        case .gearshape: return .gray
+        }
+    }
 }
 
 struct CustomTabBar: View {
     @Binding var selectedTab: Tab
-    private var fillImage: String{
-        selectedTab.rawValue + ".fill"
-    }
-    private var tabColour: Color {
-        switch selectedTab {
-        case .house:
-            return .blue
-        case .dumbbell:
-            return .red
-        case .gearshape:
-            return .gray
-        case .chartBar:
-            return .green
-        }
-        }
-    
+
     var body: some View {
-        VStack{
-            HStack{
-                ForEach(Tab.allCases, id: \.rawValue) { tab in
-                    Spacer()
-                    Image(systemName: selectedTab == tab ? fillImage : tab.rawValue)
-                        .scaleEffect(tab == selectedTab ? 1.25 : 1.0)
-                        .foregroundColor(selectedTab == tab ? tabColour : .gray)
-                        .font(.system(size: 22))
-                        .onTapGesture {
-                            withAnimation(.easeIn(duration: 0.1)) {
-                                selectedTab = tab
-                            }
-                        }
-                    Spacer()
+        HStack(spacing: 8) {
+            ForEach(Tab.allCases, id: \.rawValue) { tab in
+                Button {
+                    withAnimation(.easeInOut(duration: 0.18)) {
+                        selectedTab = tab
+                    }
+                } label: {
+                    VStack(spacing: 4) {
+                        Image(systemName: selectedTab == tab ? tab.selectedSymbol : tab.rawValue)
+                            .font(.system(size: tab == .dumbbell ? 26 : 22, weight: .semibold))
+                            .frame(width: 44, height: 32)
+                        Text(tab.title)
+                            .font(.caption2.weight(.semibold))
+                    }
+                    .frame(maxWidth: .infinity, minHeight: 54)
+                    .foregroundColor(selectedTab == tab ? tab.tint : .secondary)
+                    .contentShape(Rectangle())
+                    .accessibilityLabel(tab.title)
                 }
+                .buttonStyle(.plain)
             }
-            .frame(width: nil, height: 60)
-            .background(.thinMaterial)
-            .cornerRadius(20)
-            .padding()
         }
+        .padding(.horizontal, 12)
+        .padding(.top, 8)
+        .padding(.bottom, 10)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .padding(.horizontal, 16)
+        .padding(.bottom, 8)
+        .shadow(color: .black.opacity(0.08), radius: 14, y: 6)
     }
 }
 

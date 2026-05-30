@@ -2,141 +2,348 @@ import SwiftUI
 
 struct AutoCalcView: View {
     @Binding var info: data
-    @State private var sitUps: Float = 0.0
-    @State private var sitReach: Float = 0.0
-    @State private var calcPicker: String = "Sit-Ups"
+    @State private var selectedStation: NAPFAStation = .sitUps
+    @State private var values: [NAPFAStation: Double] = [:]
     @Environment(\.dismiss) private var dismiss
 
-    let filterOptions: [String] = ["Sit-Ups", "Sit & Reach", "Pull-Up", "2.4KM", "Incline Pull-Up", "Standing Broad Jump"]
-
-    // Define all grading systems in a dictionary
-    let gradingSystems: [String: (Int, Bool, Int) -> String] = [
-        "Sit-Ups": { age, sex, value in
-            return calculateSitUpsGrade(age: age, sex: sex, sitUps: value)
-        },
-        "Sit & Reach": { age, sex, value in
-            return calculateSitReachGrade(age: age, sex: sex, sitReach: value)
-        }
-        // Add more exercises here in the future
-    ]
-
-    static func calculateSitUpsGrade(age: Int, sex: Bool, sitUps: Int) -> String {
-        let maleGrades: [Int: [String: ClosedRange<Int>]] = [
-         
-            12: ["A": 42...100, "B": 36...41, "C": 32...35, "D": 27...31, "E": 22...26, "F": 0...21],
-                          13: ["A": 43...100, "B": 38...42, "C": 34...37, "D": 29...33, "E": 25...28, "F": 0...24],
-                          14: ["A": 43...100, "B": 40...42, "C": 37...39, "D": 33...36, "E": 29...32, "F": 0...28],
-                          15: ["A": 43...100, "B": 40...42, "C": 37...39, "D": 34...36, "E": 30...33, "F": 0...33],
-                          16: ["A": 43...100, "B": 40...42, "C": 37...39, "D": 34...36, "E": 31...33, "F": 0...33],
-                          17: ["A": 43...100, "B": 40...42, "C": 37...39, "D": 34...36, "E": 31...33, "F": 0...33],
-                          18: ["A": 43...100, "B": 40...42, "C": 37...39, "D": 34...36, "E": 31...33, "F": 0...33],
-                          19: ["A": 43...100, "B": 40...42, "C": 37...39, "D": 34...36, "E": 31...33, "F": 0...33],
-                      ]
-                      
-        
-
-        let femaleGrades: [Int: [String: ClosedRange<Int>]] = [
-            12: ["A": 30...100, "B": 25...29, "C": 21...24, "D": 17...20, "E" : 13...16, "F": 0...12],
-                        13: ["A": 31...100, "B": 26...30, "C": 22...25, "D": 18...21, "E" : 14...17, "F": 0...13],
-                        14: ["A": 31...100, "B": 28...30, "C": 24...27, "D": 20...23, "E" : 16...19, "F": 0...15],
-                        15: ["A": 31...100, "B": 29...30, "C": 25...28, "D": 21...24, "E" : 17...20, "F": 0...16],
-                        16: ["A": 31...100, "B": 29...30, "C": 26...28, "D": 22...25, "E" : 18...21, "F": 0...17],
-                        17: ["A": 31...100, "B": 29...30, "C": 27...28, "D": 23...26, "E" : 19...22, "F": 0...18],
-                        18: ["A": 31...100, "B": 29...30, "C": 27...28, "D": 24...26, "E" : 21...23, "F": 0...19],
-                        19: ["A": 31...100, "B": 29...30, "C": 27...28, "D": 24...26, "E" : 21...23, "F": 0...20],
-                    ]
-
-        let grades = sex ? maleGrades : femaleGrades
-
-        var grade = ""
-        if let ageGrades = grades[age] {
-            for (gradeString, range) in ageGrades.sorted(by: { $0.value.lowerBound < $1.value.lowerBound }) {
-                if range.contains(sitUps) {
-                    grade = gradeString
-                    break
-                }
-            }
-        }
-        return grade
-    }
-
-    static func calculateSitReachGrade(age: Int, sex: Bool, sitReach: Int) -> String {
-        let maleGradesSitReach: [Int: [String: ClosedRange<Int>]] = [
-    
-            12: ["A": 39...100, "B": 36...39, "C": 32...35, "D": 28...31, "E": 23...27, "F": 0...22], 13: ["A": 41...100, "B": 38...41, "C": 34...37, "D": 30...33, "E": 25...29, "F": 0...24], 14: ["A": 43...100, "B": 40...43, "C": 36...39, "D": 32...35, "E": 27...31, "F": 0...26], 15: ["A": 45...100, "B": 42...45, "C": 38...41, "D": 34...37, "E": 29...33, "F": 0...28], 16: ["A": 47...100, "B": 44...47, "C": 40...43, "D": 36...39, "E": 31...35, "F": 0...30],
-                       17: ["A": 48...100, "B": 45...48, "C": 41...44, "D": 37...40, "E": 32...36, "F": 0...31], 18: ["A": 48...100, "B": 45...48, "C": 41...44, "D": 37...40, "E": 32...36, "F": 0...31], 19: ["A": 48...100, "B": 45...48, "C": 41...44, "D": 37...40, "E": 32...36, "F": 0...31] ]
-                   
-
-        let femaleGradesSitReach: [Int: [String: ClosedRange<Int>]] = [
-            12: ["A": 39...100, "B": 36...39, "C": 32...35, "D": 30...31, "E": 23...29, "F": 0...22], 13: ["A": 41...100, "B": 38...41, "C": 36...37, "D": 32...35, "E": 27...31, "F": 0...26], 14: ["A": 43...100, "B": 40...43, "C": 38...39, "D": 34...37, "E": 29...33, "F": 0...28], 15: ["A": 45...100, "B": 42...45, "C": 39...41, "D": 35...38, "E": 31...34, "F": 0...30], 16: ["A": 46...100, "B": 43...46, "C": 39...42, "D": 36...38, "E": 31...35, "F": 0...30], 17: ["A": 46...100, "B": 43...46, "C": 39...42, "D": 36...38, "E": 31...35, "F": 0...30], 18: ["A": 46...100, "B": 43...46, "C": 39...42, "D": 36...38, "E": 31...35, "F": 0...30], 19: ["A": 45...100, "B": 42...45, "C": 39...41, "D": 36...38, "E": 32...35, "F": 0...31] ]
-        
-        let grades = sex ? maleGradesSitReach : femaleGradesSitReach
-
-        var grade = ""
-        if let ageGrades = grades[age] {
-            for (gradeString, range) in ageGrades.sorted(by: { $0.value.lowerBound < $1.value.lowerBound }) {
-                if range.contains(sitReach) {
-                    grade = gradeString
-                    break
-                }
-            }
-        }
-        return grade
-    }
-
     var body: some View {
-       
-
-        VStack {
-            Text("AUTO CALCULATION")
-                .font(.system(size: 20))
-                .foregroundStyle(.gray)
-                .offset(y: -160)
-                .bold()
-
-            Menu {
-                Picker("Filter", selection: $calcPicker) {
-                    ForEach(filterOptions, id: \.self) { option in
-                        HStack {
-                            Text(option)
+        NavigationStack {
+            Form {
+                Section("Station") {
+                    Picker("Station", selection: $selectedStation) {
+                        ForEach(NAPFAStation.allCases) { station in
+                            Label(station.rawValue, systemImage: station.icon)
+                                .tag(station)
                         }
-                        .tag(option)
+                    }
+                    .pickerStyle(.menu)
+                }
+
+                Section("Result") {
+                    Slider(
+                        value: activeValue,
+                        in: selectedStation.sliderRange,
+                        step: selectedStation.sliderStep
+                    )
+
+                    LabeledContent("Value", value: valueText)
+                    LabeledContent("Grade", value: gradeText)
+                        .fontWeight(.semibold)
+                }
+
+                Section("Based On") {
+                    LabeledContent("Age", value: "\(NAPFAGradeCalculator.normalizedAge(info.Age))")
+                    LabeledContent("Sex", value: info.Gender ? "Male" : "Female")
+                }
+
+                Section("Reference") {
+                    Link(destination: URL(string: "https://www.napfatest.com/napfa-standards-2026")!) {
+                        Label("Open NAPFA standards", systemImage: "safari")
                     }
                 }
-            } label: {
-                HStack {
-                    Text("Exercise:")
-                    Text("\(calcPicker)")
-                }
-                .font(.headline)
-                .foregroundColor(.white)
-                .padding()
-                .padding(.horizontal)
-                .background(.blue)
-                .cornerRadius(10)
-                .scaleEffect(0.7)
             }
-
-            // Use a slider to change the value based on the selected exercise
-            Slider(value: calcPicker == "Sit-Ups" ? $sitUps : $sitReach, in: 0...100, step: 1.0)
-                .scaleEffect(0.6)
-
-            let currentValue = calcPicker == "Sit-Ups" ? Int(sitUps) : Int(sitReach)
-            let Grade = gradingSystems[calcPicker]?(info.Age, info.Gender, currentValue) ?? "N/A"
-
-            Text(calcPicker == "Sit-Ups" ? String(format: "%.0f reps", sitUps) : String(format: "%.0f cm", sitReach))
-
-            Text("Your grade is: \(Grade)")
-
-            Button {
-                dismiss()
-            } label: {
-                Text("Save")
+            .scrollContentBackground(.hidden)
+            .background(Color(.systemGroupedBackground))
+            .navigationTitle("Auto Calculation")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Done") {
+                        dismiss()
+                    }
+                    .fontWeight(.semibold)
+                }
             }
         }
+    }
+
+    private var activeValue: Binding<Double> {
+        Binding {
+            values[selectedStation] ?? selectedStation.defaultScore
+        } set: { newValue in
+            values[selectedStation] = newValue
+        }
+    }
+
+    private var valueText: String {
+        selectedStation.formattedScore(activeValue.wrappedValue)
+    }
+
+    private var gradeText: String {
+        NAPFAGradeCalculator.grade(
+            for: selectedStation,
+            age: info.Age,
+            sex: info.Gender,
+            value: activeValue.wrappedValue
+        )
+    }
+}
+
+private enum NAPFAGradeCalculator {
+    private static let gradeLetters = ["A", "B", "C", "D", "E"]
+
+    private static let thresholds: [NAPFAStation: [Bool: [Int: [Double]]]] = [
+        .sitUps: [
+            true: [
+                9: [36, 30, 25, 20, 15],
+                10: [37, 31, 26, 21, 17],
+                11: [40, 34, 30, 25, 20],
+                12: [42, 36, 32, 27, 22],
+                13: [43, 38, 34, 29, 25],
+                14: [43, 40, 37, 33, 29],
+                15: [43, 40, 37, 34, 30],
+                16: [43, 40, 37, 34, 31],
+                17: [43, 40, 37, 34, 31],
+                18: [43, 40, 37, 34, 31],
+                19: [43, 40, 37, 34, 31],
+                20: [40, 37, 34, 31, 28]
+            ],
+            false: [
+                9: [27, 22, 18, 14, 10],
+                10: [28, 23, 19, 15, 11],
+                11: [29, 24, 20, 16, 12],
+                12: [30, 25, 21, 17, 13],
+                13: [31, 26, 22, 18, 14],
+                14: [31, 28, 24, 20, 16],
+                15: [31, 29, 25, 21, 17],
+                16: [31, 29, 26, 22, 18],
+                17: [31, 29, 27, 23, 19],
+                18: [31, 29, 27, 24, 20],
+                19: [31, 29, 27, 24, 21],
+                20: [29, 27, 25, 23, 21]
+            ]
+        ],
+        .standingBroadJump: [
+            true: [
+                9: [169, 159, 149, 139, 130],
+                10: [175, 165, 156, 146, 137],
+                11: [189, 177, 166, 155, 144],
+                12: [203, 189, 176, 163, 150],
+                13: [215, 202, 189, 176, 164],
+                14: [226, 216, 206, 196, 186],
+                15: [238, 228, 218, 208, 198],
+                16: [246, 236, 226, 216, 206],
+                17: [250, 240, 230, 220, 210],
+                18: [252, 242, 232, 222, 212],
+                19: [252, 242, 232, 222, 212],
+                20: [243, 234, 225, 216, 207]
+            ],
+            false: [
+                9: [159, 148, 139, 129, 119],
+                10: [162, 152, 143, 134, 125],
+                11: [165, 156, 147, 138, 129],
+                12: [168, 159, 150, 141, 132],
+                13: [171, 162, 153, 144, 135],
+                14: [178, 169, 160, 151, 142],
+                15: [183, 174, 165, 156, 147],
+                16: [187, 178, 169, 160, 151],
+                17: [190, 181, 172, 163, 154],
+                18: [193, 183, 174, 165, 156],
+                19: [196, 185, 174, 165, 156],
+                20: [198, 186, 174, 162, 150]
+            ]
+        ],
+        .sitAndReach: [
+            true: [
+                9: [34, 30, 26, 21, 16],
+                10: [36, 32, 28, 23, 18],
+                11: [38, 34, 30, 25, 20],
+                12: [40, 36, 32, 28, 23],
+                13: [42, 38, 34, 30, 25],
+                14: [44, 40, 36, 32, 27],
+                15: [46, 42, 38, 34, 29],
+                16: [48, 44, 40, 36, 31],
+                17: [49, 45, 41, 37, 32],
+                18: [49, 45, 41, 37, 32],
+                19: [49, 45, 41, 37, 32],
+                20: [48, 44, 40, 36, 32]
+            ],
+            false: [
+                9: [34, 31, 28, 24, 19],
+                10: [36, 33, 30, 26, 21],
+                11: [38, 35, 32, 28, 23],
+                12: [40, 37, 34, 30, 25],
+                13: [42, 39, 36, 32, 27],
+                14: [44, 41, 38, 34, 29],
+                15: [46, 43, 39, 35, 30],
+                16: [47, 44, 40, 36, 31],
+                17: [47, 44, 40, 36, 32],
+                18: [47, 44, 40, 36, 32],
+                19: [46, 43, 39, 36, 32],
+                20: [44, 41, 38, 35, 31]
+            ]
+        ],
+        .inclinedPullUps: [
+            true: [
+                9: [22, 18, 13, 9, 3],
+                10: [23, 19, 14, 9, 3],
+                11: [24, 20, 15, 10, 4],
+                12: [25, 21, 16, 11, 5],
+                13: [26, 22, 17, 12, 7],
+                14: [27, 23, 18, 13, 8],
+                15: [8, 6, 5, 3, 1],
+                16: [9, 7, 5, 3, 1],
+                17: [10, 8, 6, 4, 2],
+                18: [11, 9, 7, 5, 3],
+                19: [11, 9, 7, 5, 3],
+                20: [11, 9, 7, 5, 3]
+            ],
+            false: [
+                9: [15, 12, 9, 6, 2],
+                10: [15, 12, 9, 6, 3],
+                11: [16, 13, 10, 7, 3],
+                12: [16, 13, 10, 7, 3],
+                13: [17, 13, 10, 7, 3],
+                14: [17, 14, 10, 7, 3],
+                15: [17, 14, 10, 7, 3],
+                16: [18, 14, 11, 7, 3],
+                17: [18, 14, 11, 7, 3],
+                18: [18, 15, 11, 8, 4],
+                19: [18, 15, 11, 8, 5],
+                20: [18, 15, 11, 8, 5]
+            ]
+        ],
+        .shuttleRun: [
+            true: [
+                9: [11.2, 11.8, 12.2, 12.7, 13.1],
+                10: [11.0, 11.6, 12.0, 12.4, 12.9],
+                11: [10.6, 11.2, 11.6, 12.0, 12.5],
+                12: [10.3, 10.9, 11.3, 11.7, 12.2],
+                13: [10.2, 10.7, 11.1, 11.5, 11.9],
+                14: [10.1, 10.4, 10.8, 11.2, 11.6],
+                15: [10.1, 10.3, 10.5, 10.9, 11.3],
+                16: [10.1, 10.3, 10.5, 10.7, 11.1],
+                17: [10.1, 10.3, 10.5, 10.7, 10.9],
+                18: [10.1, 10.3, 10.5, 10.7, 10.9],
+                19: [10.1, 10.3, 10.5, 10.7, 10.9],
+                20: [10.3, 10.5, 10.7, 10.9, 11.1]
+            ],
+            false: [
+                9: [11.7, 12.3, 12.8, 13.3, 13.8],
+                10: [11.6, 12.2, 12.7, 13.2, 13.7],
+                11: [11.5, 12.1, 12.5, 12.9, 13.4],
+                12: [11.4, 11.9, 12.3, 12.7, 13.2],
+                13: [11.2, 11.7, 12.2, 12.7, 13.2],
+                14: [11.4, 11.8, 12.2, 12.6, 13.0],
+                15: [11.2, 11.6, 12.0, 12.4, 12.8],
+                16: [11.2, 11.5, 11.8, 12.2, 12.6],
+                17: [11.2, 11.5, 11.8, 12.1, 12.5],
+                18: [11.2, 11.5, 11.8, 12.1, 12.4],
+                19: [11.2, 11.5, 11.8, 12.1, 12.4],
+                20: [11.5, 11.8, 12.1, 12.4, 12.7]
+            ]
+        ],
+        .run: [
+            true: [
+                12: [720, 790, 860, 930, 1010],
+                13: [690, 750, 820, 890, 960],
+                14: [660, 720, 780, 850, 920],
+                15: [640, 700, 760, 820, 880],
+                16: [630, 690, 740, 800, 850],
+                17: [620, 670, 720, 770, 820],
+                18: [620, 670, 710, 760, 810],
+                19: [620, 660, 700, 750, 800],
+                20: [620, 660, 700, 740, 780]
+            ],
+            false: [
+                12: [880, 940, 1000, 1060, 1120],
+                13: [870, 930, 990, 1050, 1110],
+                14: [860, 920, 980, 1040, 1100],
+                15: [850, 910, 970, 1030, 1090],
+                16: [840, 900, 960, 1020, 1070],
+                17: [840, 890, 950, 1000, 1050],
+                18: [840, 890, 940, 990, 1040],
+                19: [860, 890, 930, 980, 1030],
+                20: [900, 930, 960, 990, 1020]
+            ]
+        ]
+    ]
+
+    static func normalizedAge(_ age: Int) -> Int {
+        if age >= 20 { return 20 }
+        if age <= 9 { return 9 }
+        return age
+    }
+
+    static func grade(for station: NAPFAStation, age: Int, sex: Bool, value: Double) -> String {
+        let ageKey = station == .run ? max(normalizedAge(age), 12) : normalizedAge(age)
+        guard let row = thresholds[station]?[sex]?[ageKey] else { return "N/A" }
+
+        for (letter, threshold) in zip(gradeLetters, row) {
+            if station.lowerIsBetter {
+                if value <= threshold { return letter }
+            } else if value >= threshold {
+                return letter
+            }
+        }
+
+        return "F"
+    }
+}
+
+private extension NAPFAStation {
+    var sliderRange: ClosedRange<Double> {
+        switch self {
+        case .sitUps:
+            return 0...60
+        case .standingBroadJump:
+            return 100...280
+        case .sitAndReach:
+            return 0...60
+        case .inclinedPullUps:
+            return 0...35
+        case .shuttleRun:
+            return 9...15
+        case .run:
+            return 480...1_500
+        }
+    }
+
+    var sliderStep: Double {
+        self == .shuttleRun ? 0.1 : 1
+    }
+
+    var defaultScore: Double {
+        switch self {
+        case .sitUps:
+            return 30
+        case .standingBroadJump:
+            return 170
+        case .sitAndReach:
+            return 30
+        case .inclinedPullUps:
+            return 8
+        case .shuttleRun:
+            return 12
+        case .run:
+            return 900
+        }
+    }
+
+    var lowerIsBetter: Bool {
+        self == .shuttleRun || self == .run
+    }
+
+    func formattedScore(_ value: Double) -> String {
+        switch self {
+        case .sitUps, .inclinedPullUps:
+            return String(format: "%.0f reps", value)
+        case .standingBroadJump, .sitAndReach:
+            return String(format: "%.0f cm", value)
+        case .shuttleRun:
+            return String(format: "%.1f sec", value)
+        case .run:
+            return timeString(Int(value.rounded()))
+        }
+    }
+
+    private func timeString(_ seconds: Int) -> String {
+        let minutes = max(seconds, 0) / 60
+        let seconds = max(seconds, 0) % 60
+        return "\(minutes):\(String(format: "%02d", seconds))"
     }
 }
 
 #Preview {
-    AutoCalcView(info: .constant(data(Age: 0, Gender: false, prev: [], targ: [], schedule: [], NAPFA_Date: Date.now, Goals: [])))
+    AutoCalcView(info: .constant(data(Age: 12, Gender: true, prev: [], targ: [], schedule: [], NAPFA_Date: Date.now, Goals: [])))
 }

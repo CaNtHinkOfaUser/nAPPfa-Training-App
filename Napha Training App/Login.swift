@@ -3,8 +3,6 @@ import SwiftUI
 struct StartingPage: View {
     
     @Binding var info: data
-    @State var TabViewSheet = false
-    @State var showNewView = false
     @Binding var ageFirstTime: Bool
     @Binding var ageSheet: Bool
     @Binding var Sex: Bool
@@ -14,61 +12,69 @@ struct StartingPage: View {
     @Binding var selectedDays: [Int]
     @Binding var selectedTimes: [Date]
     @Binding var showLogin : Bool
-    //var nextAction: () -> Void
+
     var body: some View {
-        NavigationView {
-            VStack(spacing: 20) {
-                
-                Image("final-image")
-                    .resizable()
-                    .frame(width: 10, height: 10)
-                    .scaleEffect(20)
-                    .foregroundColor(.mint)
-                    .aspectRatio(contentMode: .fit)
-                    .padding(.top, 40)
-                    .padding(.horizontal, 20)
-                    .offset(y: 100)
-                
-                
-                
-               /* Image("hero-image")
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: UIScreen.main.bounds.width, height: 250)
-                    .clipped()*/
-                VStack() {
-                    Text("nAPPfa")
-                        .font(.title)
-                        .scaleEffect(1.2)
-                        .fontWeight(.bold)
-                    Text("Achieve your goals and become fitter with nAPPfa.")
-                        .font(.body)
-                        .foregroundColor(.secondary)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 40)
-                    
-                    NavigationLink(destination: StartingTabView(info: $info,ageFirstTime: $ageFirstTime,ageSheet: $ageSheet,Sex: $Sex,Age: $Age,goalSheet: $goalSheet,selectedDays: $selectedDays,selectedTimes: $selectedTimes, schedSheet: $schedSheet, showLogin: $showLogin)) {
-                        VStack {
-                            Text("Get Started")
-                                .font(.title)
-                                .scaleEffect(0.9)
-                                .fontWeight(.bold)
-                                .padding(.vertical, 10)
-                                .padding(.horizontal, 20)
-                                .background(Color.blue)
-                                .foregroundColor(.white)
-                                .cornerRadius(10)
-                                .scaleEffect(0.9)
-                            
+        NavigationStack {
+            GeometryReader { proxy in
+                ScrollView {
+                    VStack(spacing: 24) {
+                        Spacer(minLength: max(20, proxy.size.height * 0.08))
+
+                        Image("naapfa_logo")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(
+                                width: min(132, proxy.size.width * 0.34),
+                                height: min(132, proxy.size.width * 0.34)
+                            )
+                            .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
+                            .shadow(color: .black.opacity(0.08), radius: 16, y: 8)
+
+                        VStack(spacing: 10) {
+                            Text("nAPPfa")
+                                .font(.system(size: 40, weight: .black, design: .rounded))
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.75)
+
+                            Text("Train for all 6 NAPFA stations with nAPPfa — goals, reminders, and streaks.")
+                                .font(.body)
+                                .foregroundStyle(.secondary)
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal, 12)
                         }
+
+                        NavigationLink {
+                            StartingTabView(
+                                info: $info,
+                                ageFirstTime: $ageFirstTime,
+                                ageSheet: $ageSheet,
+                                Sex: $Sex,
+                                Age: $Age,
+                                goalSheet: $goalSheet,
+                                selectedDays: $selectedDays,
+                                selectedTimes: $selectedTimes,
+                                schedSheet: $schedSheet,
+                                showLogin: $showLogin
+                            )
+                        } label: {
+                            Label("Get Started", systemImage: "arrow.right.circle.fill")
+                                .font(.headline)
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .controlSize(.large)
+                        .padding(.horizontal, 8)
+
+                        Spacer(minLength: 24)
                     }
-                    
+                    .frame(maxWidth: .infinity)
+                    .frame(minHeight: proxy.size.height)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 24)
                 }
-                .padding(.bottom, 40)
-                .offset(y: -40)
+                .scrollIndicators(.hidden)
             }
-            .background(Color.white)
-            .edgesIgnoringSafeArea(.all)
+            .background(Color(.systemGroupedBackground))
         }
     }
 }
